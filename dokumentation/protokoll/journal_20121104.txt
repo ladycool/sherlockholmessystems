@@ -8,6 +8,7 @@ Cypher (Wobei der Cedrick bis dato daran gearbeitet hat)
 
 Engin + Christoph:
 Remotezugriff auf die Datenbank. Die Zugangsdaten stehen im config/zugangsdaten.txt
+CRUD-Befehle
 Patrick: Der Treiber ist erledigt
 IM MOMENT IST DASS HIER DER KERNPUNKT
 
