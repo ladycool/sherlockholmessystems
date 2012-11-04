@@ -1,0 +1,39 @@
+JSP & Servlet vs Swing & AWT
+----------------------------
+
+nach 2 Tagen komme ich nun zu einem Fazit:
+
+Swing & AWT:
+  Vorteile:
+    -Es gibt genug Hilfe online
+    -
+
+  Nachteile:
+    -Nicht für grosse Projekte geeignet (der Implementierungsaufwand steigt exponential),
+    -debuggen ist die Hölle (Um die Oberflächen zu debuggen muss die immer zuerst kompliliert werden),
+    -plattformabhängig,
+    -n Anwendungen für n Benutzer + Server der implementiert werden muss,
+    -Das MVC-Pattern ist so gut wie unmöglich.
+
+
+JSP & Servlet:
+  Vorteile:
+    -Graphischeoberfläche basiert auf HTML --> plattformunabhängig,
+    -wesentlich übersichtlichere und schnellere Implementierung,
+    -Das MVC-Pattern ist anwendbar,
+    -Mehrere Server (Webserver) und Tutorials stehen bereits zur Verfügung.
+    -Zusätzlich und das finde ich super cool nur "Tomcat"-Server bietet neben coockies und sessions 
+     ein drittes Objekt das einmal gesetzt FÜR ALLE BENUZTER die auf eine Ressource zugreifen sichtbar wird
+     onhe eine Datenbank anlegen zu müssen,
+    -Für alle php-Fans die haben ziemlich viele Ähnlichkeiten mit php,
+    -und letztlich wären Swing & AWT unentbehrlich, bieten JSP & Servlet die Möglichkeit swing & AWT Komponenten
+     einzubetteln.
+
+  Nachteile:
+    -Ich konnte beim besten Willen gar nichts finden. :)
+
+
+
+Wer hat noch etwas gehabt?!
+
+Patrick

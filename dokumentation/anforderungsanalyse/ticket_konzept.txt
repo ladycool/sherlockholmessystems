@@ -1,0 +1,103 @@
+Das Ticket-Konzept
+------------------
+
+Das Konzept wurde aus "Kerberos" entnommen.
+sk = symmetrischer Schlüssel
+puk = public Key
+prk = private Key
+mk = Masterschlüssel
+
+
+1: Verschlüsselung (Erzeugung des Tickets)
+- Das Dokument wird symmetrisch verschlüsselt.
+- Der sk wird asymmetrisch (puk) für alle autorisierte Personnen (leider einmal pro Person) verschlüsselt.
+- Dies wird in der Db gespeichert
+
+
+2: Entschlüsselung (Ablesen eines Tickets)
+- Der richtige User entschlüsselt das Ticket mit seinem prk und bekommt die Id der Datei und den sk.
+- So kann er dann die Datei entschlüsseln.
+
+
+3. Datenbankstruktur
+---------------------------------------------------
+user
+---------------------------------------------------
+id | userid->(random) | ... | kId (key->id verschlüsslt) | last login |
+
+
+-----------------------------------------------------
+Datei
+-----------------------------------------------------
+id | userid | userDatenId->(random) | daten | pfad->Verzeichnis | last changed
+
+
+--------------------------
+Ticket-knoten
+--------------------------
+id | bausatz | referenz(puk des Empfängers) |
+
+
+-----------------
+Verzeichnis
+-----------------
+id | vId | Name |
+
+
+----------
+key
+----------
+id | key |
+
+
+-------------
+public key
+------------
+id | key | userid
+
+
+4. Vorgehen
+Bob besitzt 
+- ein (mehrere auch möglich) sk zur Ver- und Entschlüsselung eigener Dok,
+- einen eindeutigen prk der nie übertragen wird zur Entschlüsselung fremder Dateien,
+- einen eindeutigen puk zur Verschlüsselung fremder Dateien.
+
+Um die höchste Sicherheit zu gewährleisten sollte jeder Schlüssel im Idealfall höchstens einmal verwendet
+werden:
+
+1/
+Verschlüsseln einer Datei
+- sk+userDatenId+pfad+userid VERSCHLÜSSELN [daten]
+- sk+userid VERSCHLÜSSELN [userDatenId, pfad]
+- sk(+id --> Erschwert allerdings das eigene Wiederfinden) VERSCHLÜSSELN [userid in Datei] 
+
+Erlaubniserteilung
+- puk(von Alice) VERSCHLÜSSELN [sk+userDatenId+pfad+userid] ==> TICKET-knoten
+
+Schlüsselkasten zumachen 
+- mk(userid + password + last login) VERSCHLÜSSELN [sk, prk, kId in user] -->
+
+Authentifikation beim nächsten login
+- userid + last login VERSCHLÜSSELN [password]
+
+
+2/
+Authentifikation beim login
+- userid + last login ENTSCHLÜSSELN [password]
+
+Schlüsselkasten aufmachen 
+- mk(userid + password +last login) ENTSCHLÜSSELN [kId]
+- mk (mit Hilfe von kid in user) ENTSCHLÜSSELN [sk, prk]
+
+Entschlüsseln einer Datei
+- sk ENTSCHLÜSSELN [userid in Datei]
+- sk+userid ENTSCHLÜSSELN [userDatenId, pfad]
+- sk+userDatenId+pfad+userid ENTSCHLÜSSELN [daten]
+
+Ticket ablesen
+  TICKET ==> prk(von Alice) ENTSCHLÜSSELN [daten anhand sk+userDatenId+pfad+userid]
+
+
+
+
+

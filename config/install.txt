@@ -1,0 +1,95 @@
+Entwicklungsumgebung
+--------------------
+Ihr solltet die Version 3 oder 4 haben und sehr wichtig die Version namens:
+	Eclipse IDE for Java ##EE## Developers
+nicht
+	Eclipse IDE for Java Developers
+
+
+"entwicklung/workspace" ist das Verzeichnis in dem der Code sich befindet und befinden wird.
+Ich habe neben dem Projekt (sherlockholmessystems) ein paar Beispliele hochgepusht.
+Um den Arbeitsaufwand zu minimieren sollte ihr auf dem Verzeichnis entwickeln. 
+
+
+Das Verzeichnis "entwicklung/apache-tomcat-7" (der Webserver) solltet ihr raus kopieren und irgendwo
+ablegen (Am Besten bei C:) und die Verbindung zw. JRE und TOMCAT erstellen.
+Im folgenden Tutorial ist alles idiotensicher erklärt worden
+http://www.youtube.com/watch?v=b42CJ0r-1to&feature=relmfu
+
+
+
+
+INSTALL GIT
+-----------
+Schritt 1: GIT
+tutorial
+http://uncod.in/blog/installing-msysgit-on-windows7/
+download
+http://code.google.com/p/msysgit/downloads/list
+
+Schritt 2: TortoiseGit
+tutorial
+http://uncod.in/blog/installing-tortoisegit-on-windows7/
+download
+http://code.google.com/p/tortoisegit/downloads/list
+
+Schritt 3: GitHub
+tutorial
+http://uncod.in/blog/setting-up-a-github-account-on-windows7/
+sign up/in
+https://github.com/signup/free
+--->>>> Sobald die Anmeldung erfolgt ist, schickt mir euren Benutzername auf GitHub
+
+Schritt 4: How to use GitHub
+http://uncod.in/blog/github-tortoisegit-and-organizational-workflow-tutorial/
+
+
+
+
+COMMITEN
+--------
+Um die Version reibungslos zu aktualisieren gibt es ein Paar Dinge die zu beachten sind:
+
+Schritt 1: commit
+  Dabei bitte immer spezifizieren was genau ihr dabei seid hochzuladen.
+  Anschließend NICHT "pushen"
+
+Schritt 2: PULL
+  So holt ihr die aktuelle Version aus dem ROOT-Repository. GIT wird erstmal sicherstellen das es keine
+  Konflite gibt.
+  Erst wenn alles grün ist solltet ihr pushen.
+
+
+
+
+JSP und Servlet: Tutorials (auf Englisch :D )
+---------------------------------------------
+1.	http://www.youtube.com/watch?v=b42CJ0r-1to&feature=relmfu
+2.	http://www.youtube.com/watch?v=oX2rw5pAdxw&feature=relmfu
+3.	http://www.youtube.com/watch?v=YxuCG0f14hM&feature=relmfu
+4.	http://www.youtube.com/watch?v=w6YPK9xunCk&feature=relmfu
+5.	http://www.youtube.com/watch?v=MnUJl3NYRRc&feature=relmfu
+6.	http://www.youtube.com/watch?v=0WPfqrSCb6c&feature=relmfu
+7.	http://www.youtube.com/watch?v=yzC4oDXfkl0&feature=relmfu
+8.1.	http://www.youtube.com/watch?v=GbvuAIhLUZU&feature=relmfu
+8.2.	http://www.youtube.com/watch?v=sHpUrCJmCWs&feature=relmfu
+9.1.	http://www.youtube.com/watch?v=ji_N8pspwn0&feature=relmfu
+9.2.	http://www.youtube.com/watch?v=KPh1nPWB9ac&feature=relmfu
+9.3.	http://www.youtube.com/watch?v=cv1lp_uCtQc&feature=relmfu
+10.	http://www.youtube.com/watch?v=WCbwBHXUx0k&feature=relmfu
+11.	http://www.youtube.com/watch?v=Ycf_GQbPqKI&feature=relmfu
+12.	http://www.youtube.com/watch?v=qLpm1Zxytsg&feature=relmfu
+13.	http://www.youtube.com/watch?v=W0JQ0TaeXAY&feature=relmfu
+14.	http://www.youtube.com/watch?v=g15_vDp0HIg&feature=relmfu
+15.	http://www.youtube.com/watch?v=zk_zEp-mtvQ&feature=relmfu
+16.1.	http://www.youtube.com/watch?v=QOUIVsBN82Q&feature=relmfu	WICHTIG
+16.2.	http://www.youtube.com/watch?v=EOdvmGVdndA&feature=relmfu	WICHTIG
+16.3.	http://www.youtube.com/watch?v=WxeY-LxMIbE&feature=relmfu	WICHTIG
+16.4.	http://www.youtube.com/watch?v=3ZTxMDDmBqg&feature=relmfu	WICHTIG
+17.	http://www.youtube.com/watch?v=-mjYAf0ILZs&feature=relmfu
+18.	http://www.youtube.com/watch?v=4GAJ5pxQ-3c&feature=relmfu	nicht so wichtig
+	
+
+
+
+Patrick, 28.10.2012

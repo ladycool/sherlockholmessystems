@@ -1,0 +1,17 @@
+MyAdmin
+-------
+https://jonathan.sv.hs-mannheim.de/phpMyAdmin
+Username: kirkelstill
+Password: kirkelstill
+
+
+
+
+Verzeichnis auf dem Server an der HS
+------------------------------------
+
+
+
+
+Webserver
+---------

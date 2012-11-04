@@ -1,0 +1,10 @@
+>26.10.2012
+>- Projektaufgabe erhalten
+>
+>organisatorisch:
+>- für Aufgabe 1 entschieden
+>- Gruppenname überlegt
+>- Für Programmiersprache entschieden -> Java
+>- Treffzeitpunkt ausgemacht -> Freitags zur zweiten SIT Stunde
+>- erste Aufgaben verteilt (welche Verschlüsselung, Datenbank, GUI, ob web/desktop-anwendung)
+>- Versionsverwaltung eingerichtet (GIT / von Patrick)
