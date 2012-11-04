@@ -1,0 +1,19 @@
+Aufgabenverteilung:
+
+Ehsan + Stella:
+Ablaufdiagramm
+
+Cedrick + Patrick:
+Cypher (Wobei der Cedrick bis dato daran gearbeitet hat)
+
+Engin + Christoph:
+Remotezugriff auf die Datenbank. Die Zugangsdaten stehen im config/zugangsdaten.txt
+Patrick: Der Treiber ist erledigt
+IM MOMENT IST DASS HIER DER KERNPUNKT
+
+Luis + Patrick:
+javascript hinsichtlich des "pop-up"-Mechanismus und des Zugriff auf den Server per js
+
+
+
+Patrick, 04.11.2012

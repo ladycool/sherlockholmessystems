@@ -9,9 +9,16 @@ Password: kirkelstill
 
 Verzeichnis auf dem Server an der HS
 ------------------------------------
+Unsere Lösung wird aus teschnischen Gründen eine Hybridelösung sein
+GRUND:
+Zu wenig Zeit um sich nebenbei um die Config des Servers an der Hochschule, damit ein javabasierter 
+Server auch dort laufen kann.
+HYBRID: 
+Webbrowserunterstützt, denoch lauft die Applikation auf dem Rechner des Anwenders.
 
 
 
-
-Webserver
+Webserver: TOMCAT
 ---------
+Es sollte lokal bei jedem installiert werden
+Eine Tomcat-Version befindet sich in entwicklung/apache-tomcat-7
