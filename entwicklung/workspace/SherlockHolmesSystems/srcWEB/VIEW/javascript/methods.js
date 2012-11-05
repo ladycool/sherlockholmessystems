@@ -9,15 +9,13 @@
  *  */
 
 
-function blockdisplace(){
-	//Jquery hat bereit die methoden show() und hide(). Seht euch die mal an, die werden sehr hilfreich sein
-	/**Pseudocode:
-	 * if show()
-	 * 	then hide()
-	 * else if hide()
-	 * 	then show()
-	 * end
-	 */
+function blockToggle(id){
+	$('#'+id).fadeToggle('300');	
+}
+
+function blockToggle(id,duration){
+	//duration ="'"+duration+"'";
+	$('#'+id).fadeToggle(duration);	
 }
 
 function popup(){

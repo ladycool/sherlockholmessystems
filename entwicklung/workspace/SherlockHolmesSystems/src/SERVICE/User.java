@@ -3,7 +3,7 @@ package SERVICE;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import MODEL.Config;
+import SERVICE.Config;
 
 
 public class User{
@@ -49,6 +49,6 @@ public class User{
 		if(!this.restrictedGETAttr.contains(key)){
 			return this.attributes.get(key);
 		}
-		return Config.mydb.text(0);//Fehlermeldung
+		return Config.shsdb.text(0);//Fehlermeldung
 	}
 }

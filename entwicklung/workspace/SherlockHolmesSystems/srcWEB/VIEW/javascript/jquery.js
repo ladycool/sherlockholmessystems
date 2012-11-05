@@ -16,7 +16,6 @@
  * Date: Thu Aug 09 2012 16:24:48 GMT-0400 (Eastern Daylight Time)
  */
 
-
 (function( window, undefined ) {
 var
 	// A central reference to the root jQuery(document)

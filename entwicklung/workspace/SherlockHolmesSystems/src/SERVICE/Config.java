@@ -4,11 +4,36 @@ import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 
-import MODEL.Config;
+import MODEL._Config;
 import MODEL.enums.Logintype;
 
-public class Configservice extends Config {
+public class Config extends _Config {
 	
+	/*
+	 * PRIVATE
+	 */
+	private static Config _config = new Config();
+	private Config(){
+		super();//do nothing
+	}
+	
+	/**
+	 * @doc Erzeugt einen Singelton
+	 * @return
+	 */
+	public static Config getInstance(){
+		return Config._config;
+	}
+	
+	
+	/*
+	 * FINAL
+	 */
+	
+	
+	/*
+	 * METHODS
+	 */
 	/**
 	 * @doc Die Methode holt sich je nach gesuchtem Dateientyp, Dateien aus einem Verzeichnis die anschliessend
 	 * 		hochgeladen werden.
@@ -19,11 +44,13 @@ public class Configservice extends Config {
 	 * @param seperator: beim Uploaden -> seqfirst + Datei + seqlast + seperator + seqfirst + Datei + seqlast
 	 * @return	seqfirst + Datei + seqlast + seperator + seqfirst + Datei + seqlast + ...
 	 */
-	public static String libraryUploader(File folder,String suffix,String seqfirst,String seqlast,String seperator){
+	public static String libraryUploader(String _folder,String suffix,String seqfirst,String seqlast,String seperator){
+		File folder = new File(_folder);
 		String toreturn="";
+		
 		for (final File fileEntry : folder.listFiles()) {
 			if(fileEntry.isFile() && fileEntry.getName().endsWith(suffix)){
-				toreturn += seqfirst+fileEntry.getName()+seqlast+seperator;
+				toreturn += seqfirst+fileEntry+seqlast+seperator;
 			}
 		}
 		return toreturn;
@@ -40,7 +67,7 @@ public class Configservice extends Config {
 		if(type.equals(Logintype.signin)){
 			
 		}else if(type.equals(Logintype.signup)){
-			if(mydb.select1(usertb, "id", "username LIKE '"+(String)attributes.get("username")+"'").equals("")){
+			if(shsdb.select1(usertb, "id", "username LIKE '"+(String)attributes.get("username")+"'").equals("")){
 				Date date = new Date();
 				String userid = random(randomlength);
 				String masterkey = userid+date;

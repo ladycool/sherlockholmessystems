@@ -1,8 +1,8 @@
 package CONTROLLER;
 
-import MODEL.Config;
+import MODEL._Config;
 
-public class Sessionmanager extends Config {
+public class Sessionmanager extends _Config {
 	
 	//private User shsuser;
 	

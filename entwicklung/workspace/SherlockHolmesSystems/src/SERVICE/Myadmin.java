@@ -42,10 +42,10 @@ public class Myadmin implements Database {
 			
 		    // Setup the connection with the DB
 		    //"jdbc:mysql://https://jonathan.sv.hs-mannheim.de/phpMyAdmin/:3306/database","username","password"
-		    toreturn = DriverManager.getConnection(Config.url_db,Config.username,Config.password);	
+		    toreturn = DriverManager.getConnection(_Config.url_db,_Config.username,_Config.password);	
 		    System.out.println("haaaaaaaa");
 		}catch (Exception e){
-			gui.triggernotice(e);
+			//gui.triggernotice(e);
 		}
 		return toreturn;
 	}
@@ -93,5 +93,12 @@ public class Myadmin implements Database {
 			String condition, String info) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	@Override
+	public String select1(String table, String fields, String condition) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

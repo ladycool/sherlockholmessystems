@@ -1,6 +1,6 @@
 package SERVICE;
 
-import MODEL.Config;
+import MODEL._Config;
 import MODEL.GUI;
 import MODEL.enums.Direction;
 
@@ -8,18 +8,31 @@ public class HTML implements GUI {
 
 		
 	@Override
-	public String createInput(String type,String id,String value,int length) {
-		String input = "<input type=\""+type+"\" id=\""+id+"\" value=\""+value+"\"";	
+	public String createInput(String type,String id,String value,int length,String onclick) {
+		String input = "<input type=\""+type+"\" id=\""+id+"\" name=\""+id+"\" value=\""+value+"\"";	
 		if(length > 0){
 			input += " size=\""+length+"\"";
 		}
-		input +="\\>";
+		if(!onclick.isEmpty()){
+			input += " onclick=\""+onclick+"\"";
+		}
+		input +="/>";
 		return input;
 	}
 	
 	@Override
+	public String createInput(String type,String id,String value,String onclick) {
+		return createInput(type,id,value,0,onclick);
+	}
+	
+	@Override
 	public String createInput(String type,String id,String value) {
-		return createInput(type,id,value,0);
+		return createInput(type,id,value,0,"");
+	}
+	
+	@Override
+	public String createInput(String type,String id,int length) {
+		return createInput(type,id,"",length,"");
 	}
 	
 	public String createSelect(){
@@ -47,7 +60,7 @@ public class HTML implements GUI {
 	
 	@Override
 	public void triggernotice(Exception e){
-		String a = Config.progressId;
+		String a = _Config.progressId;
 		
 		//ruft die züstandige javascript-Methode auf
 	}
@@ -64,4 +77,41 @@ public class HTML implements GUI {
 		return null;
 	}
 	
+	@Override
+	public String createA(String id,String click,String mouseover,String mouseout,String otherEvents,int textId){
+		String toreturn = "<a ";
+		if(!id.isEmpty()){
+			//id += "_a";
+			toreturn ="id=\""+id+"_a\" ";
+		}
+		toreturn += "onmouseover=\"";
+		if(!mouseover.isEmpty()){
+			toreturn += mouseover+";";
+		}
+		toreturn += "$(this).css({'cursor':'pointer','color':'blue'});\" ";
+		
+		toreturn += "onmouseout=\"";
+		if(!mouseout.isEmpty()){
+			toreturn += mouseout+";";
+		}
+		toreturn += "$(this).css({'cursor':'auto','color':'black'});\" ";
+		
+		if(!click.isEmpty()){
+			toreturn += "onclick=\""+click+"\" ";
+		}
+		
+		toreturn +=otherEvents+">"+Config.shsdb.text(textId)+"</a>";
+		
+		return toreturn;
+	}
+		
+	@Override
+	public String createA(String click,String mouseover,String mouseout,int textId){
+		return createA("",click, mouseover, mouseout,"", textId);
+	}
+	
+	@Override
+	public String createA(String click, int textId) {
+		return createA("",click,"","","",textId);
+	}
 }
