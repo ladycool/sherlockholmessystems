@@ -1,7 +1,10 @@
 <%@ page import="SERVICE.Config" %>
 <%
 	final String
-	spanbackId = "spanbackId"
+	spanId = "spanbackId",
+	submitId = "usercreator",
+	hiddenbufId = "hiddenbuffer",
+	hiddenjudgeId= ""
 	;
 %>
 
@@ -22,33 +25,37 @@
 		<tr>
 			<td colspan="2" style="text-align:right;">
 				<!-- Not a memeber yet -->	
-				<%=	"<span id='"+spanbackId+"'>"+//Config.shsgui.createA("blockToggle('"+Config.signupId+"')",1000000000) +						
-					Config.shsgui.createA("onIndexAclick('tosignup')",1000000000)+
+				<%=	"<span id='"+spanId+"'>"+//Config.shsgui.createA("blockToggle('"+Config.signupId+"')",1000000000) +						
+					Config.shsgui.createA("clicktosignup('tosignup')",1000000000)+
 					Config.shsgui.space(10,Config.horiz) +
 					"</span>"+
-					Config.shsgui.createInput("submit","usercreator",Config.shsdb.text(2222)) %>
+					Config.shsgui.createInput("submit",submitId,Config.shsdb.text(2222)) %>
+				
+				<input type="hidden" id="<%=hiddenbufId %>" value=""/>
+				<script>
+					function clicktosignup(action){
+						blockToggle("'"+<%=Config.signupId%>+"'");
+						if(action ="tosignup"){
+							tohtml="<input type='button' value='"+<%=Config.shsdb.text(333)%>+"' onclick='clicktosignup(\'\')'/>";
+							
+							$("'#"+<%=hiddenbufId %>+"'").val($('"#'+<%=spanId%>+'"').html());
+							
+							$('"#'+<%=submitId%>+'"').val("'"+<%=Config.shsdb.text(11111)%>+"'");
+						
+						}else{
+							tohtml= $("'#"+<%=hiddenbufId %>+"'").val();
+							
+							$("'#"+<%=hiddenbufId %>+"'").val('');
+							
+							$('"#'+<%=submitId%>+'"').val("'"+<%=Config.shsdb.text(2222)%>+"'");
+						
+						}
+						$('"#'+<%=spanId%>+'"').html(tohtml);
+						
+					}
+				</script>
 			</td>
-			<script>
-			function onIndexAclick(action){
-				blockToggle("'"+<%=Config.signupId%>+"'");
-				if(action ="tosignup"){
 					
-					$('"#'+<%=spanbackId%>+'"').html('"'+
-												<%=Config.shsgui.createInput("button","",Config.shsdb.text(333),"onIndexAclick('')")%>
-												+'"');
-					$('#usercreator').val("'"+<%=Config.shsdb.text(11111)%>+"'");
-				
-				}else{
-					
-					$('"#'+<%=spanbackId%>+'"').html("\'"+<%=
-													Config.shsgui.createA("onIndexAclick('tosignup')",1000000000) 
-													%>+"\'");
-					$('#usercreator').val("'"+<%=Config.shsdb.text(2222)%>+"'");
-				
-				}
-				
-			}
-			</script>
-		</tr>
+		</tr>		
 	</table>
 </form>

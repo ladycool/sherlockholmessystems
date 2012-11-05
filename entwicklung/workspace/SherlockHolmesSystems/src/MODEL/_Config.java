@@ -77,7 +77,7 @@ public class _Config {
 	public static final String
 	driver="jdbc:mysql:",
 	port="3306",
-	url="//https://jonathan.sv.hs-mannheim.de/phpMyAdmin/",
+	url="//https://jonathan.sv.hs-mannheim.de/phpMyAdmin/",//@Engin: Den richtigen Link solltest du finden
 	db="kirkelstillsystems",
 	url_db=driver+url +":"+port+"//"+db,
 	username="kirkelstill",
