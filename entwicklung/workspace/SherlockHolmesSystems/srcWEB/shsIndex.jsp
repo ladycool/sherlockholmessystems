@@ -4,7 +4,10 @@
 <%@ page import="SERVICE.Config" %>
 
 <%
-	String absPath = request.getContextPath();	
+	String
+	absPath = request.getContextPath(),
+	bodyId = "shsbody"
+	;
 %>
 
 <%!
@@ -41,13 +44,11 @@
 		
 		<title>Sherlock Holmes Systems</title>
 	</head>
-	<body>
-		<div style="width:100%;">
-			<%if(session.getAttribute("user") == null){%>
-				<%@ include file="VIEW/login.jsp" %>
-			<%}else{%>
-				<%@ include file="VIEW/controllboard.jsp" %>	
-			<%}%>
-		</div>
+	<body class="maxwidth" id="<%=bodyId%>" name="<%=bodyId%>">
+		<%if(session.getAttribute("user") != null){%>
+			<%@ include file="VIEW/login.jsp" %>
+		<%}else{%>
+			<%@ include file="VIEW/controllboard.jsp" %>	
+		<%}%>
 	</body>
 </html>

@@ -35,10 +35,40 @@ public class HTML implements GUI {
 		return createInput(type,id,"",length,"");
 	}
 	
+	@Override
+	public String defaultTXTInput(String id){
+		return createInput("text",id,"",50,"") ;
+	}
+	
+	@Override
 	public String createSelect(){
 		return "";
 	}
 	
+	@Override
+	public String createImg(String blockId,String src,String alt,int height,int width,boolean resizeable){
+		//Beispiel: <img alt="images/arrowRIGHT.png"" src="images/arrowLEFT.png" onclick="blockToggle('<%=Config.mainwestId%>')">
+		String toprint = "<img alt=\""+alt+"\" src=\""+src+"\" onclick=\"blockToggle('"+blockId+"')\"";
+		if(height > 0 && width > 0){
+			toprint += "height=\""+height+"\" width=\""+width+"\"";
+		}
+		if(resizeable){
+			toprint += "onmouseover=\"$(this).attr('height',5*$(this).attr('height')/4);$(this).attr('width',5*$(this).attr('width')/4)\"";
+			toprint += "onmouseout=\"$(this).attr('height',4*$(this).attr('height')/5);$(this).attr('width',4*$(this).attr('width')/5)\"";
+		}
+		toprint += ">";		
+		return toprint;
+	}
+	
+	@Override
+	public String createImg(String blockId,String src,String alt){//Speziel für die Pfeile
+		return createImg(blockId,src,alt,20,20,true);
+	}
+	
+	@Override
+	public String createImg(String blockId,String src){
+		return createImg(blockId,src,"",0,0,false);
+	}
 	
 	@Override
 	/**
@@ -60,7 +90,7 @@ public class HTML implements GUI {
 	
 	@Override
 	public void triggernotice(Exception e){
-		String a = _Config.progressId;
+		String a = _Config.consoleId;
 		
 		//ruft die züstandige javascript-Methode auf
 	}
@@ -113,5 +143,11 @@ public class HTML implements GUI {
 	@Override
 	public String createA(String click, int textId) {
 		return createA("",click,"","","",textId);
+	}
+
+	@Override
+	public String createTextarea(String id,String rows,String cols,String initval) {
+		String toprint="<textarea rows=\""+rows+"\" cols=\""+cols+"\">"+initval+"</textarea>";		
+		return toprint;
 	}
 }

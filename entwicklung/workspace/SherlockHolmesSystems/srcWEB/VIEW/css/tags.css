@@ -1,1 +1,13 @@
 @Engin, Ehsan, Stella
+
+body[name="shsbody"]{
+	background-color: #808080; /*dark gray*/	
+}
+
+select,input[type="text"],input[type="password"]{
+	background-color: #E0FFFF; /*silver like*/
+}
+
+legend{
+	color: #228B22;
+}

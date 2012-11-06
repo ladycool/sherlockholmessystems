@@ -9,13 +9,22 @@
  *  */
 
 
-function blockToggle(id){
-	$('#'+id).fadeToggle('300');	
+function simpleToggle(id){
+	$('#'+id).fadeToggle('1');	
 }
 
-function blockToggle(id,duration){
+function simpleToggle(id,duration){
 	//duration ="'"+duration+"'";
 	$('#'+id).fadeToggle(duration);	
+}
+
+function blockToggle(imgId,blockId){//Aufgepasst diese Methode kann nur für speziell angepasste img-Tags optimal funktionieren. 
+	simpleToggle(blockId);
+	temp1 = $('#'+imgId).attr('src');
+	temp2 = $('#'+imgId).attr('alt');
+	//Es wird vorausgesetzt dass das Attribut 'alt' den alternativen Pfad enthält
+	$('#'+imgId).attr('alt',temp1);
+	$('#'+imgId).attr('src',temp2);
 }
 
 function popup(){

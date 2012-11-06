@@ -35,7 +35,8 @@ public class _Config {
 	;
 	
 	public static final String	
-	view = sep+"VIEW",
+	_view = "VIEW",
+	view = sep+_view,
 	
 	js = view+sep+"javascript",
 	css = view+sep+"css",
@@ -55,7 +56,10 @@ public class _Config {
 	signup	= viewcontrol+sep+"signup"+jsp,
 	signin	= viewcontrol+sep+"signin"+jsp,
 
-	init = "shsIndex.jsp" //??
+	arrowleft=_view+sep+"images"+sep+"arrowLEFT.png",
+	arrowright=_view+sep+"images"+sep+"arrowRIGHT.png",
+	arrowup=_view+sep+"images"+sep+"arrowUP.png",
+	arrowdown=_view+sep+"images"+sep+"arrowDOWN.png"
 	;
 	
 	
@@ -69,7 +73,7 @@ public class _Config {
 	mainnordId = mainId+"_nord",
 	mainwestId = mainId+"_west",
 	mainsouthId = mainId+"_south",
-	progressId = "progress"
+	consoleId = "progress"
 	;
 	
 	
