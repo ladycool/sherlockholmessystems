@@ -5,8 +5,7 @@
 
 <%
 	String
-	absPath = request.getContextPath(),
-	bodyId = "shsbody"
+	absPath = request.getContextPath()
 	;
 %>
 
@@ -44,8 +43,8 @@
 		
 		<title>Sherlock Holmes Systems</title>
 	</head>
-	<body class="maxwidth" id="<%=bodyId%>" name="<%=bodyId%>">
-		<%if(session.getAttribute("user") != null){%>
+	<body class="maxwidth" id="<%=Config.bodyId%>" name="<%=Config.bodyId%>">
+		<%if(session.getAttribute("user") == null){%>
 			<%@ include file="VIEW/login.jsp" %>
 		<%}else{%>
 			<%@ include file="VIEW/controllboard.jsp" %>	

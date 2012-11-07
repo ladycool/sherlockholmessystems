@@ -1,11 +1,11 @@
 package SERVICE;
 
-import MODEL._Config;
+import SERVICE.Config;
 import MODEL.GUI;
 import MODEL.enums.Direction;
 
 public class HTML implements GUI {
-
+	//Der Singelton muss noch geschrieben werden 06.11.2012
 		
 	@Override
 	public String createInput(String type,String id,String value,int length,String onclick) {
@@ -46,9 +46,9 @@ public class HTML implements GUI {
 	}
 	
 	@Override
-	public String createImg(String blockId,String src,String alt,int height,int width,boolean resizeable){
+	public String createImg(String imgId,String blockId,String src,String alt,int height,int width,boolean resizeable){
 		//Beispiel: <img alt="images/arrowRIGHT.png"" src="images/arrowLEFT.png" onclick="blockToggle('<%=Config.mainwestId%>')">
-		String toprint = "<img alt=\""+alt+"\" src=\""+src+"\" onclick=\"blockToggle('"+blockId+"')\"";
+		String toprint = "<img id=\""+imgId+"\" alt=\""+alt+"\" src=\""+src+"\" onclick=\"blockToggle('"+imgId+"','"+blockId+"')\"";
 		if(height > 0 && width > 0){
 			toprint += "height=\""+height+"\" width=\""+width+"\"";
 		}
@@ -61,13 +61,13 @@ public class HTML implements GUI {
 	}
 	
 	@Override
-	public String createImg(String blockId,String src,String alt){//Speziel für die Pfeile
-		return createImg(blockId,src,alt,20,20,true);
+	public String createImg(String imgId,String blockId,String src,String alt){//Speziel für die Pfeile
+		return createImg(imgId,blockId,src,alt,20,20,true);
 	}
 	
 	@Override
-	public String createImg(String blockId,String src){
-		return createImg(blockId,src,"",0,0,false);
+	public String createImg(String imgId,String blockId,String src){
+		return createImg(imgId,blockId,src,"",0,0,false);
 	}
 	
 	@Override
@@ -90,11 +90,18 @@ public class HTML implements GUI {
 	
 	@Override
 	public void triggernotice(Exception e){
-		String a = _Config.consoleId;
+		//Spezielfall der Methode triggernotice(String message);
 		
-		//ruft die züstandige javascript-Methode auf
+		String tosend = e.getMessage();
+		triggernotice(tosend);
 	}
 
+	@Override
+	public void triggernotice(String message){
+		String a = Config.consoleId;
+		//ruft die züstandige javascript-Methode auf
+	}
+	
 	@Override
 	public String createRadiobuttons() {
 		// TODO Auto-generated method stub

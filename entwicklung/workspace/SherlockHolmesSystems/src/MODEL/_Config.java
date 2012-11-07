@@ -18,9 +18,9 @@ public class _Config {
 	protected static int
 	randomlength = 10	
 	;
-	protected static Shscipher 
+	protected static _Cipher 
 	symchipher = new Symmcipher(),
-	asymchipher = new Asymmcipher()
+	asymchipher = new Shscipher()
 	;
 	
 	
@@ -63,8 +63,9 @@ public class _Config {
 	;
 	
 	
-	//Tag names
+	//Tag attributes
 	public static final String
+	bodyId = "shsbody",
 	mainId = "controllboard",
 	signupId = "signup",
 	signupBackId="signupback",
@@ -73,7 +74,12 @@ public class _Config {
 	mainnordId = mainId+"_nord",
 	mainwestId = mainId+"_west",
 	mainsouthId = mainId+"_south",
-	consoleId = "progress"
+	consoleId = "progress",
+	mainnordarrowId = mainnordId+"_arrow",
+	mainwestarrowId = mainwestId+"_arrow",
+	mainsoutharrowId = mainsouthId+"_arrow",
+	consolearrowId = consoleId+"_arrow",
+	mainwesttdId = mainwestId+"_td"
 	;
 	
 	
@@ -81,7 +87,7 @@ public class _Config {
 	public static final String
 	driver="jdbc:mysql:",
 	port="3306",
-	url="//https://jonathan.sv.hs-mannheim.de/phpMyAdmin/",//@Engin: Den richtigen Link solltest du finden
+	url="https://jonathan.sv.hs-mannheim.de/phpMyAdmin/",//@Engin: Den richtigen Link solltest du finden
 	db="kirkelstillsystems",
 	url_db=driver+url +":"+port+"//"+db,
 	username="kirkelstill",

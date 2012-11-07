@@ -62,7 +62,7 @@ public interface GUI {
 	 * @param src: Pfad zum Bild
 	 * @return String
 	 */
-	public String createImg(String blockId, String src);
+	public String createImg(String imgId,String blockId, String src);
 	
 	/**
 	 * Erzeugt ein Tag vom Typ '<img/>'
@@ -71,7 +71,7 @@ public interface GUI {
 	 * @param alt: Pfad zum Bild der nach der Defaultaktion angezeigt werden sollte
 	 * @return String
 	 */
-	public String createImg(String blockId, String src, String alt);
+	public String createImg(String imgId,String blockId, String src, String alt);
 	
 	/**
 	 * Erzeugt ein Tag vom Typ '<img/>'
@@ -83,7 +83,7 @@ public interface GUI {
 	 * @param resizeable: Erzeugt ein nettes Feature
 	 * @return String
 	 */
-	public String createImg(String blockId,String src,String alt,int height,int width,boolean resizeable);
+	public String createImg(String imgId,String blockId,String src,String alt,int height,int width,boolean resizeable);
 	
 	public String createTextarea(String id,String rows,String cols,String initval);
 	
@@ -138,8 +138,14 @@ public interface GUI {
 	public String createA(String click,int textId);
 	
 	/**
-	 * @deprecated Für den Moment
-	 * @param e
+	 * Reicht Meldung zur Konsole weiter.
+	 * @param e: Exception die weiter gereicht werden sollte.
 	 */
 	public void triggernotice(Exception e);
+	
+	/**
+	 * Reicht Meldung zur Konsole weiter.
+	 * @param message: Nachricht die angezeigt werden sollte.
+	 */
+	public void triggernotice(String message);
 }

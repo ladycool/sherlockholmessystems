@@ -14,11 +14,11 @@
 			</div>
 		</td></tr>
 		<tr>
-			<td class="right" Style="max-width=30%;"><!-- Header für main WEST -->
-				<%=Config.shsgui.createImg(Config.mainwestId,Config.arrowleft,Config.arrowright) %>
+			<td class="right" id="<%=Config.mainwesttdId%>"><!-- Header für main WEST -->
+				<%=Config.shsgui.createImg(Config.mainwestarrowId,Config.mainwestId,Config.arrowleft,Config.arrowright) %>
 			</td>
 			<td class="right"><!-- Header für main NORD -->
-				<%=Config.shsgui.createImg(Config.mainnordId,Config.arrowup,Config.arrowdown) %>
+				<%=Config.shsgui.createImg(Config.mainnordarrowId,Config.mainnordId,Config.arrowup,Config.arrowdown) %>
 			</td>
 		</tr>
 		<tr>
@@ -37,7 +37,7 @@
 		<tr>
 			<!-- <td></td> -->
 			<td class="right"><!-- Header für main SOUTH -->
-				<%=Config.shsgui.createImg(Config.mainsouthId,Config.arrowdown,Config.arrowup) %>
+				<%=Config.shsgui.createImg(Config.mainsoutharrowId,Config.mainsouthId,Config.arrowdown,Config.arrowup) %>
 			</td>
 		</tr>
 		<tr>
@@ -50,20 +50,25 @@
 		</tr>
 		<tr>
 			<td class="right" colspan="2"><!-- Header für Console -->
-				<%=Config.shsgui.createImg(Config.consoleId,Config.arrowdown,Config.arrowup) %>
+				<%=Config.shsgui.createImg(Config.consolearrowId,Config.consoleId,Config.arrowdown,Config.arrowup) %>
 			</td>
 		</tr>
 		<tr><td colspan="2">
-			<div id="<%=Config.consoleId%>" title="<%=Config.shsdb.text(23)%>" style="max-height:250px;">
-				<%!String werfen(int j){
-					String t ="";
-					for(int i=0;i<j;i++){
-						t +="Test\n";
-					}
-					return t;
-				}%>
-				<%=werfen(10000) %>
+			<div id="<%=Config.consoleId%>" title="<%=Config.shsdb.text(23)%>" style="max-height:250px;overflow:auto">
+				<table>
+					<tr><td>
+						<%!String werfen(int j){
+							String t ="";
+							for(int i=0;i<j;i++){
+								t +="Test\n";
+							}
+							return t;
+						}%>
+						<%=werfen(10) %>
+					</td></tr>
+				</table>
 			</div>
 		</td></tr>
 	</table>
+	<script>documentready('<%=Config.bodyId%>','<%=Config.mainwestId%>');</script>
 </div>
