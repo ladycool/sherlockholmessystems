@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
     
-<%@ page import="SERVICE.Config" %>
+<%@ page import="CONTROLLER.Controller" %>
 
 <%
 	String
@@ -36,15 +36,15 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">		
-		<link href="<%=absPath+Config.classes %>" type="text/css" rel="stylesheet">
-		<link href="<%=absPath+Config.tags %>" type="text/css" rel="stylesheet">
-		<script src="<%=absPath+Config.jquery %>" type="text/javascript"></script>	
-		<script src="<%=absPath+Config.jsmeth %>" type="text/javascript"></script>	
+		<link href="<%=absPath+Controller.shsconfig.classes %>" type="text/css" rel="stylesheet">
+		<link href="<%=absPath+Controller.shsconfig.tags %>" type="text/css" rel="stylesheet">
+		<script src="<%=absPath+Controller.shsconfig.jquery %>" type="text/javascript"></script>	
+		<script src="<%=absPath+Controller.shsconfig.jsmeth %>" type="text/javascript"></script>	
 		
 		<title>Sherlock Holmes Systems</title>
 	</head>
-	<body class="maxwidth" id="<%=Config.bodyId%>" name="<%=Config.bodyId%>">
-		<%if(session.getAttribute("user") == null){%>
+	<body class="maxwidth" id="<%=Controller.shsconfig.bodyId%>">
+		<%if(session.getAttribute("user") != null){%>
 			<%@ include file="VIEW/login.jsp" %>
 		<%}else{%>
 			<%@ include file="VIEW/controllboard.jsp" %>	

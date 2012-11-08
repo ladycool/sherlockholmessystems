@@ -1,9 +1,8 @@
-<%@ page import="SERVICE.Config" %>
+<%@ page import="CONTROLLER.Controller" %>
 
 <!-- How to create a text area -->
-<%=Config.shsgui.createTextarea("","5","100%","") %>
+<%=Controller.shsgui.createTextarea("","5","100%","") %>
 
-<%switch(request.getParameter("ajaxhandlertype")){%>
+<%switch(request.getParameter("ajaxhandlertype")){ }%>
 
-<%}%>
 	

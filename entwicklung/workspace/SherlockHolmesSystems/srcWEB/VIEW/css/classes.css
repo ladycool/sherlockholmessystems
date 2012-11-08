@@ -19,6 +19,32 @@ td.right{
 	text-align: right;
 }
 
-maxwidth{
-	width:100%;	
+td.body{
+	border: solid 1px;
+	border-top-left-radius: 10px 10px;
+	border-bottom-right-radius: 10px 10px;
+	background-color: #778899;/*LightSlateGrey*/
+	/*http://www.w3schools.com/cssref/css_colornames.asp*/
+	max-height:330px;
+}
+
+td.headerB{
+	border: solid 2px;
+	border-top-left-radius: 10px 10px;
+	border-bottom-right-radius: 10px 10px;
+	background-color: #87CEFA;/*LightSkyblue*/ /* Alternative -> #708090;/*SlateGrey*/
+}
+
+td.headerA{
+	border: solid 5px;
+	border-top-left-radius: 10px 10px;
+	border-bottom-right-radius: 10px 10px;
+	background-color: #B0C4DE;/*LightSteelBlue*/ /* Alternative -> #1E90FF;/*DodgerBlue*/
+}
+
+td.console{
+	border: solid 1px;
+	border-top-left-radius: 10px 10px;
+	border-bottom-right-radius: 10px 10px;
+	max-height:100px;
 }

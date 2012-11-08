@@ -17,18 +17,39 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import CONTROLLER.Controller;
 import MODEL._Cipher;
 import MODEL.enums.Ciphertype;
+
 
 public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/java7/1507_22_006.html
 	private SecretKey shssymkey;
 	private KeyPair shsasymkeypair;
 	
-	public Shscipher(int keysize, String symInstance, String asymInstance) {
+	/*
+	 * PRIVATE
+	 */
+	private static Shscipher _cipher = null;
+	private Shscipher(int keysize, String symInstance, String asymInstance) {
 		super(keysize, symInstance, asymInstance);
 		this.shssymkey = this.createsymmetricKey();
 		this.shsasymkeypair = this.createAsymmetricKey();
 	}
+	
+	/**
+	 * @doc Erzeugt einen Singelton
+	 * @return
+	 */
+	public static Shscipher getInstance(int keysize, String symInstance, String asymInstance){
+		//SETTER-START
+		if(_cipher != null){
+			_cipher = new Shscipher(keysize, symInstance, asymInstance);
+		}
+		//SETTER-END
+		return _cipher;
+	}
+	
+	
 
 	/**
 	 * Erzeugt ein Objekt vom Typ Chipher, das zum chiffrieren benötigt wird.
@@ -39,19 +60,19 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	private Cipher getCipher(Ciphertype type,int cipherMODE){
 		Cipher cipher = null;
 		try{
-			if(type.equals(Ciphertype.asymmetric)){			
+			if(type.equals(Controller.shsconfig.asymmetric)){			
 				cipher = Cipher.getInstance(this.getInstance(type));
 				cipher.init(cipherMODE, this.shsasymkeypair.getPublic());
 				//byte[] wrappedKey = cipher.wrap(key);				        
 		        
-			}else if(type.equals(Ciphertype.symmetric)){
+			}else if(type.equals(Controller.shsconfig.symmetric)){
 				cipher = Cipher.getInstance(this.getInstance(type));
 	            cipher.init(cipherMODE, this.shssymkey);
 				
 			}
 		}catch (GeneralSecurityException e){
 			//e.printStackTrace();
-			Config.shsgui.triggernotice(e);
+			Controller.shsgui.triggernotice(e);
 		}
 		return cipher;
 	}
@@ -63,14 +84,14 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		SecretKey key = null;
 		try {
 			KeyGenerator keygen;
-			keygen = KeyGenerator.getInstance(this.getInstance(Ciphertype.symmetric));//AES
+			keygen = KeyGenerator.getInstance(this.getInstance(Controller.shsconfig.symmetric));//AES
 			SecureRandom random = new SecureRandom();
 	        keygen.init(random);
 	        key = keygen.generateKey();
 	        
 		} catch (GeneralSecurityException e) {
 			//e.printStackTrace();
-			Config.shsgui.triggernotice(e);
+			Controller.shsgui.triggernotice(e);
 		}
         
 		return key;
@@ -81,14 +102,14 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	protected KeyPair createAsymmetricKey() {
 		KeyPair keypair = null;
 		try {
-			KeyPairGenerator pairgen = KeyPairGenerator.getInstance(this.getInstance(Ciphertype.asymmetric));//RSA
+			KeyPairGenerator pairgen = KeyPairGenerator.getInstance(this.getInstance(Controller.shsconfig.asymmetric));//RSA
             SecureRandom random = new SecureRandom();
             pairgen.initialize(this.getkeysize(), random);
             keypair = pairgen.generateKeyPair();
 			
 		} catch (GeneralSecurityException e){
 			//e.printStackTrace();
-			Config.shsgui.triggernotice(e);
+			Controller.shsgui.triggernotice(e);
 		}
 
 		return keypair;
@@ -107,7 +128,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		} catch (GeneralSecurityException | UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
-			Config.shsgui.triggernotice(e);
+			Controller.shsgui.triggernotice(e);
 		}
 		
 		return toreturn;
@@ -128,33 +149,33 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 			}
 			cipherdata.close();		
 			String tosend=""; //NOT DONE YET. I will be coming from the database
-			Config.shsgui.triggernotice(tosend);
+			Controller.shsgui.triggernotice(tosend);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
-			Config.shsgui.triggernotice(e);
+			Controller.shsgui.triggernotice(e);
 		}
 		
 	}
 
 	@Override
-	public void dataPULL(String dbfilename,String locfilepath,Ciphertype type,int cipherMODE) {//NOT DONE
+	public void dataPULL(String dbfilename,String localfilepath,Ciphertype type,int cipherMODE) {//NOT DONE
 		try {
 			Cipher cipher = getCipher(type, cipherMODE);
 			
 			String tocrypt = "";//TO DO --> Datenbankaufruf			
 			String plaintext = crypt(tocrypt, type, cipherMODE);
 			
-			DataOutputStream out = new DataOutputStream(locfilepath);
+			DataOutputStream out = new DataOutputStream(new FileOutputStream(localfilepath));
 			out.writeBytes(plaintext);
 		    
 		} catch (IOException e) {
 			//e.printStackTrace();
-			Config.shsgui.triggernotice(e);
+			Controller.shsgui.triggernotice(e);
 		}
 		
 	}
-	
+
 
 }

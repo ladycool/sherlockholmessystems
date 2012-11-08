@@ -1,9 +1,9 @@
-<%@ page import="SERVICE.Config" %>
+<%@ page import="CONTROLLER.Controller" %>
 
 <table><tr>
 	<td>Lisa Hoffmann</td>
 	<td>Einstellung</td>
 	<td class="right">
-	<%=Config.shsgui.createInput("button", "", "engin-Test") %>
+	<%=Controller.shsgui.createInput("button", "", "engin-Test") %>
 	</td>
 </tr></table>

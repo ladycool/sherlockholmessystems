@@ -1,60 +1,85 @@
-<%@ page import="SERVICE.Config" %>
+<%@ page import="CONTROLLER.Controller" %>
 
 <!-- @Autor: Patrick -->
 <%
+	String 
+	headerheight = "50px",
+	mainwestwidth = "200px"
+	;
 	
 %>
 
 
-<div id="<%=Config.mainId%>" class="maxwidth">
-	<table class="maxwidth">
-		<tr><td colspan="2">
-			<div id="<%=Config.headerId%>">
+<div id="<%=Controller.shsconfig.mainId%>" class="maxwidth">
+	<table>
+		<tr><td colspan="2" class="headerA"><!-- HEADER -->
+			<div id="<%=Controller.shsconfig.headerId%>">
 				<%@ include file="VIEWCONTROLLER/header.jsp" %>
 			</div>
-		</td></tr>
-		<tr>
-			<td class="right" id="<%=Config.mainwesttdId%>"><!-- Header für main WEST -->
-				<%=Config.shsgui.createImg(Config.mainwestarrowId,Config.mainwestId,Config.arrowleft,Config.arrowright) %>
-			</td>
-			<td class="right"><!-- Header für main NORD -->
-				<%=Config.shsgui.createImg(Config.mainnordarrowId,Config.mainnordId,Config.arrowup,Config.arrowdown) %>
+		</td></tr><!-- HEADER END-->
+		<tr><!-- MAIN -->
+			<td class="headerB" id="<%=Controller.shsconfig.mainwesttdId%>"><!-- Header für main WEST -->
+				My buddies :)
+			</td><!-- Später DATENBANK AUFRUF -->
+			<td class="headerB" id="<%=Controller.shsconfig.mainnordtdId%>"><!-- Header für main NORD -->
+				<table>
+					<tr>
+						<td>My folders</td><!-- Später DATENBANK AUFRUF -->
+						<td class="right"><%=Controller.shsgui.createImg(Controller.shsconfig.mainnordarrowId, Controller.shsconfig.mainnordId, 
+															Controller.shsconfig.arrowup, Controller.shsconfig.arrowdown) %></td>
+					</tr>
+				</table>
 			</td>
 		</tr>
 		<tr>
-			<td rowspan="3">
-				<div id="<%=Config.mainwestId%>">
+			<td rowspan="3" class="body">
+				<div id="<%=Controller.shsconfig.mainwestId%>">
 					<%@ include file="VIEWCONTROLLER/mainwest.jsp" %>
 				</div>				
 			</td>
-			<td>
-				<div id="<%=Config.mainnordId%>">
+			<td class="body">
+				<div id="<%=Controller.shsconfig.mainnordId%>">
 					<%@ include file="VIEWCONTROLLER/mainnord.jsp" %>
 				</div>
-				<hr>
 			</td>
 		</tr>
 		<tr>
 			<!-- <td></td> -->
-			<td class="right"><!-- Header für main SOUTH -->
-				<%=Config.shsgui.createImg(Config.mainsoutharrowId,Config.mainsouthId,Config.arrowdown,Config.arrowup) %>
+			<td class="headerB"><!-- Header für main SOUTH -->
+				<table>
+					<tr>
+						<td>My buddie's folders</td><!-- Später DATENBANK AUFRUF -->
+						<td class="right">
+							<%=Controller.shsgui.createImg(Controller.shsconfig.mainsoutharrowId, Controller.shsconfig.mainsouthId, 
+												Controller.shsconfig.arrowdown, Controller.shsconfig.arrowup) %>
+						</td>
+					</tr>
+				</table>			
 			</td>
 		</tr>
 		<tr>
 			<!-- <td></td> -->
-			<td>
-				<div id="<%=Config.mainsouthId%>">
+			<td class="body">
+				<div id="<%=Controller.shsconfig.mainsouthId%>" class="body">
 					<%@ include file="VIEWCONTROLLER/mainsouth.jsp" %>
 				</div>
 			</td>
-		</tr>
-		<tr>
-			<td class="right" colspan="2"><!-- Header für Console -->
-				<%=Config.shsgui.createImg(Config.consolearrowId,Config.consoleId,Config.arrowdown,Config.arrowup) %>
+		</tr><!-- MAIN END -->
+		<tr><!-- CONSOLE -->
+			<td class="headerB" colspan="2"><!-- Header für Console -->
+				<table>
+					<tr>
+						<td>Console</td><!-- Später DATENBANK AUFRUF -->
+						<td class="right">
+							<%=Controller.shsgui.createImg(Controller.shsconfig.consolearrowId, Controller.shsconfig.consoleId, 
+															Controller.shsconfig.arrowdown, Controller.shsconfig.arrowup) %>
+						</td>
+					</tr>
+				</table>
 			</td>
 		</tr>
-		<tr><td colspan="2">
-			<div id="<%=Config.consoleId%>" title="<%=Config.shsdb.text(23)%>" style="max-height:250px;overflow:auto">
+		<tr><td colspan="2" id="<%=Controller.shsconfig.consoletdId%>" class="console">
+			<div id="<%=Controller.shsconfig.consoleId%>" title="<%=Controller.shsdb.text(23)%>">
 				<table>
 					<tr><td>
 						<%!String werfen(int j){
@@ -68,7 +93,7 @@
 					</td></tr>
 				</table>
 			</div>
-		</td></tr>
+		</td></tr><!-- CONSOLE END -->
 	</table>
-	<script>documentready('<%=Config.bodyId%>','<%=Config.mainwestId%>');</script>
+	<script>documentready('<%=Controller.shsconfig.bodyId%>','<%=Controller.shsconfig.mainwestId%>');</script>
 </div>

@@ -88,7 +88,7 @@ function triggernotice(){
 function documentready(bodyId,mainwestId){
 	newwidth = $('#'+bodyId).css('width')*10/100;
 	//$(document).ready
-	$(function(){alert($('#'+mainwestId).css('width') +'---'+$('#'+bodyId).css('width'));
+	$(function(){
 		$('#'+mainwestId).css('width',newwidth);
 	}); 
 	//shsresize(bodyId,mainwesttdId,percentage);

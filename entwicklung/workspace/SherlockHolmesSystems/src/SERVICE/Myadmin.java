@@ -3,17 +3,34 @@ package SERVICE;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-import MODEL.*;
+import CONTROLLER.Controller;
+import MODEL.Database;
 
 
 public class Myadmin implements Database {
-	private Connection connect;
-	private GUI gui;
 	
-	public Myadmin(){
+	
+	private Connection connect;
+	
+	/*
+	 * PRIVATE
+	 */
+	private static Myadmin _db = new Myadmin();
+	private Myadmin(){
 		this.connect = dbconnect();
-		gui = new HTML();
 	}
+	
+	/**
+	 * @doc Erzeugt einen Singelton
+	 * @return
+	 */
+	public static Myadmin getInstance(){
+		return Myadmin._db;
+	}
+	
+	
+	
+	
 	
 
 	//Ovderride	
@@ -42,8 +59,8 @@ public class Myadmin implements Database {
 			
 		    // Setup the connection with the DB
 		    //"jdbc:mysql://https://jonathan.sv.hs-mannheim.de/phpMyAdmin/:3306/database","username","password"
-		    toreturn = DriverManager.getConnection(_Config.url_db,_Config.username,_Config.password);	
-		    System.out.println("haaaaaaaa");
+		    toreturn = DriverManager.getConnection(Controller.shsconfig.url_db,Controller.shsconfig.username,Controller.shsconfig.password);	
+		    
 		}catch (Exception e){
 			//gui.triggernotice(e);
 		}

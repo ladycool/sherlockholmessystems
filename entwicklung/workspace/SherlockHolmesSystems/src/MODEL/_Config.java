@@ -1,11 +1,12 @@
 package MODEL;
 
 import java.io.File;
+import java.util.HashMap;
 
 import MODEL.enums.*;
 import SERVICE.*;
 
-public class _Config {
+public abstract class _Config {
 	/*
 	 * PRIVATE
 	 */
@@ -15,26 +16,21 @@ public class _Config {
 	/*
 	 * PROTECTED
 	 */
-	protected static int
+	protected int
 	randomlength = 10	
-	;
-	protected static _Cipher 
-	symchipher = new Symmcipher(),
-	asymchipher = new Shscipher()
-	;
-	
+	;	
 	
 	
 	/*
 	 * PUBLIC
 	 */
 	//paths
-	private static final String 
+	private final String 
 	jsp = ".jsp",
 	sep = "/"
 	;
 	
-	public static final String	
+	public final String	
 	_view = "VIEW",
 	view = sep+_view,
 	
@@ -64,7 +60,7 @@ public class _Config {
 	
 	
 	//Tag attributes
-	public static final String
+	public final String
 	bodyId = "shsbody",
 	mainId = "controllboard",
 	signupId = "signup",
@@ -79,12 +75,16 @@ public class _Config {
 	mainwestarrowId = mainwestId+"_arrow",
 	mainsoutharrowId = mainsouthId+"_arrow",
 	consolearrowId = consoleId+"_arrow",
-	mainwesttdId = mainwestId+"_td"
+	mainwesttdId = mainwestId+"_td",
+	mainnordtdId = mainnordId+"_td",
+	consoletdId = consoleId+"_td",
+	
+	hiddensignId = "signaction" //SEHR WICHTIG
 	;
 	
 	
 	//Database
-	public static final String
+	public final String
 	driver="jdbc:mysql:",
 	port="3306",
 	url="https://jonathan.sv.hs-mannheim.de/phpMyAdmin/",//@Engin: Den richtigen Link solltest du finden
@@ -94,21 +94,35 @@ public class _Config {
 	password="kirkelstill",
 	
 	usertb="user"
-	;
-
-	
-	//Singeltons und Objekte
-	public static final Database shsdb = new Myadmin();
-	public Direction shsDir = null;
-	public static Logintype shslogin = null;
-	public static final GUI shsgui = new HTML();
-	//public static User shsuser;
-	
+	;	
 	
 	
 	//ENUM
-	public static final Direction
-	verti = Direction.verti,
-	horiz = Direction.horiz
+	public final Ciphertype
+	asymmetric = Ciphertype.asymmetric,
+	symmetric = Ciphertype.symmetric
 	;
+	public final Direction
+	verti = Direction.verti,
+	horiz = Direction.horiz,
+	up = Direction.up,
+	down = Direction.down,
+	left = Direction.left,
+	right = Direction.right
+	;
+	public final Logintype
+	signinlogintype = Logintype.signin,
+	signuplogintype = Logintype.signup
+	;
+	
+	
+	//METHODS
+	/**
+	 * @doc NOT DONE YET
+	 * @param type
+	 * @param attributes
+	 * @return
+	 */
+	public abstract User login(String action,HashMap<String, Object>attributes);
+	
 }

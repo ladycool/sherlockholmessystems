@@ -59,6 +59,6 @@ public abstract class _Cipher {
 	
 	public abstract void dataPUSH(String filepath,Ciphertype type,int cipherMODE);
 	
-	public abstract void dataPULL(String filename, Ciphertype type, int cipherMODE);
+	public abstract void dataPULL(String filename,String localfilepath,Ciphertype type,int cipherMODE);
 	
 }

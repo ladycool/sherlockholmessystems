@@ -7,6 +7,7 @@ import java.util.HashMap;
 import MODEL._Config;
 import MODEL.enums.Logintype;
 
+
 public class Config extends _Config {
 	
 	/*
@@ -44,7 +45,7 @@ public class Config extends _Config {
 	 * @param seperator: beim Uploaden -> seqfirst + Datei + seqlast + seperator + seqfirst + Datei + seqlast
 	 * @return	seqfirst + Datei + seqlast + seperator + seqfirst + Datei + seqlast + ...
 	 */
-	public static String libraryUploader(String _folder,String suffix,String seqfirst,String seqlast,String seperator){
+	public String libraryUploader(String _folder,String suffix,String seqfirst,String seqlast,String seperator){
 		File folder = new File(_folder);
 		String toreturn="";
 		
@@ -56,34 +57,20 @@ public class Config extends _Config {
 		return toreturn;
 	}
 	
-	/**
-	 * @doc NOT DONE YET
-	 * @param type
-	 * @param attributes
-	 * @return
-	 */
-	public static User login(Logintype type,HashMap<String, Object>attributes){
+@Override
+	public User login(String action,HashMap<String, Object>attributes){
 		User shsuser=null;
-		if(type.equals(Logintype.signin)){
+		if(action.isEmpty()){//sign in
 			
-		}else if(type.equals(Logintype.signup)){
-			if(shsdb.select1(usertb, "id", "username LIKE '"+(String)attributes.get("username")+"'").equals("")){
-				Date date = new Date();
-				String userid = random(randomlength);
-				String masterkey = userid+date;
-				String encryptedpassw = symchipher.encrypt((String)attributes.get("password"), masterkey);
-				
-				//Save in database
-				
-				shsuser = User.getInstance(attributes);
-			}else{
-				
-			}		
+		}else{//sign up
+					
 		}
 		return shsuser;
 	}
 
-	public static String random(int n){
+	
+	
+	public String random(int n){
 		String toreturn="";
 		for (int i = 0; i < n; i++) {
 			char randomsign = (char) ('a'+Math.random()*128);

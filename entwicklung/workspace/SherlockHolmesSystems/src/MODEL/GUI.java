@@ -3,6 +3,7 @@ package MODEL;
 import MODEL.enums.Direction;
 
 public interface GUI {
+	
 	/**
 	 * <input/>-Feld in HTML. Diese Methode sollte bei Input-Tags benutzt werden die keine Länge benötigen
 	 * @param type: <input type=""

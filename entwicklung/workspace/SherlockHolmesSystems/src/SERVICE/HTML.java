@@ -1,12 +1,29 @@
 package SERVICE;
 
 import SERVICE.Config;
+import CONTROLLER.Controller;
 import MODEL.GUI;
 import MODEL.enums.Direction;
 
 public class HTML implements GUI {
-	//Der Singelton muss noch geschrieben werden 06.11.2012
-		
+	
+	/*
+	 * PRIVATE
+	 */
+	private static HTML _html = new HTML();
+	private HTML(){
+		super();//do nothing
+	}
+	
+	/**
+	 * @doc Erzeugt einen Singelton
+	 * @return
+	 */
+	public static HTML getInstance(){
+		return HTML._html;
+	}
+	
+	
 	@Override
 	public String createInput(String type,String id,String value,int length,String onclick) {
 		String input = "<input type=\""+type+"\" id=\""+id+"\" name=\""+id+"\" value=\""+value+"\"";	
@@ -76,9 +93,9 @@ public class HTML implements GUI {
 	 */
 	public String space(int i,Direction d){
 		String toreturn="",space="";
-		if(d.equals(Direction.horiz)||d.equals(Direction.up)||d.equals(Direction.down)){
+		if(d.equals(Controller.shsconfig.horiz)||d.equals(Controller.shsconfig.up)||d.equals(Controller.shsconfig.down)){
 			space = "&nbsp;";
-		}else if(d.equals(Direction.verti)||d.equals(Direction.left)||d.equals(Direction.right)){
+		}else if(d.equals(Controller.shsconfig.verti)||d.equals(Controller.shsconfig.left)||d.equals(Controller.shsconfig.right)){
 			space = "<br/>";
 		}
 		for (int j = 0; j < i; j++) {
@@ -98,7 +115,7 @@ public class HTML implements GUI {
 
 	@Override
 	public void triggernotice(String message){
-		String a = Config.consoleId;
+		String a = Controller.shsconfig.consoleId;
 		//ruft die züstandige javascript-Methode auf
 	}
 	
@@ -137,7 +154,7 @@ public class HTML implements GUI {
 			toreturn += "onclick=\""+click+"\" ";
 		}
 		
-		toreturn +=otherEvents+">"+Config.shsdb.text(textId)+"</a>";
+		toreturn +=otherEvents+">"+Controller.shsdb.text(textId)+"</a>";
 		
 		return toreturn;
 	}

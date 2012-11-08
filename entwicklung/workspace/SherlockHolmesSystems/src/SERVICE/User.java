@@ -3,7 +3,6 @@ package SERVICE;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import SERVICE.Config;
 
 
 public class User{
@@ -23,9 +22,11 @@ public class User{
 	 * @return ein Singelton
 	 */
 	public static User getInstance(HashMap<String, Object> attributes) {
+		//SETTER-START
 		if(User.singelton == null){
 			User.singelton = new User(attributes);
 		}
+		//SETTER-END
 		return User.singelton;
 	}
 	
@@ -49,6 +50,6 @@ public class User{
 		if(!this.restrictedGETAttr.contains(key)){
 			return this.attributes.get(key);
 		}
-		return Config.shsdb.text(0);//Fehlermeldung
+		return null;//Fehlermeldung
 	}
 }
