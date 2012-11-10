@@ -71,7 +71,19 @@ public interface Database {
 	 * @return String
 	 */
 	public String text(int id,String lang);
-
-
+	
+	/**
+	 * @deprecated
+	 * @param id
+	 * @return
+	 */
+	public String text(int id);
+	
+	/**
+	 * @deprecated
+	 * @param message
+	 * @return
+	 */
+	public String text(String message);
 	// Zusätzliches---END
 }

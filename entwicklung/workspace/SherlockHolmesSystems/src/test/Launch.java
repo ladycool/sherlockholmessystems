@@ -3,6 +3,7 @@ package test;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 
+import CONTROLLER.Controller;
 import SERVICE.Config;
 import SERVICE.Myadmin;
 
@@ -21,6 +22,8 @@ public class Launch {
 		String c = new String(b,"UTF-8");
 		System.out.println(c);
 		
+		Myadmin db = Myadmin.getInstance();
+		System.out.println(db == null);
 	}
 
 }

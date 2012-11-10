@@ -93,7 +93,7 @@ public class Config extends _Config {
 			userId = Base64.encode(userId.getBytes());//userId to save
 			attributes.put("userid", userId);
 			
-			Controller.shsdb.insert(this.usertb, attributes);
+			Controller.shsdb.insert(this.usertb, attributes,"");
 			
 			
 			//Tabelle: key
@@ -107,17 +107,17 @@ public class Config extends _Config {
 			byte[] tocrypt = Controller.shscipher.getkey(Controller.shsconfig.symmetric);
 			cryptedkey = Controller.shscipher.crypt(new String(tocrypt),Controller.shsconfig.master,Controller.shsconfig.encryptmode);
 			cryptedkey += Controller.shsconfig.savesym;
-			Controller.shsdb.insert("userid", "key", cryptedkey);
+			Controller.shsdb.insert("userid", "key", cryptedkey,"");
 			
 			HashMap<String, byte[]>tocrypt1 = Controller.shscipher.getkey();
 			//Verschlüsselung und Speicherung des public Key
 			cryptedkey = Controller.shscipher.crypt(new String(tocrypt1.get("pubk")),Controller.shsconfig.master,Controller.shsconfig.encryptmode);
 			cryptedkey += Controller.shsconfig.savepubk;
-			Controller.shsdb.insert("userid", "key", cryptedkey);
+			Controller.shsdb.insert("userid", "key", cryptedkey,"");
 			//Verschlüsselung und Speicherung des private Key
 			cryptedkey = Controller.shscipher.crypt(new String(tocrypt1.get("prik")),Controller.shsconfig.master,Controller.shsconfig.encryptmode);
 			cryptedkey += Controller.shsconfig.saveprik;
-			Controller.shsdb.insert("userid", "key", cryptedkey);
+			Controller.shsdb.insert("userid", "key", cryptedkey,"");
 			
 			
 			//CREATE USER: HIER BIN HIER _________________________________________

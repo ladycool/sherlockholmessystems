@@ -30,7 +30,7 @@ public class Myadmin implements Database {
 	 */
 	public static Myadmin getInstance(){
 		//SETTER-START
-		if(db != null){
+		if(db == null){
 			db = new Myadmin();
 		}
 		//SETTER-END
@@ -39,22 +39,6 @@ public class Myadmin implements Database {
 	//SINGELTON-END
 	
 	
-	
-	@Override
-	public String text(int id,String lang){
-		String toreturn="";
-		try {
-			if(lang.isEmpty()){lang = "de";}
-			
-			String field = "text_"+lang;
-			ResultSet result = this.select("text", field,"id="+id,"");
-			toreturn = result.getString(field);
-		} catch (SQLException e) {
-			Controller.shsgui.triggernotice(e);
-		}
-		return toreturn;
-	}
-
 	// private Methods
 	/**
 	 * Establishing an new connection to either the local or remote database ->
@@ -67,14 +51,19 @@ public class Myadmin implements Database {
 		try {
 			// Load the MySQL JDBC driver
 			Class.forName("com.mysql.jdbc.Driver");// "oracle.jdbc.driver.OracleDriver"
-			// System.out.println("MySQL JDBC driver loaded ok.");
+			System.out.println("MySQL JDBC driver loaded ok.");
 
 			// Setup the connection with the DB
 			// "jdbc:mysql://https://jonathan.sv.hs-mannheim.de/phpMyAdmin/:3306/database","username","password"
-			toreturn = DriverManager.getConnection(Controller.shsconfig.url_db,Controller.shsconfig.username,Controller.shsconfig.password);
-		} catch (Exception e) {
-			Controller.shsgui.triggernotice(e);
-		}
+			
+				toreturn = DriverManager.getConnection(Controller.shsconfig.url_db,Controller.shsconfig.username,Controller.shsconfig.password);
+				System.out.println("The biding has been proceeded");
+		} catch (SQLException | ClassNotFoundException e) {
+				//2012.11.10
+				//Ein Gateway muss hier implementiert werden.
+				Controller.shsgui.triggernotice(e);
+			}
+		
 		return toreturn;
 	}
 
@@ -192,6 +181,32 @@ public class Myadmin implements Database {
 	}
 
 	
+
+	@Override
+	public String text(int id,String lang){
+		String toreturn="";
+		try {
+			if(lang.isEmpty()){lang = "de";}
+			
+			String field = "text_"+lang;
+			ResultSet result = this.select("text", field,"id="+id,"");
+			toreturn = result.getString(field);
+		} catch (SQLException e) {
+			Controller.shsgui.triggernotice(e);
+		}
+		return toreturn;
+	}
+	
+	
+	@Override
+	public String text(int id){
+		return text(""+id); 
+	}
+	
+	@Override
+	public String text(String message){
+		return message;
+	}
 	
 	
 	public void close() {

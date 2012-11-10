@@ -7,12 +7,15 @@
 	bakupId = "backup",
 	defaultAction = "'" + Controller.shsconfig.signactionB + "'" //signup
 	;
+
+   //Controller.shsdb.text("username")
+   out.print(Controller.shsdb != null);
 %>
 
 
 <table>
 	<tr>
-		<td class="loginlabel"><%=Controller.shsdb.text("Username")%></td>
+		<td class="loginlabel"><%=Controller.shsdb.text("username") %></td>
 		<td class="logininput"><%=Controller.shsgui.defaultTXTInput(Controller.shsconfig.usernameId)%></td>
 	</tr>
 	<tr>
