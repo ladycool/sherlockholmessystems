@@ -11,7 +11,7 @@ import MODEL.enums.Ciphertype;
 
 
 public class Config extends _Config {
-	private int randomuseridlength = 10;
+	private int randompseudouserIdlength = 10;
 	
 	
 	/*
@@ -79,8 +79,7 @@ public class Config extends _Config {
 		if(result != null){
 			
 			//Tabelle: user
-			String userId = this.random(this.randomuseridlength);
-			String pseudouserId = userId;
+			String userId = this.random(this.randompseudouserIdlength);
 			String password = attributes.get(this.passwordId);
 			
 			int insertpos = this.randomnr(password.length()-1);
@@ -89,9 +88,9 @@ public class Config extends _Config {
 			attributes.put(this.passwordId, password);
 			
 			insertpos = this.randomnr(userId.length()-1);
-			userId = userId.substring(0,insertpos) + username + userId.substring(insertpos);//new userId
-			userId = Base64.encode(userId.getBytes());//userId to save
-			attributes.put("userid", userId);
+			String pseudouserId = userId.substring(0,insertpos) + username + userId.substring(insertpos);//new pseudouserId
+			pseudouserId = Base64.encode(pseudouserId.getBytes());//pseudouserId to save
+			attributes.put(this.dbuserId, pseudouserId);
 			
 			Controller.shsdb.insert(this.usertb, attributes,"");
 			
@@ -99,27 +98,31 @@ public class Config extends _Config {
 			//Tabelle: key
 			Controller.shscipher = Shscipher.getInstance(this.keysize,this.symInstance,this.asymInstance);
 			String cryptedkey="";
-			//attributes = new HashMap<String, String>();
-			attributes.put("userid", pseudouserId);
 			
 			//
+			String tocrypt2 = "";
+			
 			//Verschlüsselung und Speicherung des geheimen symmetrischen Schlüssels
 			byte[] tocrypt = Controller.shscipher.getkey(Controller.shsconfig.symmetric);
-			cryptedkey = Controller.shscipher.crypt(new String(tocrypt),Controller.shsconfig.master,Controller.shsconfig.encryptmode);
-			cryptedkey += Controller.shsconfig.savesym;
-			Controller.shsdb.insert("userid", "key", cryptedkey,"");
+			tocrypt2 = new String(tocrypt) + Controller.shsconfig.savesym; //Zu dem bereits vorhandenen Schlüssel wird ein Stück text hinzugefügt um die Zuordnug beim
+																		//Entschlüsseln zu ermöglichen.
+			cryptedkey = Controller.shscipher.crypt(tocrypt2,Controller.shsconfig.master,Controller.shsconfig.encryptmode);
+			Controller.shsdb.insert(this.keytb,"",userId+","+cryptedkey,"");
 			
 			HashMap<String, byte[]>tocrypt1 = Controller.shscipher.getkey();
 			//Verschlüsselung und Speicherung des public Key
-			cryptedkey = Controller.shscipher.crypt(new String(tocrypt1.get("pubk")),Controller.shsconfig.master,Controller.shsconfig.encryptmode);
-			cryptedkey += Controller.shsconfig.savepubk;
-			Controller.shsdb.insert("userid", "key", cryptedkey,"");
+			tocrypt2 = new String(tocrypt1.get("pubk"))+Controller.shsconfig.savepubk;//Analog zum savesym
+			cryptedkey = Controller.shscipher.crypt(tocrypt2,Controller.shsconfig.master,Controller.shsconfig.encryptmode);
+			Controller.shsdb.insert(this.keytb,"",userId+","+cryptedkey,"");
+			
 			//Verschlüsselung und Speicherung des private Key
-			cryptedkey = Controller.shscipher.crypt(new String(tocrypt1.get("prik")),Controller.shsconfig.master,Controller.shsconfig.encryptmode);
-			cryptedkey += Controller.shsconfig.saveprik;
-			Controller.shsdb.insert("userid", "key", cryptedkey,"");
+			tocrypt2 = new String(tocrypt1.get("prik"))+Controller.shsconfig.saveprik; // Analog zum savesym
+			cryptedkey = Controller.shscipher.crypt(tocrypt2,Controller.shsconfig.master,Controller.shsconfig.encryptmode);
+			Controller.shsdb.insert(this.keytb,"",userId+","+cryptedkey,"");
 			
-			
+			HashMap<String,Object> userattr = new HashMap<String,Object>();
+			userattr.put(this.userid,userId)
+			user = User.getInstance(userattr);
 			//CREATE USER: HIER BIN HIER _________________________________________
 		}
 		
@@ -132,20 +135,22 @@ public class Config extends _Config {
 	
 	
 	@Override
-	public void uploaddata(String type,String path,String toggleId){
+	public void uploaddata(String type,Object path,String toggleId){
 		if(type.equals(this.uploadtypeA)){
-			internaldataupload(path,toggleId);
+			internaldataupload((String)path,toggleId);
 		}else if(type.equals(this.uploadtypeB)){
-			externaldataupload(path,toggleId);
+			externaldataupload((User)path,toggleId);
 		}
 	}
 	
 	
 	private void internaldataupload(String path,String toggleId){
-		
+		/*
+		 * Anhand des Pfads sollten die Dateien hohgeholt werden und mithilfe von Javascript dan richtig angezeigt werden
+		 */
 	}
 	
-	private void externaldataupload(String path,String toggleId){
+	private void externaldataupload(User user,String toggleId){
 		
 	}
 	

@@ -104,14 +104,17 @@ public abstract class _Config {
 	//Database
 	public final String
 	driver="jdbc:mysql:",
-	port="3306",
+	port="443",//3306
 	url="https://jonathan.sv.hs-mannheim.de/phpMyAdmin/",//@Engin: Den richtigen Link solltest du finden
 	db="kirkelstillsystems",
 	url_db=driver+url +":"+port+"//"+db,
 	username="kirkelstill",
 	password="kirkelstill",
 	
-	usertb="user"
+	usertb="user",
+	dbuserId="userid",
+	userid = dbuserId,
+	keytb="key"
 	;	
 	
 	
@@ -170,7 +173,7 @@ public abstract class _Config {
 	 */
 	public abstract void loginSHS(String type,HashMap<String,String>attributes);
 	
-	public abstract void uploaddata(String type,String path,String toggleId);
+	public abstract void uploaddata(String type,Object path,String toggleId);
 	
 	protected abstract void savecreatedKeys();
 	

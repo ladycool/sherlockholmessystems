@@ -45,7 +45,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 */
 	public static Shscipher getInstance(int keysize, String symInstance, String asymInstance){
 		//SETTER-START
-		if(_cipher != null){
+		if(_cipher == null){
 			_cipher = new Shscipher(keysize, symInstance, asymInstance);
 		}
 		//SETTER-END
