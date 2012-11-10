@@ -1,5 +1,3 @@
-<!-- @Eshan,Engin,Stella -->
-
 <%@ page import="CONTROLLER.Controller" %>
 <%
 	final String
