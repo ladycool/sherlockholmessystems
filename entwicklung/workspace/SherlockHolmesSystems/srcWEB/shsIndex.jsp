@@ -45,7 +45,7 @@
 		<title>Controller.shsconfig.title</title>
 	</head>
 	
-	<body class="maxwidth" id="<%=Controller.shsconfig.bodyId%>">
+	<body>
 		<%if(session.getAttribute("user") == null && request.getParameter(Controller.shsconfig.signactionId) == null){%>
 			<%@ include file="VIEW/login.jsp" %>
 		<%}else{%><%=session.getAttribute("user") %>

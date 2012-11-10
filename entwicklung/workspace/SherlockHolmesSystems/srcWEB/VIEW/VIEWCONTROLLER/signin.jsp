@@ -14,14 +14,20 @@
 
 
 <table>
+	<tr><td class="shstitle" colspan="2">
+			<%=Controller.shsconfig.programName %>
+			<%=Controller.shsgui.createImg("","",Controller.shsconfig.print) %>
+		</td></tr>
 	<tr>
-		<td class="loginlabel"><%=Controller.shsdb.text("username") %></td>
+		<td class="loginlabel"><%=Controller.shsdb.text("Username") %></td>
 		<td class="logininput"><%=Controller.shsgui.defaultTXTInput(Controller.shsconfig.usernameId)%></td>
 	</tr>
+	
 	<tr>
 		<td class="loginlabel"><%=Controller.shsdb.text("Password")%></td>
 		<td class="logininput"><%=Controller.shsgui.createInput("password",Controller.shsconfig.passwordId,50)%></td>
 	</tr>
+	
 </table>
 
 <div id="<%=Controller.shsconfig.signupId%>" style="display:none;">

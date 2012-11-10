@@ -57,11 +57,14 @@ public abstract class _Config {
 	progress = viewcontrol+sep+"progress"+jsp,
 	signup	= viewcontrol+sep+"signup"+jsp,
 	signin	= viewcontrol+sep+"signin"+jsp,
-
-	arrowleft=_view+sep+"images"+sep+"arrowLEFT.png",
-	arrowright=_view+sep+"images"+sep+"arrowRIGHT.png",
-	arrowup=_view+sep+"images"+sep+"arrowUP.png",
-	arrowdown=_view+sep+"images"+sep+"arrowDOWN.png"
+	
+	png=".png",
+	images = _view+sep+"images"+sep,
+	arrowleft=images+"arrowLEFT"+png,
+	arrowright=images+"arrowRIGHT"+png,
+	arrowup=images+"arrowUP"+png,
+	arrowdown=images+"arrowDOWN"+png,
+	print=images+"print"+png
 	;
 	
 	
@@ -85,6 +88,8 @@ public abstract class _Config {
 	consoletdId = consoleId+"_td",
 	passwordId = "password",
 	usernameId = "username",
+	
+	programName = "Holmes Secure",
 	
 	signactionId = "signaction", //SEHR WICHTIG
 	signactionA = "signin",

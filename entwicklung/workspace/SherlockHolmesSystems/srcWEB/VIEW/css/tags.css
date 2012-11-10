@@ -1,11 +1,12 @@
 @Engin, Ehsan, Stella
 
-body[id="shsbody"]{
-	background-color: #808080; /*dark gray*/	
+div[id="shsbody"]{
+	background-color: #808080; /*dark gray*/
+	width:90%;	
 }
 
 select,input[type="text"],input[type="password"]{
-	background-color: #E0FFFF; /*silver like*/
+	background-color: #white; /*silver like*/
 }
 
 legend{
