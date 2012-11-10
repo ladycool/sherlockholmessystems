@@ -4,23 +4,20 @@
 	final String //Skriptspezifische Ids
 	spanId = "spanbackId",
 	submitId = "usercreator",
-	usernameId = "username",
-	passwordId = "password"
+	bakupId = "backup",
+	defaultAction = "'" + Controller.shsconfig.signactionB + "'" //signup
 	;
-	
-	String action = request.getParameter(Controller.shsconfig.hiddensignId);//ICH BIN HIER:::::::::::::::::::::::::::::::::::
-	Controller.shsuser = Controller.shsconfig.login(action,new HashMap());
 %>
 
 
 <table>
 	<tr>
 		<td class="loginlabel"><%=Controller.shsdb.text("Username")%></td>
-		<td class="logininput"><%=Controller.shsgui.defaultTXTInput(usernameId)%></td>
+		<td class="logininput"><%=Controller.shsgui.defaultTXTInput(Controller.shsconfig.usernameId)%></td>
 	</tr>
 	<tr>
 		<td class="loginlabel"><%=Controller.shsdb.text("Password")%></td>
-		<td class="logininput"><%=Controller.shsgui.createInput("password",passwordId,50)%></td>
+		<td class="logininput"><%=Controller.shsgui.createInput("password",Controller.shsconfig.passwordId,50)%></td>
 	</tr>
 </table>
 
@@ -31,29 +28,39 @@
 <table>
 	<tr><td style="text-align:right;">
 		<!-- Not a memeber yet -->	
-		<%=	"<span id='"+spanId+"'>"+					
-			Controller.shsgui.createA("clicktosignup('tosignup')",1000000000)+
+		<%=	
+			"<span id='"+spanId+"'>"+					
+			Controller.shsgui.createA("clicktochange('signup')",1000000000)+
 			Controller.shsgui.space(10,Controller.shsconfig.horiz) +
 			"</span>"+
-			Controller.shsgui.createInput("submit",submitId,Controller.shsdb.text(2222)) %>
+			Controller.shsgui.createInput("submit",submitId,Controller.shsdb.text(2222)) 
+		%>
 		
-		<input type="hidden" id="<%=Controller.shsconfig.hiddensignId %>" name="<%=Controller.shsconfig.hiddensignId %>" value=""/>
+		<input type="hidden" id="<%=bakupId %>" name="<%=bakupId %>" value=""/>
+		<input type="hidden" id="<%=Controller.shsconfig.signactionId %>" name="<%=Controller.shsconfig.signactionId %>" value="signin"/><!-- id="signaction" -->
 		<script>
-			function clicktosignup(action){
-				simpleToggle("signup");	
-				if(action == "tosignup"){
-					tohtml="<input type='button' title='"+<%=Controller.shsdb.text(333)%>+"' value='"+<%=Controller.shsdb.text(333)%>+"' onclick='clicktosignup(\"\")'/>";							
-					$("#signaction").val($("#spanbackId").html());				
-					$("#usercreator").val(<%=Controller.shsdb.text(11111)%>);
+			function clicktochange(action){					
+				bakupId = "#backup";
+				signactionId = "#signaction";
+				spanId = "#spanbackId";
+				submitId = "#usercreator";
+											
+				if(action == "signup"){
+					tohtml = "<input type='button' title='"+<%=Controller.shsdb.text(333)%>+"' value='"+<%=Controller.shsdb.text(333)%>+"' onclick='clicktochange(\"signin\")'/>";
+					tohtml += "&nbsp;&nbsp;<input type='reset' value='"+<%=Controller.shsdb.text(55)%>+"'/>&nbsp;&nbsp;";
+					
+					if($(bakupId).val() == ''){//So wird es sichergestellt dass die ursprüngliche Form des span-Tags aufbewahren wird
+						$(bakupId).val($(spanId).html());
+					}
+					$(submitId).val(<%=Controller.shsdb.text(11111)%>);
+				}else if(action == "signin"){
+					tohtml = $(bakupId).val();
+					$(submitId).val(<%=Controller.shsdb.text(2222)%>);
+				}				
+				animateToggle("signup","verti");
+				$(spanId).html(tohtml);
+				$(signactionId).val(action);
 				
-				}else{
-					tohtml= $("#signaction").val();							
-					$("#signaction").val("");							
-					$("#usercreator").val(<%=Controller.shsdb.text(2222)%>);
-				
-				}
-				
-				$("#spanbackId").html(tohtml);
 			}
 		</script>
 	</td></tr>		

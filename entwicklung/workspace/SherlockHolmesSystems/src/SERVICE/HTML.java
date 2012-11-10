@@ -63,9 +63,12 @@ public class HTML implements GUI {
 	}
 	
 	@Override
-	public String createImg(String imgId,String blockId,String src,String alt,int height,int width,boolean resizeable){
+	public String createImg(String imgId,String blockId,String src,String alt,int height,int width,String event,boolean resizeable){
 		//Beispiel: <img alt="images/arrowRIGHT.png"" src="images/arrowLEFT.png" onclick="blockToggle('<%=Config.mainwestId%>')">
-		String toprint = "<img id=\""+imgId+"\" alt=\""+alt+"\" src=\""+src+"\" onclick=\"blockToggle('"+imgId+"','"+blockId+"')\"";
+		String toprint = "<img id=\""+imgId+"\" alt=\""+alt+"\" src=\""+src+"\"";
+		if(!event.equals("")){
+			toprint += event;
+		}
 		if(height > 0 && width > 0){
 			toprint += "height=\""+height+"\" width=\""+width+"\"";
 		}
@@ -78,13 +81,21 @@ public class HTML implements GUI {
 	}
 	
 	@Override
-	public String createImg(String imgId,String blockId,String src,String alt){//Speziel für die Pfeile
-		return createImg(imgId,blockId,src,alt,20,20,true);
+	public String createImg(String imgId,String blockId,String src,String alt,String direction){//Speziel für die Pfeile
+		int height = 20, width = 20;
+		
+		//Beispiel: <img alt="images/arrowRIGHT.png"" src="images/arrowLEFT.png" onclick="blockToggle('<%=Config.mainwestId%>')">
+		String toprint = "<img id=\""+imgId+"\" alt=\""+alt+"\" src=\""+src+"\" onclick=\"blockToggle('"+imgId+"','"+blockId+"','"+direction+"')\"";
+		toprint += "height=\""+height+"\" width=\""+width+"\"";
+		toprint += "onmouseover=\"$(this).attr('height',5*$(this).attr('height')/4);$(this).attr('width',5*$(this).attr('width')/4)\"";
+		toprint += "onmouseout=\"$(this).attr('height',4*$(this).attr('height')/5);$(this).attr('width',4*$(this).attr('width')/5)\"";
+		toprint += ">";		
+		return toprint;
 	}
 	
 	@Override
 	public String createImg(String imgId,String blockId,String src){
-		return createImg(imgId,blockId,src,"",0,0,false);
+		return createImg(imgId,blockId,src,"",0,0,"",false);
 	}
 	
 	@Override

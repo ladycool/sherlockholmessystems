@@ -2,11 +2,7 @@
 
 <!-- @Autor: Patrick -->
 <%
-	String 
-	headerheight = "50px",
-	mainwestwidth = "200px"
-	;
-	
+		
 %>
 
 
@@ -26,7 +22,7 @@
 					<tr>
 						<td>My folders</td><!-- Später DATENBANK AUFRUF -->
 						<td class="right"><%=Controller.shsgui.createImg(Controller.shsconfig.mainnordarrowId, Controller.shsconfig.mainnordId, 
-															Controller.shsconfig.arrowup, Controller.shsconfig.arrowdown) %></td>
+															Controller.shsconfig.arrowup, Controller.shsconfig.arrowdown,"verti") %></td>
 					</tr>
 				</table>
 			</td>
@@ -51,7 +47,7 @@
 						<td>My buddie's folders</td><!-- Später DATENBANK AUFRUF -->
 						<td class="right">
 							<%=Controller.shsgui.createImg(Controller.shsconfig.mainsoutharrowId, Controller.shsconfig.mainsouthId, 
-												Controller.shsconfig.arrowdown, Controller.shsconfig.arrowup) %>
+												Controller.shsconfig.arrowdown, Controller.shsconfig.arrowup,"verti") %>
 						</td>
 					</tr>
 				</table>			
@@ -72,7 +68,7 @@
 						<td>Console</td><!-- Später DATENBANK AUFRUF -->
 						<td class="right">
 							<%=Controller.shsgui.createImg(Controller.shsconfig.consolearrowId, Controller.shsconfig.consoleId, 
-															Controller.shsconfig.arrowdown, Controller.shsconfig.arrowup) %>
+															Controller.shsconfig.arrowdown, Controller.shsconfig.arrowup,"verti") %>
 						</td>
 					</tr>
 				</table>
@@ -95,5 +91,9 @@
 			</div>
 		</td></tr><!-- CONSOLE END -->
 	</table>
-	<script>documentready('<%=Controller.shsconfig.bodyId%>','<%=Controller.shsconfig.mainwestId%>');</script>
+	<!-- <script>documentready('<%=Controller.shsconfig.bodyId%>','<%=Controller.shsconfig.mainwestId%>');</script>-->
+</div>
+
+<div id="<%=Controller.shsconfig.popupId %>" class="popup">
+weeeeeeeeeeeeeeeeeeeeeeeeeeee
 </div>

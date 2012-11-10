@@ -72,7 +72,7 @@ public interface GUI {
 	 * @param alt: Pfad zum Bild der nach der Defaultaktion angezeigt werden sollte
 	 * @return String
 	 */
-	public String createImg(String imgId,String blockId, String src, String alt);
+	public String createImg(String imgId,String blockId, String src, String alt,String direction);
 	
 	/**
 	 * Erzeugt ein Tag vom Typ '<img/>'
@@ -84,7 +84,7 @@ public interface GUI {
 	 * @param resizeable: Erzeugt ein nettes Feature
 	 * @return String
 	 */
-	public String createImg(String imgId,String blockId,String src,String alt,int height,int width,boolean resizeable);
+	public String createImg(String imgId,String blockId,String src,String alt,int height,int width,String event,boolean resizeable);
 	
 	public String createTextarea(String id,String rows,String cols,String initval);
 	

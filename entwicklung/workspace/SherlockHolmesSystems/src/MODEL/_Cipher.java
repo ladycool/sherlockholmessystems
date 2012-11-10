@@ -1,6 +1,7 @@
 package MODEL;
 
 import java.security.KeyPair;
+import java.util.HashMap;
 
 import MODEL.enums.Ciphertype;
 
@@ -29,6 +30,7 @@ public abstract class _Cipher {
 		}
 	}
 	
+	
 	protected int getkeysize(){
 		return this.keysize;
 	}
@@ -44,6 +46,10 @@ public abstract class _Cipher {
 	}
 	
 	//Abstract methods
+	public abstract byte[] getkey(Ciphertype type);
+	
+	public abstract HashMap<String, byte[]> getkey();
+	
 	protected abstract Object createsymmetricKey();
 	
 	protected abstract Object createAsymmetricKey();
@@ -53,9 +59,8 @@ public abstract class _Cipher {
 	 * @param tocrypt: Text der chiffriert werden muss
 	 * @param type: asymmetrisch || symmetrisch
 	 * @param cipherMODE: Cipher.ENCRYPT_MODE || Cipher.DECRYPT_MODE
-	 * @return String [chiffre(tocrypt)]
 	 */
-	protected abstract String crypt(String tocrypt,Ciphertype type,int cipherMODE);
+	public abstract String crypt(String tocrypt,Ciphertype type,int cipherMODE);
 	
 	public abstract void dataPUSH(String filepath,Ciphertype type,int cipherMODE);
 	

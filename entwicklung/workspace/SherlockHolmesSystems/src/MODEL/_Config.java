@@ -3,10 +3,16 @@ package MODEL;
 import java.io.File;
 import java.util.HashMap;
 
+import javax.crypto.Cipher;
+
 import MODEL.enums.*;
 import SERVICE.*;
 
 public abstract class _Config {
+	//About jsp - servlets
+	//http://ww2.cis.temple.edu/cis308/Lectures/Unit%202/Servlets_ImplicitObjects/jsp_objects.htm	
+	
+	
 	/*
 	 * PRIVATE
 	 */
@@ -64,7 +70,6 @@ public abstract class _Config {
 	bodyId = "shsbody",
 	mainId = "controllboard",
 	signupId = "signup",
-	signupBackId="signupback",
 	signinId = "signin",
 	headerId = mainId+"_header",
 	mainnordId = mainId+"_nord",
@@ -78,8 +83,21 @@ public abstract class _Config {
 	mainwesttdId = mainwestId+"_td",
 	mainnordtdId = mainnordId+"_td",
 	consoletdId = consoleId+"_td",
+	passwordId = "password",
+	usernameId = "username",
 	
-	hiddensignId = "signaction" //SEHR WICHTIG
+	signactionId = "signaction", //SEHR WICHTIG
+	signactionA = "signin",
+	signactionB = "signup",
+	uploadtypeA = "internal",
+	uploadtypeB = "external",
+	savesym = "savesym",
+	savepubk = "savepubk",
+	saveprik = "saveprik",
+	
+	
+	popupId = "popup",
+	title = "Sherlock Holmes Systems"
 	;
 	
 	
@@ -97,10 +115,22 @@ public abstract class _Config {
 	;	
 	
 	
+	//Cipher
+	public int 
+	keysize = 512,
+	encryptmode = Cipher.ENCRYPT_MODE,
+	decryptmode = Cipher.ENCRYPT_MODE
+	;
+	public String
+	symInstance = "AES",
+	asymInstance = "RSA"
+	;
+	
 	//ENUM
 	public final Ciphertype
 	asymmetric = Ciphertype.asymmetric,
-	symmetric = Ciphertype.symmetric
+	symmetric = Ciphertype.symmetric,
+	master = Ciphertype.master
 	;
 	public final Direction
 	verti = Direction.verti,
@@ -116,13 +146,40 @@ public abstract class _Config {
 	;
 	
 	
-	//METHODS
+	//METHODS NORMAL
+	public String random(int length){
+		String toreturn="";
+		for (int i = 0; i < length; i++) {
+			char randomsign = (char) ('a'+Math.random()*128);
+			toreturn += randomsign;
+		}
+		return toreturn;
+	}
+	
+	public int randomnr(int margin){
+		return (int) (Math.random()*margin);
+	}
+	
+	
+	//METHODS ABSTRACT
 	/**
-	 * @doc NOT DONE YET
-	 * @param type
-	 * @param attributes
-	 * @return
+	 * @doc In progress
+	 * @param action: [signin || signup]
+	 * @param attributes: benutzerspezifische Eigenschaften
+	 * @return User || null
 	 */
-	public abstract User login(String action,HashMap<String, Object>attributes);
+	public abstract void loginSHS(String type,HashMap<String,String>attributes);
+	
+	public abstract void uploaddata(String type,String path,String toggleId);
+	
+	protected abstract void savecreatedKeys();
+	
+	public abstract HashMap<String, Object>getKeys();
+	
+	protected abstract void getticket();
+	
+	public abstract void createticket(String path,String name);
+	
+	public abstract void shsinit();
 	
 }

@@ -11,6 +11,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
+import java.util.HashMap;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -23,6 +24,7 @@ import MODEL.enums.Ciphertype;
 
 
 public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/java7/1507_22_006.html
+	private SecretKey masterkey;
 	private SecretKey shssymkey;
 	private KeyPair shsasymkeypair;
 	
@@ -32,6 +34,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	private static Shscipher _cipher = null;
 	private Shscipher(int keysize, String symInstance, String asymInstance) {
 		super(keysize, symInstance, asymInstance);
+		this.masterkey = this.createsymmetricKey();
 		this.shssymkey = this.createsymmetricKey();
 		this.shsasymkeypair = this.createAsymmetricKey();
 	}
@@ -49,11 +52,27 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		return _cipher;
 	}
 	
+	public byte[] getkey(Ciphertype type){
+		byte[] toreturn = null;
+		if(type.equals(Ciphertype.master)){
+			toreturn = this.masterkey.getEncoded();
+		}else if(type.equals(Ciphertype.symmetric)){
+			toreturn = this.shssymkey.getEncoded();	
+		}			
+		return toreturn;
+	}
 	
+	public HashMap<String, byte[]> getkey() {
+		HashMap<String, byte[]> toreturn = new HashMap<String,byte[]>();
+		toreturn.put("prik", this.shsasymkeypair.getPrivate().getEncoded());
+		toreturn.put("pubk", this.shsasymkeypair.getPublic().getEncoded());
+		
+		return toreturn;
+	}
 
 	/**
 	 * Erzeugt ein Objekt vom Typ Chipher, das zum chiffrieren benötigt wird.
-	 * @param type: asymmetric || symmetric
+	 * @param type: asymmetric || symmetric || master
 	 * @param cipherMODE: Cipher.ENCRYPT_MODE || Cipher.DECRYPT_MODE
 	 * @return
 	 */
@@ -69,6 +88,9 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 				cipher = Cipher.getInstance(this.getInstance(type));
 	            cipher.init(cipherMODE, this.shssymkey);
 				
+			}else if(type.equals(Controller.shsconfig.master)){			
+				cipher = Cipher.getInstance(this.getInstance(type));
+				cipher.init(cipherMODE, this.masterkey);					        
 			}
 		}catch (GeneralSecurityException e){
 			//e.printStackTrace();
@@ -133,7 +155,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		
 		return toreturn;
 	}
-
+	
 	@Override
 	public void dataPUSH(String filepath,Ciphertype type,int cipherMODE) {
 		// NOT DONE YET. 2 points are missing

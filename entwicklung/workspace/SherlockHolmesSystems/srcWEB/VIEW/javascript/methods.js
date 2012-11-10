@@ -8,18 +8,26 @@
  * 
  *  */
 
-
-function simpleToggle(id){
-	$('#'+id).fadeToggle('1');	
-}
-
+//Alternative
 function simpleToggle(id,duration){
 	//duration ="'"+duration+"'";
-	$('#'+id).fadeToggle(duration);	
+	$('#'+id).fadeToggle(duration);
 }
 
-function blockToggle(imgId,blockId){//Aufgepasst diese Methode kann nur für speziell angepasste img-Tags optimal funktionieren. 
-	simpleToggle(blockId);
+function animateToggle(id,direction){
+	animateToggle(id,direction,50);	
+}
+
+function animateToggle(id,direction,speed){
+	if(direction == 'horiz'){
+		$('#'+id).animate({width:'toggle'},speed);
+	}else if(direction == 'verti'){
+		$('#'+id).animate({height:'toggle'},speed);
+	}	
+}
+
+function blockToggle(imgId,blockId,direction){//Aufgepasst diese Methode kann nur für speziell angepasste img-Tags optimal funktionieren. 
+	animateToggle(blockId, direction)
 	temp1 = $('#'+imgId).attr('src');
 	temp2 = $('#'+imgId).attr('alt');//alert($('#'+imgId).attr('src')+'\n'+imgId);
 	//Es wird vorausgesetzt dass das Attribut 'alt' den alternativen Pfad enthält
@@ -45,22 +53,6 @@ function fupload(){
 }
 
 
-/////////////////LISTENERS-START//////////////////////////
-function listener(listenerMapper){
-	toeval = 'function '+listenerMapper+'listener(';
-	
-	toeval += ')';
-	eval(toeval);
-}
-
-function ajaxlistener(){
-	
-}
-
-function windowlistener(){
-	
-} 
-/////////////////LISTENERS-END//////////////////////////
 
 ///////////////DATA-MANAGEMENT-START////////////////////
 function datadelete(){
@@ -106,3 +98,70 @@ function shsresize(bodyId,mainwesttdId,percentage){
 	});
 	*/
 }
+
+/**
+ * @author Shazem
+ * @param event: Das onclick-Even
+ * @param path: Dynamischer Pfad zum "ajaxhandler,jsp"-Skript
+ * @param popupdim: Json-Objekt das aus der Länge und der Breite des Popups besteht
+ * 					Bsp: {width:100,heigth:300}
+ * @param ajaxdata: Json-Objekt das aus den zu übermittelnden Parametern besteht
+ * 					Bsp: {name:"john",location:"mannheim"}
+ */
+function popup(event,popupdim,ajaxdata){
+	additional = 10;
+	body = "#shsbody";
+	popupid = "#popup";
+	popupwidth = popupdim.width;
+	popupheight = popupdim.height;
+	var popupleft = 0;
+	var popuptop = 0;
+	px = "px";
+	
+	maxwidth = $(body).css('width');
+	maxheight = $(body).css('height');
+	if(event.pageX || event.pageY){//FIREFOX, CHROME
+		popupleft = event.pageX;
+		popuptop = event.pageY;
+	}else if(window.event){//IE
+		popupleft = window.event.clientX;
+		popuptop = window.event.clientY;
+	}
+	
+	var marginX = parseInt(maxwidth) - popupleft - additional;
+	var marginY = parseInt(maxheight) - popuptop - additional;
+		
+	if(popupwidth > marginX){
+		popupleft -= popupwidth;
+	}
+	if(popupheight > marginY){
+		popuptop -= popupheight;
+	}
+	
+	popupleft +=px;
+	popuptop +=px;
+	popupwidth +=px;
+	popupheight +=px;
+	$(popupid).css({
+			left: popupleft,
+			top: popuptop,
+			width: popupwidth,
+			height: popupheight
+	      });
+	$(popupid).show('50');//hide() -> to shut it down	
+	//http://www.joelpeterson.com/blog/2010/12/quick-and-easy-windowless-popup-overlay-in-jquery/
+	//show(), hide(), popup(), fadein(), fadeout()
+
+	$.ajax({
+		type: "POST",
+		cache: true,
+		dataType: "html",
+		data: ajaxdata,
+		url: "VIEW/VIEWCONTROLLER/ajaxhandler.jsp",//ICH BIN HIER ___________________________________
+		success:function(text){
+			alert(ajaxdata);
+		}
+	});
+}
+
+

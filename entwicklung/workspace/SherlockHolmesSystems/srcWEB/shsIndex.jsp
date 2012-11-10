@@ -5,8 +5,9 @@
 
 <%
 	String
-	absPath = request.getContextPath()
+	absPath = request.getContextPath() 
 	;
+	
 %>
 
 <%!
@@ -41,12 +42,13 @@
 		<script src="<%=absPath+Controller.shsconfig.jquery %>" type="text/javascript"></script>	
 		<script src="<%=absPath+Controller.shsconfig.jsmeth %>" type="text/javascript"></script>	
 		
-		<title>Sherlock Holmes Systems</title>
+		<title>Controller.shsconfig.title</title>
 	</head>
+	
 	<body class="maxwidth" id="<%=Controller.shsconfig.bodyId%>">
-		<%if(session.getAttribute("user") != null){%>
+		<%if(session.getAttribute("user") == null && request.getParameter(Controller.shsconfig.signactionId) == null){%>
 			<%@ include file="VIEW/login.jsp" %>
-		<%}else{%>
+		<%}else{%><%=session.getAttribute("user") %>
 			<%@ include file="VIEW/controllboard.jsp" %>	
 		<%}%>
 	</body>
