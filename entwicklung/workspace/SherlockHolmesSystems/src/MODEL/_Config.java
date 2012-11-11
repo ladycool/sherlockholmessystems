@@ -109,9 +109,9 @@ public abstract class _Config {
 	
 	//Database
 	public final String
-	driver="jdbc:mysql:",
-	port="443",//3306
-	url="https://jonathan.sv.hs-mannheim.de/phpMyAdmin/",//@Engin: Den richtigen Link solltest du finden
+	driver="jdbc:mysql:",//com.mysql.jdbc.Driver
+	port="1443",//3306
+	url="//jonathan.sv.hs-mannheim.de/phpMyAdmin/",//141.19.141.151
 	db="kirkelstillsystems",
 	url_db=driver+url +":"+port+"//"+db,
 	dbusername="kirkelstill",

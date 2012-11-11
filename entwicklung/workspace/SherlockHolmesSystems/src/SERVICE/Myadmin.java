@@ -58,17 +58,23 @@ public class Myadmin implements Database {
 			// Load the MySQL JDBC driver
 			Class.forName("com.mysql.jdbc.Driver");// "oracle.jdbc.driver.OracleDriver"
 			System.out.println("MySQL JDBC driver loaded ok.");
-
 			// Setup the connection with the DB
-			// "jdbc:mysql://https://jonathan.sv.hs-mannheim.de/phpMyAdmin/:3306/database","username","password"
+			// "jdbc:mysql://https://jonathan.sv.hs-mannheim.de/phpMyAdmin/:443/database","username","password"
 			
 				toreturn = DriverManager.getConnection(Controller.shsconfig.url_db,Controller.shsconfig.dbusername,Controller.shsconfig.dbpassword);
 				System.out.println("The biding has been proceeded");
 		} catch (SQLException | ClassNotFoundException e) {
-				//2012.11.10
-				//Ein Gateway muss hier implementiert werden.
-				Controller.shsgui.triggernotice(e);
-			}
+			Controller.shsgui.triggernotice(e);System.out.println(e.getMessage());
+			/*
+			try{				
+				toreturn = DriverManager.getConnection("jdbc:mysql:localhost:3306/kirkelstillsystems","root","");
+				System.out.println("The biding has been proceeded");
+			}catch(SQLException e2){
+				System.out.println(e2.getMessage());
+			Controller.shsgui.triggernotice(e2);
+			}		*/
+			
+		}
 		
 		return toreturn;
 	}
