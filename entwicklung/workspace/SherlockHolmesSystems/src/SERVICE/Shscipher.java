@@ -1,29 +1,45 @@
 package SERVICE;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import CONTROLLER.Controller;
 import MODEL._Cipher;
 import MODEL.enums.Ciphertype;
 
-
+/**
+ * @author Shazem (Patrick) && Cedrick
+ */
 public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/java7/1507_22_006.html
+										//http://herbertwu.wordpress.com/2010/03/06/a-simple-string-cipher-in-java-6/
+										//http://herbertwu.wordpress.com/2010/03/06/a-simple-string-cipher-in-java-6/
+	//How to create a pdf file in java (Nice to have) --> http://www.vogella.com/articles/JavaPDF/article.html
+	
 	private SecretKey masterkey;
 	private SecretKey shssymkey;
 	private KeyPair shsasymkeypair;
@@ -79,17 +95,17 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	private Cipher getCipher(Ciphertype type,int cipherMODE){
 		Cipher cipher = null;
 		try{
-			if(type.equals(Controller.shsconfig.asymmetric)){			
-				cipher = Cipher.getInstance(this.getInstance(type));
-				cipher.init(cipherMODE, this.shsasymkeypair.getPublic());
-				//byte[] wrappedKey = cipher.wrap(key);				        
-		        
+			cipher = Cipher.getInstance(this.getInstance(type));//AES || RSA
+			
+			if(type.equals(Controller.shsconfig.asymmetric)){
+				if(cipherMODE == Cipher.ENCRYPT_MODE){
+					cipher.init(cipherMODE, this.shsasymkeypair.getPublic());
+				}else if(cipherMODE == Cipher.DECRYPT_MODE){
+					cipher.init(cipherMODE, this.shsasymkeypair.getPrivate());
+				}
 			}else if(type.equals(Controller.shsconfig.symmetric)){
-				cipher = Cipher.getInstance(this.getInstance(type));
-	            cipher.init(cipherMODE, this.shssymkey);
-				
+	            cipher.init(cipherMODE, this.shssymkey);				
 			}else if(type.equals(Controller.shsconfig.master)){			
-				cipher = Cipher.getInstance(this.getInstance(type));
 				cipher.init(cipherMODE, this.masterkey);					        
 			}
 		}catch (GeneralSecurityException e){
@@ -102,15 +118,17 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	
 	@SuppressWarnings("unused")
 	@Override
-	protected SecretKey createsymmetricKey() {
+	protected SecretKey createsymmetricKey(String pseudokey) {
 		SecretKey key = null;
 		try {
-			KeyGenerator keygen;
-			keygen = KeyGenerator.getInstance(this.getInstance(Controller.shsconfig.symmetric));//AES
-			SecureRandom random = new SecureRandom();
-	        keygen.init(random);
-	        key = keygen.generateKey();
-	        
+			if(pseudokey.isEmpty()){
+				KeyGenerator keygen = KeyGenerator.getInstance(this.getInstance(Controller.shsconfig.symmetric));//AES
+				SecureRandom random = new SecureRandom();
+		        keygen.init(random);
+		        key = keygen.generateKey();
+			}else{
+				key = new SecretKeySpec(pseudokey.getBytes(),this.getInstance(Controller.shsconfig.symmetric));//AES
+			}
 		} catch (GeneralSecurityException e) {
 			//e.printStackTrace();
 			Controller.shsgui.triggernotice(e);
@@ -118,6 +136,12 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
         
 		return key;
 	}
+	
+	@Override
+	protected SecretKey createsymmetricKey() {
+		return createsymmetricKey("");
+	}
+	
 
 	@SuppressWarnings("unused")
 	@Override
@@ -137,6 +161,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		return keypair;
 	}
 
+	
 	@Override
 	public String crypt(String tocrypt,Ciphertype type,int cipherMODE) {
 		//cipherMODE = Cipher.ENCRYPT_MODE || Cipher.DECRYPT_MODE
@@ -144,8 +169,8 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		try {
 			Cipher cipher = getCipher(type, cipherMODE);
 			
-			byte[] crypted = cipher.doFinal(tocrypt.getBytes("UTF-8"));
-			toreturn = new String(crypted,"UTF-8");//UTF-8 -> So werden ebenfalls die Sonderzeichen des europaischen Raums mitberücksichtigt
+			byte[] crypted = cipher.doFinal(tocrypt.getBytes("UTF8"));
+			toreturn = new String(crypted,"UTF8");//UTF-8 -> So werden ebenfalls die Sonderzeichen des europaischen Raums mitberücksichtigt
 			
 		} catch (GeneralSecurityException | UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
@@ -157,47 +182,63 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	}
 	
 	@Override
-	public void dataPUSH(String filepath,Ciphertype type,int cipherMODE) {
-		// NOT DONE YET. 2 points are missing
+	public String encryptfile(String filepath,String pseudokey){
+		String toreturn = "";
 		try {
-			Cipher cipher = getCipher(type, cipherMODE);
-			
-			CipherInputStream cipherdata = new CipherInputStream(new DataInputStream(new FileInputStream(filepath)),cipher);
-			
-			int data = cipherdata.read();
-			while(data != -1) {
-			  //NOT DONE YET. In DB speichern(data)
-			  data = cipherdata.read();
+			//Lesen der Datei
+			BufferedReader file = new BufferedReader(new InputStreamReader(new FileInputStream(new File(filepath)),"UTF8"));
+			String tocrypt = "",str="";
+			while((str = file.readLine()) != null){
+			    tocrypt += str+Controller.shsconfig.txtlinebreak;//Puffern <shsbr/>
+			    //System.out.println(str);
 			}
-			cipherdata.close();		
-			String tosend=""; //NOT DONE YET. I will be coming from the database
-			Controller.shsgui.triggernotice(tosend);
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			Controller.shsgui.triggernotice(e);
-		}
-		
-	}
+			tocrypt += Controller.shsuser.getattr("metadata");
+			file.close();
 
+			
+			//Verschlüsselung des Inhaltes
+			SecretKey key = new SecretKeySpec(pseudokey.getBytes(),this.getInstance(Controller.shsconfig.symmetric));
+			Cipher cipher = Cipher.getInstance(this.getInstance(Controller.shsconfig.symmetric));
+			cipher.init(Controller.shsconfig.encryptmode, key);
+			byte[] crypted = cipher.doFinal(tocrypt.getBytes("UTF8"));
+			toreturn = new String(crypted,"UTF8");//UTF-8 -> So werden ebenfalls die Sonderzeichen des europaischen Raums mitberücksichtigt	
+			
+		} catch (GeneralSecurityException | IOException e) {
+			Controller.shsgui.triggernotice(e);
+		}	
+		
+		return toreturn;
+	}
+	
 	@Override
-	public void dataPULL(String dbfilename,String localfilepath,Ciphertype type,int cipherMODE) {//NOT DONE
+	protected String[] readfile(String pseudokey, int fileId){
+		String[] toreturn = null;
 		try {
-			Cipher cipher = getCipher(type, cipherMODE);
+			//Datei aus der Db holen
+			ResultSet result = Controller.shsdb.select("files","content","id="+fileId,"");
+			String content = result.getString("content");
 			
-			String tocrypt = "";//TO DO --> Datenbankaufruf			
-			String plaintext = crypt(tocrypt, type, cipherMODE);
+			//Entschlüsselung des Inhaltes
+			SecretKey key = new SecretKeySpec(pseudokey.getBytes(),this.getInstance(Controller.shsconfig.symmetric));
+			Cipher cipher = Cipher.getInstance(this.getInstance(Controller.shsconfig.symmetric));
+			cipher.init(Controller.shsconfig.decryptmode, key);
+			byte[] crypted = cipher.doFinal(content.getBytes("UTF8"));
+			content = new String(crypted,"UTF8");//UTF-8 -> So werden ebenfalls die Sonderzeichen des europaischen Raums mitberücksichtigt	
 			
-			DataOutputStream out = new DataOutputStream(new FileOutputStream(localfilepath));
-			out.writeBytes(plaintext);
-		    
-		} catch (IOException e) {
-			//e.printStackTrace();
+			//Entpuffern: Entfernung von <shsbr/>
+			toreturn = content.split(Controller.shsconfig.txtlinebreak);
+			
+		} catch (Exception e) {
 			Controller.shsgui.triggernotice(e);
 		}
-		
+			
+		return toreturn;
 	}
+	
+	
+	
 
+	
+	
 
 }

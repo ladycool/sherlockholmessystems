@@ -3,17 +3,25 @@ package SERVICE;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
+/**
+ * 
+ * @author Shazem (Patrick)
+ *
+ */
 
 public class User{
 	private HashMap<String, Object> attributes;
-	private ArrayList<String> restrictedSETAttr;
-	private ArrayList<String> restrictedGETAttr;
+	private ArrayList<String> restrictedSETAttr,restrictedGETAttr;
 	private static User singelton;
 	
 	
 	private User(HashMap<String, Object> attributes) {
 		this.attributes = attributes;
+		
+		//Set metadata
+		String metadata = "<shsmetadata>"+this.attributes.get("username")+"</shsmetadata>";
+		this.restrictedSETAttr.add("metadata");
+		this.attributes.put("metadata",metadata);
 	}
 
 	/**

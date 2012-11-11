@@ -10,6 +10,12 @@ import java.util.HashMap;
 import CONTROLLER.Controller;
 import MODEL.*;
 
+
+/**
+ * 
+ * @author Shazem (Patrick)
+ *
+ */
 public class Myadmin implements Database {
 	private Connection connect;
 	// predefinend variables
@@ -56,7 +62,7 @@ public class Myadmin implements Database {
 			// Setup the connection with the DB
 			// "jdbc:mysql://https://jonathan.sv.hs-mannheim.de/phpMyAdmin/:3306/database","username","password"
 			
-				toreturn = DriverManager.getConnection(Controller.shsconfig.url_db,Controller.shsconfig.username,Controller.shsconfig.password);
+				toreturn = DriverManager.getConnection(Controller.shsconfig.url_db,Controller.shsconfig.dbusername,Controller.shsconfig.dbpassword);
 				System.out.println("The biding has been proceeded");
 		} catch (SQLException | ClassNotFoundException e) {
 				//2012.11.10

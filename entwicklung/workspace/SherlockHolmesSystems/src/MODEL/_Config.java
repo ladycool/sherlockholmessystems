@@ -89,8 +89,9 @@ public abstract class _Config {
 	signactionId = "signaction", //SEHR WICHTIG
 	signactionA = "signin",
 	signactionB = "signup",
-	uploadtypeA = "internal",
-	uploadtypeB = "external",
+	uploadtypeA = "todb",
+	uploadtypeB = "fromdb",
+	uploadtypeC = "external",
 	savesym = "savesym",
 	savepubk = "savepubk",
 	saveprik = "saveprik",
@@ -108,13 +109,17 @@ public abstract class _Config {
 	url="https://jonathan.sv.hs-mannheim.de/phpMyAdmin/",//@Engin: Den richtigen Link solltest du finden
 	db="kirkelstillsystems",
 	url_db=driver+url +":"+port+"//"+db,
-	username="kirkelstill",
-	password="kirkelstill",
+	dbusername="kirkelstill",
+	dbpassword="kirkelstill",
 	
 	usertb="user",
 	dbuserId="userid",
 	userid = dbuserId,
-	keytb="key"
+	keys="keys",
+	keytb="key",
+	username="username",
+	password="",
+	txtlinebreak="<shsbr/>"
 	;	
 	
 	
@@ -148,9 +153,16 @@ public abstract class _Config {
 	signuplogintype = Logintype.signup
 	;
 	
+	public final Viewertype
+	owner = Viewertype.owner,
+	reader = Viewertype.reader
+	;
 	
+	/**
+	 * @author Shazem (Patrick)
+	 */
 	//METHODS NORMAL
-	public String random(int length){
+	protected String random(int length){
 		String toreturn="";
 		for (int i = 0; i < length; i++) {
 			char randomsign = (char) ('a'+Math.random()*128);
@@ -159,11 +171,40 @@ public abstract class _Config {
 		return toreturn;
 	}
 	
-	public int randomnr(int margin){
+	protected int randomnr(int margin){
 		return (int) (Math.random()*margin);
 	}
 	
+	/**
+	 * Falls der searchtxt im fulltext vorhanden ist, so sollte er rausgeschnitten werden, ansonsten bleibt fulltxt ungeändert
+	 * @author Shazem
+	 * @param fulltxt
+	 * @param searchtxt
+	 * @return String
+	 */
+	protected String cut(String fulltxt,String searchtxt){
+		if(fulltxt.contains(searchtxt)){
+			fulltxt = fulltxt.replace(searchtxt,"");
+		}
+		return fulltxt;
+	}
 	
+	/**
+	 * newtxt = fulltxt(teil1) + inserttxt + fulltxt(teil2)
+	 * Um die Felher beim "cuten" zu minimieren wird es nur dann ein INSERT gemacht wenn inserttxt.length() >= fulltxt.length(),
+	 * ansonsten bleibt fulltxt ungeändert
+	 * @author Shazem
+	 * @param fulltxt
+	 * @param searchtxt
+	 * @return String
+	 */
+	protected String insert(String fulltxt,String inserttxt){
+		if(inserttxt.length() >= fulltxt.length()){
+			int insertpos = this.randomnr(fulltxt.length()-1);
+			fulltxt = fulltxt.substring(0, insertpos) + inserttxt + fulltxt.substring(insertpos);//new fulltxt
+		}
+		return fulltxt;
+	}
 	//METHODS ABSTRACT
 	/**
 	 * @doc In progress
@@ -171,18 +212,25 @@ public abstract class _Config {
 	 * @param attributes: benutzerspezifische Eigenschaften
 	 * @return User || null
 	 */
-	public abstract void loginSHS(String type,HashMap<String,String>attributes);
+	public abstract User loginSHS(String type,HashMap<String,String>attributes);
 	
-	public abstract void uploaddata(String type,Object path,String toggleId);
+	public abstract void loadUserView(User user); 
 	
-	protected abstract void savecreatedKeys();
+	/*
+	 * loginSHS
+	 * -->session stuff
+	 * loadUserView
+	 */
 	
-	public abstract HashMap<String, Object>getKeys();
+	public abstract void uploadfile(String path,String toggleId);
+	
+	public abstract void downloadfile(String path,int fileId);
+	
+	protected abstract void viewfile(int fileId,Viewertype status);
 	
 	protected abstract void getticket();
 	
 	public abstract void createticket(String path,String name);
 	
-	public abstract void shsinit();
 	
 }

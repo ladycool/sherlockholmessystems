@@ -3,8 +3,16 @@ package MODEL;
 import java.security.KeyPair;
 import java.util.HashMap;
 
+import javax.crypto.CipherInputStream;
+import javax.crypto.SecretKey;
+
+import CONTROLLER.Controller;
 import MODEL.enums.Ciphertype;
 
+
+/**
+ * @author Shazem (Patrick)
+ */
 public abstract class _Cipher {
 	
 	private int keysize = 0;
@@ -13,13 +21,7 @@ public abstract class _Cipher {
 	protected _Cipher(int keysize,String symInstance, String asymInstance){
 		_init(keysize, symInstance, asymInstance);
 	}
-	
-	
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return super.toString();
-	}
+
 	
 	
 	private void _init(int keysize,String symInstance, String asymInstance){
@@ -37,21 +39,46 @@ public abstract class _Cipher {
 	
 	protected String getInstance(Ciphertype type){
 		String toreturn = "";
-		if(type.equals(Ciphertype.asymmetric)){
-			toreturn = this.asymInstance;
-		}else if(type.equals(Ciphertype.symmetric)){
-			toreturn = this.asymInstance;
+		if(type.equals(Controller.shsconfig.asymmetric)){
+			toreturn = this.asymInstance;//Bsp: RSA
+		}else if(type.equals(Controller.shsconfig.symmetric)){
+			toreturn = this.symInstance; // Bsp: AES
 		}
 		return toreturn;
 	}
 	
+	
+	
 	//Abstract methods
+	/**Gibt einen der sym. Schlüssel in seiner Byte-form zurück 
+	 * @param type = master | simple symmetric
+	 * @return byte[]
+	 */
 	public abstract byte[] getkey(Ciphertype type);
 	
+	/**
+	 * Gibt das asym. Schlüsselpaar in deren Byte-form zurück
+	 * @return HashMap<String, byte[]>
+	 */
 	public abstract HashMap<String, byte[]> getkey();
 	
+	/**
+	 * Erzeugt einen sym. Schlüssel
+	 * @return Der Rückgabetyp ist von der implementierten Methode abhängig.
+	 */
 	protected abstract Object createsymmetricKey();
 	
+	/**
+	 * Erzeugt einen sym. Schlüssel 
+	 * @param pseudokey: String der Länge 16Bytes, der als Schlüsselwurzel diennen soll. 
+	 * @return Der Rückgabetyp ist von der implementierten Methode abhängig.
+	 */
+	protected abstract Object createsymmetricKey(String pseudokey);
+	
+	/**
+	 * Selbsterklärend
+	 * @return Siehe oben
+	 */
 	protected abstract Object createAsymmetricKey();
 	
 	/**
@@ -62,8 +89,23 @@ public abstract class _Cipher {
 	 */
 	public abstract String crypt(String tocrypt,Ciphertype type,int cipherMODE);
 	
-	public abstract void dataPUSH(String filepath,Ciphertype type,int cipherMODE);
+	/**
+	 * Diese Methode wird beim Upload von Datei vewendet. Die dient lediglig der Verschlüsselung
+	 * @param filepath
+	 * @param pseudokey: String der Länge 16Bytes, der als Schlüsselwurzel diennen soll.
+	 * @return String: verschlüsselte Form des Dateiinhaltes
+	 */
+	public abstract String encryptfile(String filepath,String pseudokey);
 	
-	public abstract void dataPULL(String filename,String localfilepath,Ciphertype type,int cipherMODE);
+	/**
+	 * Diese Methode liest Dateien aus der Tabelle "files".
+	 * @param pseudokey
+	 * @param fileId: Id der Datei.
+	 * @return String[i] --> Zeile in der Datei.
+	 */
+	protected abstract String[] readfile(String pseudokey, int fileId);
+	
+
+
 	
 }
