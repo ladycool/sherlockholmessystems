@@ -5,18 +5,56 @@
 }
 
 .loginlabel{
-	width: 30%;
-	vertical-align: top;
-	text-align: right;
-	padding-right: 5px;
+	display:block;
+    font:14px/22px Arial, Helvetica, Sans-serif;
+    margin:3px 0 0 6px;
 }
 
 .logininput{
-	vertical-align: top;
+	
+	 border:3px solid #F7F9FA;
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+    -moz-box-shadow:2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95a2a7 inset;
+    -webkit-box-shadow:2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95a2a7 inset;
+    box-shadow:2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95a2a7 inset;
+    margin:-3px 3px 0px 4px;
+    width:355px;
+    display:block;
+}
+
+.loginDiv {
+	width: 600px;
+	 background:#fefefe;
+    border: 1px solid #C3D4DB;
+	border-top:1px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    -moz-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    color:#444;
+    font:normal 12px/14px Arial, Helvetica, Sans-serif;
+    margin:0 auto 30px;
+	overflow:hidden;
 }
 
 td.right{
 	text-align: right;
+}
+
+td.shstitle{
+	text-align: left;
+	font:normal 18px Arial, Helvetica, Sans-serif;
+	font-size: 30px;
+	font-weight: bold;
+	color: #777777;
+	margin:3px 0 4px;
+    padding-bottom: 15px;
+    padding-left: 8px;
+    
 }
 
 td.body{
@@ -56,6 +94,11 @@ div.popup{
 	position: relative;
 	display: none;
 	resize:both; 
+}
+
+body{
+	background:#eff3f6;
+	
 }
 
 
