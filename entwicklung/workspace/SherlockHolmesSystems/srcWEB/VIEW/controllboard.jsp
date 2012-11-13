@@ -6,7 +6,7 @@
 %>
 
 
-<div id="<%=Controller.shsconfig.mainId%>" class="maxwidth">
+<div class = "main" id="<%=Controller.shsconfig.mainId%>" class="maxwidth">
 	<table>
 		<tr><td colspan="2" class="headerA"><!-- HEADER -->
 			<div id="<%=Controller.shsconfig.headerId%>">
