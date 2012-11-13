@@ -129,9 +129,11 @@ public abstract class _Config {
 	userid = dbuserId,
 	keys="keys",
 	keytb="key",
+	filestb ="files",
 	username="username",
 	password="",
-	txtlinebreak="<shsbr/>"
+	txtlinebreak="<shsbr/>",
+	stamp = "CURRENT_TIMESTAMP";
 	;	
 	
 	
@@ -166,6 +168,8 @@ public abstract class _Config {
 	reader = Viewertype.reader
 	;
 	
+	
+	
 	/**
 	 * @author Shazem (Patrick)
 	 */
@@ -190,28 +194,32 @@ public abstract class _Config {
 	 * @param searchtxt
 	 * @return String
 	 */
-	protected String cut(String fulltxt,String searchtxt){
+	protected String remove(String fulltxt,String searchtxt){
 		if(fulltxt.contains(searchtxt)){
 			fulltxt = fulltxt.replace(searchtxt,"");
 		}
-		return fulltxt;
+		return searchtxt;
 	}
 	
 	/**
 	 * newtxt = fulltxt(teil1) + inserttxt + fulltxt(teil2)
-	 * Um die Felher beim "cuten" zu minimieren wird es nur dann ein INSERT gemacht wenn inserttxt.length() >= fulltxt.length(),
-	 * ansonsten bleibt fulltxt ungeändert
 	 * @author Shazem
 	 * @param fulltxt
 	 * @param searchtxt
 	 * @return String
 	 */
 	protected String insert(String fulltxt,String inserttxt){
-		if(inserttxt.length() >= fulltxt.length()){
-			int insertpos = this.randomnr(fulltxt.length()-1);
-			fulltxt = fulltxt.substring(0, insertpos) + inserttxt + fulltxt.substring(insertpos);//new fulltxt
-		}
+		int insertpos = this.randomnr(fulltxt.length()-1);
+		fulltxt = fulltxt.substring(0, insertpos) + inserttxt + fulltxt.substring(insertpos);//new fulltxt
 		return fulltxt;
+	}
+	
+	protected String wrap(String towrap, String with){
+		return with + towrap + with;
+	}
+	
+	protected String wrap(String towrap){
+		return wrap(towrap,"'");
 	}
 	//METHODS ABSTRACT
 	/**
@@ -234,7 +242,7 @@ public abstract class _Config {
 	
 	protected abstract void downloadfile(String path,int fileId);
 	
-	protected abstract void viewfile(int fileId,Viewertype status);
+	protected abstract void viewfile(String id,Viewertype status);
 	
 	/**
 	 * Passiert beim Laden der Hauptseite.

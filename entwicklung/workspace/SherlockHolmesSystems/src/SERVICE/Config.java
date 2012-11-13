@@ -67,6 +67,9 @@ public class Config extends _Config {
 	
 	
 	////////////////////LOGIN-START/////////////////////////////
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public User loginSHS(String type,HashMap<String,String>attributes){
 		if(type.equals(this.signactionA)){//sign in
@@ -85,6 +88,7 @@ public class Config extends _Config {
 	 * @return
 	 */
 	private User signup(HashMap<String, String>attributes){
+		HashMap<String, String> toinsert = new HashMap<String, String>();
 		String username = attributes.get("username");		
 		ResultSet result = Controller.shsdb.select(this.usertb,"username", "username LIKE '"+username+"'","");
 		User user = null;
@@ -100,11 +104,17 @@ public class Config extends _Config {
 				password = Base64.encode(password.getBytes());//password to save
 				attributes.put(this.passwordId, password);
 				
-				String pseudouserId = this.insert(username, userId);
+				String pseudouserId = this.insert(userId,username);
 				pseudouserId = Base64.encode(pseudouserId.getBytes());//pseudouserId to save
 				attributes.put(this.dbuserId, pseudouserId);
 				
-				Controller.shsdb.insert(this.usertb, attributes,"");
+				toinsert.putAll(attributes);
+				for (String elt : toinsert.keySet()) {
+					elt = wrap(elt);
+				}
+				toinsert.put("created_date", "NOW()");
+				toinsert.put("last_mod_date",this.stamp);
+				Controller.shsdb.insert(this.usertb, toinsert,"");
 				
 				
 				//Tabelle: key
@@ -156,6 +166,9 @@ public class Config extends _Config {
     ////////////////////LOGIN-END/////////////////////////////
 	
 	///////////////////LOADUSERVIEW-START/////////////////////////
+	/**
+	 * {@inheritDoc}
+	 */
 	public void loadUserView(User user){
 		//der user sollte aus der Session kommen
 		//public wegen einem möglichen Reload-button
@@ -175,45 +188,100 @@ public class Config extends _Config {
 	
 	
 	////////////////////LOAD-FILE-START////////////////////////
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void uploadfile(String path,String toggleId){
-		/*
-		 * Anhand des Pfads sollten die Dateien hochgeholt werden und mithilfe von Javascript dan richtig angezeigt werden
-		 */
-		File file = new File(path);
+	public void uploadfile(String localpath,String newpath){
+		try {
+			HashMap<String,String> toinsert = new HashMap<String, String>();
+			//pseudo user
+			String pseudouserId = this.insert((String)Controller.shsuser.getattr("userId"),username);
+			//Ich habe mich an der Stelle gegen Base64 um für den Fall dass die userId geknackt wird die Zuordnung nicht direkt zu erkennen
+			//pseudouserId = Base64.encode(pseudouserId.getBytes());
+			pseudouserId = wrap(Controller.shscipher.crypt(pseudouserId, this.symInstance, this.encryptmode));
+			toinsert.put("pseudouserId", pseudouserId);
+			
+			String[]temp = localpath.split("/");
+			String pseudokey = this.random(this.keysize);
+			String content = wrap(Controller.shscipher.encryptfile(localpath, pseudokey));			
+			pseudokey = wrap(Controller.shscipher.crypt(pseudokey, this.symInstance, this.encryptmode));
+			
+			toinsert.put("key", pseudokey);
+			toinsert.put("content", content);
+			
+			ResultSet result = Controller.shsdb.select("path_definition", "def", "pathname LIKE '"+newpath+"'");			
+			String pathdef = result.getString("def")+"/"+temp[temp.length-1];
+			pathdef = wrap(Controller.shscipher.crypt(pathdef, this.symInstance, this.encryptmode));
+			
+			toinsert.put("pathdef", pathdef);
+			toinsert.put("date",this.stamp);
+			
+			Controller.shsdb.insert(this.filestb, toinsert, Controller.shsdb.text(44));
+		} catch (SQLException e) {
+			Controller.shsgui.triggernotice(e);
+		}
+		
 		
 	}
 	
-    private void pseudokey(){
-		
-	}
-	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void downloadfile(String path,int fileId){
 				
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	protected void viewfile(int fileId,Viewertype status){
-		if(status.equals(Controller.shsconfig.owner)){
-			this.viewInternalfile(fileId);
-		}else if(status.equals(Controller.shsconfig.reader)){
-			this.viewExternalfile(fileId);
+	public void viewfile(String id,Viewertype status){
+		HashMap<String,String> file = new HashMap<String,String>();
+		if(status.equals(this.owner)){
+			file = this.previewInternalfile(id);
+		}else if(status.equals(this.reader)){
+			file = this.previewExternalfile(id);
 		}
+		HIERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+		//path,content
 	}
 	
-	private void viewInternalfile(int fileId){
-		
+	/**
+	 * 
+	 * @param fileid
+	 * @return {@link HashMap} HashMap<String,String> = (filepath->"",content->"")
+	 */
+	private HashMap<String,String> previewInternalfile(String fileid){
+		//key
 	}
 	
-	private void viewExternalfile(int fileId){
+	/**
+	 * 
+	 * @param fileid
+	 * @return {@link HashMap} HashMap<String,String> = (filepath->"",content->"")
+	 */
+	private HashMap<String,String> previewExternalfile(String ticketId){
+		HashMap<String, String> toreturn = new HashMap<String, String>();
+		HashMap<String, String> temp = this.readticket(ticketId);//fileid + key + path
+		toreturn.put("filepath", temp.get("filepath"));
 		
+		String pseudokey = temp.get("pseudokey");
+		String fileId = temp.get("fileId");
+		String content = Controller.shscipher.readfile(pseudokey, fileId);
+		content = content.replace(this.txtlinebreak, "<br/>");
+		toreturn.put("content", content);
+		
+		return toreturn;
 	}
 	
 	////////////////////LOAD-FILE-END////////////////////////
 	
 	//////////////////////////////TICKETS-START/////////////////////////////////
-	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public HashMap<Integer,String[]> gettickets(){
 		HashMap<Integer,String[]> toreturn = new HashMap<Integer,String[]>();
@@ -243,14 +311,22 @@ public class Config extends _Config {
 		return toreturn;
 	}
 	
-	@Override
 	/**
-	 * @author Shazem(Patrick)
+	 * {@inheritDoc}
+	 * * @author Shazem(Patrick)
 	 */
+	@Override
 	public HashMap<String, String> readticket(String ticketId){
 		HashMap<String, String> toreturn = new HashMap<String, String>();
 		try{
-			ResultSet result = Controller.shsdb.select("tickets","fileId,`key`","id="+ticketId);
+			ResultSet result = Controller.shsdb.select("tickets","sent_by,fileId,filename,`key`","id="+ticketId);
+			
+			String sent_by = result.getString("sent_by");
+			sent_by = Controller.shscipher.crypt(sent_by, this.asymInstance, this.decryptmode);
+			String filename = result.getString("filename");
+			filename = Controller.shscipher.crypt(filename, this.asymInstance, this.decryptmode);
+			String path = sent_by+"/"+filename;
+			
 			String pseudokey = result.getString("key");
 			pseudokey = Controller.shscipher.crypt(pseudokey,this.asymInstance,this.decryptmode);
 			
@@ -259,12 +335,16 @@ public class Config extends _Config {
 			
 			toreturn.put("fileId",fileId);
 			toreturn.put("pseudokey",pseudokey);
+			toreturn.put("filepath", path);
 		}catch(SQLException e){
 			Controller.shsgui.triggernotice(e);
 		}
 		return toreturn;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	/**
 	 * @author Shazem(Patrick)

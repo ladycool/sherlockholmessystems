@@ -58,6 +58,9 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		return _cipher;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public byte[] getkey(String instance){
 		byte[] toreturn = null;
@@ -69,6 +72,9 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		return toreturn;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public HashMap<String, byte[]> getkey() {
 		HashMap<String, byte[]> toreturn = new HashMap<String,byte[]>();
@@ -133,12 +139,17 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		return key;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected SecretKey createsymmetricKey() {
 		return createsymmetricKey("");
 	}
 	
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@SuppressWarnings("unused")
 	@Override
 	protected KeyPair createAsymmetricKey() {
@@ -157,7 +168,9 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		return keypair;
 	}
 
-	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String crypt(String tocrypt,String instance,int cipherMODE) {
 		//cipherMODE = Cipher.ENCRYPT_MODE || Cipher.DECRYPT_MODE
@@ -175,6 +188,9 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		return toreturn;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String crypt(String tocrypt,String key,String instance,int cipherMODE){
 		String toreturn="";
@@ -190,6 +206,9 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		return toreturn;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String encryptfile(String filepath,String pseudokey){
 		String toreturn = "";
@@ -215,27 +234,30 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		return toreturn;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	protected String[] readfile(String pseudokey,String fileId){
-		String[] toreturn = null;
+	public String readfile(String pseudokey,String fileId){
+		String content = "";
 		try {
 			//Datei aus der Db holen
 			ResultSet result = Controller.shsdb.select("files","content","id="+fileId,"");
-			String content = result.getString("content");
+			content = result.getString("content");
 			
 			//Entschlüsselung des Inhaltes
 			content = this.crypt(content,pseudokey,this.symInstance,Cipher.DECRYPT_MODE);
 						
 			//Entpuffern: Entfernung von <shsbr/>
-			toreturn = content.split(Controller.shsconfig.txtlinebreak);
+			//toreturn = content.split(Controller.shsconfig.txtlinebreak);
+			//Jede weitere Methode wird sich ums Entpuffern kümmern
 			
 		} catch (Exception e) {
 			Controller.shsgui.triggernotice(e);
 		}
 			
-		return toreturn;
+		return content;
 	}
-	
 	
 	
 

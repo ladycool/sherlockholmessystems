@@ -78,18 +78,17 @@ public abstract class _Cipher {
 	/**
 	 * Diese Methode wird sowohl zur Entschlüsselung als auch zur Verschlüsselung verwendet
 	 * @param tocrypt: Text der chiffriert werden muss
-	 * @param type: asymmetrisch || symmetrisch
+	 * @param instance: asymmetrisch || symmetrisch(master || secret)
 	 * @param cipherMODE: Cipher.ENCRYPT_MODE || Cipher.DECRYPT_MODE
 	 */
-	public abstract String crypt(String tocrypt,String type,int cipherMODE);
+	public abstract String crypt(String tocrypt,String instance,int cipherMODE);
 	
 	/**
-	 * 
-	 * @param tocrypt
-	 * @param key
-	 * @param instance
-	 * @param cipherMODE
-	 * @return
+	 * Diese Methode wird sowohl zur Entschlüsselung als auch zur Verschlüsselung verwendet
+	 * @param tocrypt: Text der chiffriert werden muss
+	 * @param key: Schlüssel zum crypten
+	 * @param instance: asymmetrisch || symmetrisch(master || secret)
+	 * @param cipherMODE: Cipher.ENCRYPT_MODE || Cipher.DECRYPT_MODE
 	 */
 	public abstract String crypt(String tocrypt,String key,String instance,int cipherMODE);
 	/**
@@ -104,9 +103,9 @@ public abstract class _Cipher {
 	 * Diese Methode liest Dateien aus der Tabelle "files".
 	 * @param pseudokey
 	 * @param fileId: Id der Datei.
-	 * @return String[i] --> Zeile in der Datei.
+	 * @return String.
 	 */
-	protected abstract String[] readfile(String pseudokey,String fileId);
+	public abstract String readfile(String pseudokey,String fileId);
 	
 
 

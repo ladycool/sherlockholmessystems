@@ -1,6 +1,7 @@
 package test;
 
 import MODEL.Database;
+import SERVICE.Config;
 import SERVICE.Myadmin;
 
 
@@ -12,8 +13,9 @@ public class Launch {
 	 */
 	public static void main(String[] args){
 		
-		Database a = Myadmin.getInstance();
-		
+		//Database a = Myadmin.getInstance();
+		Config a = Config.getInstance();
+		System.out.println(a.random(16));
 	}
 
 }
