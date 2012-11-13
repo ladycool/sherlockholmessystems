@@ -91,7 +91,7 @@ public class Myadmin implements Database {
 			
 			connect.createStatement().executeQuery(query);
 			
-			if(info.isEmpty()){info =this.text(344,"");}
+			if(info.isEmpty()){info =this.text(344);}
 			Controller.shsgui.triggernotice(info);
 		} catch (SQLException e) {
 			Controller.shsgui.triggernotice(e);
@@ -132,7 +132,7 @@ public class Myadmin implements Database {
 			}
 			connect.createStatement().executeQuery(query);
 			
-			if(info.equals("")){info = this.text(655,"");}
+			if(info.equals("")){info = this.text(655);}
 			Controller.shsgui.triggernotice(info);
 		} catch (SQLException e) {
 			Controller.shsgui.triggernotice(info);
@@ -158,7 +158,7 @@ public class Myadmin implements Database {
 			}
 			connect.createStatement().executeQuery(query);
 			
-			if(info.equals("")){info = this.text(4444,"de");}
+			if(info.equals("")){info = this.text(4444);}
 			Controller.shsgui.triggernotice(info);
 			
 		} catch (SQLException e) {
@@ -193,12 +193,21 @@ public class Myadmin implements Database {
 	}
 
 	
+	@Override
+	public ResultSet select(String table, String fields, String condition) {
+		return select(table, fields, condition,"");
+	}
 
 	@Override
-	public String text(int id,String lang){
+	public String text(int id){
 		String toreturn="";
 		try {
-			if(lang.isEmpty()){lang = "de";}
+			String lang;
+			if(Controller.shsuser == null){
+				lang = Controller.shsconfig.getlang();
+			}else{
+				lang = (String) Controller.shsuser.getattr("language");
+			}
 			
 			String field = "text_"+lang;
 			ResultSet result = this.select("text", field,"id="+id,"");
@@ -207,12 +216,6 @@ public class Myadmin implements Database {
 			Controller.shsgui.triggernotice(e);
 		}
 		return toreturn;
-	}
-	
-	
-	@Override
-	public String text(int id){
-		return text(""+id); 
 	}
 	
 	@Override

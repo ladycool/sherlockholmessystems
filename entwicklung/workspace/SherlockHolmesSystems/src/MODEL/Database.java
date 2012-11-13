@@ -60,21 +60,21 @@ public interface Database {
 	 */
 	public ResultSet select(String table, String fields, String condition,String others);
 	
+	/**
+	 * @see ResultSet select(String table, String fields, String condition,String others);
+	 * @param table
+	 * @param fields
+	 * @param condition
+	 * @return
+	 */
+	public ResultSet select(String table, String fields, String condition);
 	// CRUD-Befehle---END
 
-	// Zusätzliches---START
+	// Zusätzliches---START	
 	/**
-	 * @doc Mit der Hilfe der Hilfe einer bekomme ich einen Text Basiert auf dem
+	 * Mit der Hilfe der Hilfe einer bekomme ich einen Text Basiert auf dem
 	 *      select-Befehl: SELECT name_ FROM text WHERE id = id
 	 * @param id: Id der gesuchten Zeile in der Table 'Text'
-	 * @param lang
-	 * @return String
-	 */
-	public String text(int id,String lang);
-	
-	/**
-	 * @deprecated
-	 * @param id
 	 * @return
 	 */
 	public String text(int id);

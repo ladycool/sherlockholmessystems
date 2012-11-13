@@ -106,14 +106,21 @@ public abstract class _Config {
 	title = "Sherlock Holmes Systems"
 	;
 	
+	protected String
+	lang = ""
+	;
+	public String getlang(){
+		return lang;
+	}
+	
 	
 	//Database
 	public final String
 	driver="jdbc:mysql:",//com.mysql.jdbc.Driver
-	port="1443",//3306
+	port="3306",//3306
 	url="//jonathan.sv.hs-mannheim.de/phpMyAdmin/",//141.19.141.151
 	db="kirkelstillsystems",
-	url_db=driver+url +":"+port+"//"+db,
+	url_db= driver+url+db,//driver+url +":"+port+"/"+db,
 	dbusername="kirkelstill",
 	dbpassword="kirkelstill",
 	
@@ -136,15 +143,11 @@ public abstract class _Config {
 	;
 	public String
 	symInstance = "AES",
-	asymInstance = "RSA"
+	asymInstance = "RSA",
+	masterInstance = "master"
 	;
 	
 	//ENUM
-	public final Ciphertype
-	asymmetric = Ciphertype.asymmetric,
-	symmetric = Ciphertype.symmetric,
-	master = Ciphertype.master
-	;
 	public final Direction
 	verti = Direction.verti,
 	horiz = Direction.horiz,
@@ -217,9 +220,9 @@ public abstract class _Config {
 	 * @param attributes: benutzerspezifische Eigenschaften
 	 * @return User || null
 	 */
-	public abstract User loginSHS(String type,HashMap<String,String>attributes);
+	protected abstract User loginSHS(String type,HashMap<String,String>attributes);
 	
-	public abstract void loadUserView(User user); 
+	protected abstract void loadUserView(User user); 
 	
 	/*
 	 * loginSHS
@@ -227,15 +230,27 @@ public abstract class _Config {
 	 * loadUserView
 	 */
 	
-	public abstract void uploadfile(String path,String toggleId);
+	protected abstract void uploadfile(String path,String toggleId);
 	
-	public abstract void downloadfile(String path,int fileId);
+	protected abstract void downloadfile(String path,int fileId);
 	
 	protected abstract void viewfile(int fileId,Viewertype status);
 	
-	protected abstract void getticket();
+	/**
+	 * Passiert beim Laden der Hauptseite.
+	 * @return {@link HashMap} HashMap<Integer, String[]>: Integer = Zähler, String[]={0->ticketId,1->sent_by,2->filename}
+	 */
+	protected abstract HashMap<Integer, String[]> gettickets();
 	
-	public abstract void createticket(String path,String name);
+	/**
+	 * Geschiet während dem Versuch sich eine Fremddatei anzusehen
+	 * @param fileId
+	 * @return {@link HashMap} HashMap<String,String>:"fileId"->fileId, "pseudokey"->Schlüssel zur Entschlüsselung der Datei
+	 */
+	protected abstract HashMap<String, String> readticket(String fileId);
 	
+	protected abstract void createticket(int fileId,String[] userList);
+
+
 	
 }

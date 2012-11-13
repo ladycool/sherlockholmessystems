@@ -1,36 +1,26 @@
 package SERVICE;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import CONTROLLER.Controller;
 import MODEL._Cipher;
-import MODEL.enums.Ciphertype;
 
 /**
  * @author Shazem (Patrick) && Cedrick
@@ -68,16 +58,18 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		return _cipher;
 	}
 	
-	public byte[] getkey(Ciphertype type){
+	@Override
+	public byte[] getkey(String instance){
 		byte[] toreturn = null;
-		if(type.equals(Ciphertype.master)){
+		if(instance.equals(this.master)){
 			toreturn = this.masterkey.getEncoded();
-		}else if(type.equals(Ciphertype.symmetric)){
+		}else if(instance.equals(this.symInstance)){
 			toreturn = this.shssymkey.getEncoded();	
 		}			
 		return toreturn;
 	}
 	
+	@Override
 	public HashMap<String, byte[]> getkey() {
 		HashMap<String, byte[]> toreturn = new HashMap<String,byte[]>();
 		toreturn.put("prik", this.shsasymkeypair.getPrivate().getEncoded());
@@ -92,20 +84,24 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 * @param cipherMODE: Cipher.ENCRYPT_MODE || Cipher.DECRYPT_MODE
 	 * @return
 	 */
-	private Cipher getCipher(Ciphertype type,int cipherMODE){
+	private Cipher getCipher(String instance,int cipherMODE){
 		Cipher cipher = null;
 		try{
-			cipher = Cipher.getInstance(this.getInstance(type));//AES || RSA
+			if(instance.equals(this.master)){
+				cipher = Cipher.getInstance(this.symInstance);//AES
+			}else{
+				cipher = Cipher.getInstance(instance);//AES || RSA
+			}
 			
-			if(type.equals(Controller.shsconfig.asymmetric)){
+			if(instance.equals(this.asymInstance)){
 				if(cipherMODE == Cipher.ENCRYPT_MODE){
 					cipher.init(cipherMODE, this.shsasymkeypair.getPublic());
 				}else if(cipherMODE == Cipher.DECRYPT_MODE){
 					cipher.init(cipherMODE, this.shsasymkeypair.getPrivate());
 				}
-			}else if(type.equals(Controller.shsconfig.symmetric)){
+			}else if(instance.equals(this.symInstance)){
 	            cipher.init(cipherMODE, this.shssymkey);				
-			}else if(type.equals(Controller.shsconfig.master)){			
+			}else if(instance.equals(this.master)){			
 				cipher.init(cipherMODE, this.masterkey);					        
 			}
 		}catch (GeneralSecurityException e){
@@ -122,12 +118,12 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		SecretKey key = null;
 		try {
 			if(pseudokey.isEmpty()){
-				KeyGenerator keygen = KeyGenerator.getInstance(this.getInstance(Controller.shsconfig.symmetric));//AES
+				KeyGenerator keygen = KeyGenerator.getInstance(this.symInstance);//AES
 				SecureRandom random = new SecureRandom();
 		        keygen.init(random);
 		        key = keygen.generateKey();
 			}else{
-				key = new SecretKeySpec(pseudokey.getBytes(),this.getInstance(Controller.shsconfig.symmetric));//AES
+				key = new SecretKeySpec(pseudokey.getBytes(),this.asymInstance);//AES
 			}
 		} catch (GeneralSecurityException e) {
 			//e.printStackTrace();
@@ -148,7 +144,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	protected KeyPair createAsymmetricKey() {
 		KeyPair keypair = null;
 		try {
-			KeyPairGenerator pairgen = KeyPairGenerator.getInstance(this.getInstance(Controller.shsconfig.asymmetric));//RSA
+			KeyPairGenerator pairgen = KeyPairGenerator.getInstance(this.asymInstance);//RSA
             SecureRandom random = new SecureRandom();
             pairgen.initialize(this.getkeysize(), random);
             keypair = pairgen.generateKeyPair();
@@ -163,21 +159,34 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 
 	
 	@Override
-	public String crypt(String tocrypt,Ciphertype type,int cipherMODE) {
+	public String crypt(String tocrypt,String instance,int cipherMODE) {
 		//cipherMODE = Cipher.ENCRYPT_MODE || Cipher.DECRYPT_MODE
 		String toreturn="";
 		try {
-			Cipher cipher = getCipher(type, cipherMODE);
+			Cipher cipher = getCipher(instance, cipherMODE);
 			
 			byte[] crypted = cipher.doFinal(tocrypt.getBytes("UTF8"));
 			toreturn = new String(crypted,"UTF8");//UTF-8 -> So werden ebenfalls die Sonderzeichen des europaischen Raums mitberücksichtigt
 			
 		} catch (GeneralSecurityException | UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
 			Controller.shsgui.triggernotice(e);
 		}
 		
+		return toreturn;
+	}
+	
+	@Override
+	public String crypt(String tocrypt,String key,String instance,int cipherMODE){
+		String toreturn="";
+		try {
+			Key _key = new SecretKeySpec(key.getBytes(),instance);
+			Cipher cipher = Cipher.getInstance(instance);
+			cipher.init(cipherMODE, _key);			
+			byte[] crypted = cipher.doFinal(tocrypt.getBytes("UTF8"));
+			toreturn = new String(crypted,"UTF8");//UTF-8 -> So werden ebenfalls die Sonderzeichen des europaischen Raums mitberücksichtigt	
+		} catch (GeneralSecurityException | UnsupportedEncodingException e) {
+			Controller.shsgui.triggernotice(e);
+		}
 		return toreturn;
 	}
 	
@@ -192,18 +201,14 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 			    tocrypt += str+Controller.shsconfig.txtlinebreak;//Puffern <shsbr/>
 			    //System.out.println(str);
 			}
-			tocrypt += Controller.shsuser.getattr("metadata");
+			//tocrypt += Controller.shsuser.getattr("metadata");
 			file.close();
 
 			
 			//Verschlüsselung des Inhaltes
-			SecretKey key = new SecretKeySpec(pseudokey.getBytes(),this.getInstance(Controller.shsconfig.symmetric));
-			Cipher cipher = Cipher.getInstance(this.getInstance(Controller.shsconfig.symmetric));
-			cipher.init(Controller.shsconfig.encryptmode, key);
-			byte[] crypted = cipher.doFinal(tocrypt.getBytes("UTF8"));
-			toreturn = new String(crypted,"UTF8");//UTF-8 -> So werden ebenfalls die Sonderzeichen des europaischen Raums mitberücksichtigt	
+			toreturn = this.crypt(tocrypt,pseudokey,this.symInstance,Cipher.ENCRYPT_MODE);
 			
-		} catch (GeneralSecurityException | IOException e) {
+		} catch (IOException e) {
 			Controller.shsgui.triggernotice(e);
 		}	
 		
@@ -211,7 +216,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	}
 	
 	@Override
-	protected String[] readfile(String pseudokey, int fileId){
+	protected String[] readfile(String pseudokey,String fileId){
 		String[] toreturn = null;
 		try {
 			//Datei aus der Db holen
@@ -219,12 +224,8 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 			String content = result.getString("content");
 			
 			//Entschlüsselung des Inhaltes
-			SecretKey key = new SecretKeySpec(pseudokey.getBytes(),this.getInstance(Controller.shsconfig.symmetric));
-			Cipher cipher = Cipher.getInstance(this.getInstance(Controller.shsconfig.symmetric));
-			cipher.init(Controller.shsconfig.decryptmode, key);
-			byte[] crypted = cipher.doFinal(content.getBytes("UTF8"));
-			content = new String(crypted,"UTF8");//UTF-8 -> So werden ebenfalls die Sonderzeichen des europaischen Raums mitberücksichtigt	
-			
+			content = this.crypt(content,pseudokey,this.symInstance,Cipher.DECRYPT_MODE);
+						
 			//Entpuffern: Entfernung von <shsbr/>
 			toreturn = content.split(Controller.shsconfig.txtlinebreak);
 			

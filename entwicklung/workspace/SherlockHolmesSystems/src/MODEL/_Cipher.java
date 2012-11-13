@@ -1,13 +1,6 @@
 package MODEL;
 
-import java.security.KeyPair;
 import java.util.HashMap;
-
-import javax.crypto.CipherInputStream;
-import javax.crypto.SecretKey;
-
-import CONTROLLER.Controller;
-import MODEL.enums.Ciphertype;
 
 
 /**
@@ -16,7 +9,7 @@ import MODEL.enums.Ciphertype;
 public abstract class _Cipher {
 	
 	private int keysize = 0;
-	private String asymInstance = "", symInstance = "";
+	protected String asymInstance = "", symInstance = "", master="";
 	
 	protected _Cipher(int keysize,String symInstance, String asymInstance){
 		_init(keysize, symInstance, asymInstance);
@@ -28,6 +21,7 @@ public abstract class _Cipher {
 		if(this.keysize == 0 && this.symInstance.isEmpty() && this.asymInstance.isEmpty()){
 			this.keysize = keysize;
 			this.symInstance = symInstance;
+			this.master = "master";
 			this.asymInstance = asymInstance;
 		}
 	}
@@ -37,24 +31,24 @@ public abstract class _Cipher {
 		return this.keysize;
 	}
 	
-	protected String getInstance(Ciphertype type){
+	
+	private String getkeyInstance(String name){
 		String toreturn = "";
-		if(type.equals(Controller.shsconfig.asymmetric)){
+		if(name.equals("asym")){
 			toreturn = this.asymInstance;//Bsp: RSA
-		}else if(type.equals(Controller.shsconfig.symmetric)){
+		}else if(name.equals("sym") || name.equals("master")){
 			toreturn = this.symInstance; // Bsp: AES
 		}
 		return toreturn;
 	}
-	
-	
+
 	
 	//Abstract methods
 	/**Gibt einen der sym. Schlüssel in seiner Byte-form zurück 
 	 * @param type = master | simple symmetric
 	 * @return byte[]
 	 */
-	public abstract byte[] getkey(Ciphertype type);
+	public abstract byte[] getkey(String type);
 	
 	/**
 	 * Gibt das asym. Schlüsselpaar in deren Byte-form zurück
@@ -87,8 +81,17 @@ public abstract class _Cipher {
 	 * @param type: asymmetrisch || symmetrisch
 	 * @param cipherMODE: Cipher.ENCRYPT_MODE || Cipher.DECRYPT_MODE
 	 */
-	public abstract String crypt(String tocrypt,Ciphertype type,int cipherMODE);
+	public abstract String crypt(String tocrypt,String type,int cipherMODE);
 	
+	/**
+	 * 
+	 * @param tocrypt
+	 * @param key
+	 * @param instance
+	 * @param cipherMODE
+	 * @return
+	 */
+	public abstract String crypt(String tocrypt,String key,String instance,int cipherMODE);
 	/**
 	 * Diese Methode wird beim Upload von Datei vewendet. Die dient lediglig der Verschlüsselung
 	 * @param filepath
@@ -103,7 +106,7 @@ public abstract class _Cipher {
 	 * @param fileId: Id der Datei.
 	 * @return String[i] --> Zeile in der Datei.
 	 */
-	protected abstract String[] readfile(String pseudokey, int fileId);
+	protected abstract String[] readfile(String pseudokey,String fileId);
 	
 
 
