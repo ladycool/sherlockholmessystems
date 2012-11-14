@@ -6,7 +6,7 @@
 
 .loginlabel{
 	display:block;
-    font:14px/22px Arial, Helvetica, Sans-serif;
+    font:14px/22px Verdana, Tahomma, Geneva;
     text-shadow: 1px 2px 3px #999;
     margin:3px 0 0 6px;
 }
@@ -37,7 +37,7 @@
     -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     color:#444;
-    font:normal 12px/14px Arial, Helvetica, Sans-serif;
+    font:normal 12px/14px Verdana, Tahomma, Geneva;
     text-shadow: 1px 2px 3px #999;
     margin:0 auto 30px;
 	overflow:hidden;
@@ -49,11 +49,11 @@ td.right{
 
 td.shstitle{
 	text-align: left;
-	font:normal 18px Arial, Helvetica, Sans-serif;
-	text-shadow: 1px 2px 3px #999;
+	font:normal 18px Verdana, Tahomma, Geneva;
+	text-shadow: 1px 1px 1px #999;
 	font-size: 30px;
 	font-weight: bold;
-	color: rgb(119,136,153);
+	color: rgb(65,105,225);
 	margin:3px 0 4px;
     padding-bottom: 15px;
     padding-left: 8px;
@@ -71,7 +71,7 @@ td.body{
     -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     color:#444;
-    font:normal 12px/14px Arial, Helvetica, Sans-serif;
+    font:normal 12px/14px Verdana, Tahomma, Geneva;
     text-shadow: 1px 2px 3px #999;
     margin:0 auto 30px;
 	overflow:hidden;
@@ -83,7 +83,7 @@ td.headerB{
     -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     color: rgb(0,191,255);
-    font:bold 14px Arial, Helvetica, Sans-serif;
+    font:normal 14px Verdana, Tahomma, Geneva;
    	text-shadow: 1px 1px 1px #999;
     margin:0 auto 30px;
 	overflow:hidden;
@@ -95,8 +95,8 @@ td.headerA{
     -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     color:white;
-    font:bold 18px Arial, Helvetica, Sans-serif;
-    text-shadow: 1px 2px 3px #999;
+    font:bold 18px Verdana, Tahomma, Geneva;
+    text-shadow: 1px 1px 1px #999;
     margin:0 auto 30px;
 	overflow:hidden;
 }
@@ -112,7 +112,7 @@ td.console{
     -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     color:#444;
-    font:normal 12px/14px Arial, Helvetica, Sans-serif;
+    font:normal 12px/14px Verdana, Tahomma, Geneva;
     margin:0 auto 30px;
 	overflow:hidden;
 }
