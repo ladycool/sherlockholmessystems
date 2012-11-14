@@ -99,8 +99,17 @@ public class Config extends _Config {
 				//Tabelle: user
 				String password = attributes.get(this.passwordId);
 				String userId = this.random(username.length()+password.length());
-							
+				
+				//userId eindeutig festlegen
+				//////////////////////TO DO ---> passwortcipher(String username, String passwort = pseudopasswort, pseudouserid)
 				password = this.insert(password, userId);//pseudo-password
+				/*
+				 * @Luis:
+				 * username,password
+				 * pseudouserid = Base64.decode(pseudouserid)
+				 * userid = remove(pseudouserid,username)
+				 * password = Base64.decode(password)
+				 */
 				password = Base64.encode(password.getBytes());//password to save
 				attributes.put(this.passwordId, password);
 				
@@ -141,7 +150,7 @@ public class Config extends _Config {
 				
 				HashMap<String,Object> userattr = new HashMap<String,Object>();
 				userattr.put(this.username,attributes.get(this.username));
-				userattr.put(this.userid,userId);
+				userattr.put(this.userId,userId);
 				userattr.put(this.keys,Controller.shscipher);
 				user = User.getInstance(userattr);
 			}else{
@@ -160,6 +169,7 @@ public class Config extends _Config {
 	 * @return
 	 */
 	private User signin(HashMap<String,String>attributes){
+		String username = attributes.get("username");
 		return null;	
 	}
 	
@@ -174,6 +184,13 @@ public class Config extends _Config {
 		//public wegen einem möglichen Reload-button
 		
 		if(user != null){
+			Thread threadinternal = new Shsthread();
+			threadinternal.setName(this.threadinternal);
+			Thread threadexternal = new Shsthread();
+			threadexternal.setName(this.threadinternal);
+			
+			threadinternal.start();
+			threadexternal.start();
 			
 		}else{
 			//redirect with triggernotice
@@ -182,7 +199,44 @@ public class Config extends _Config {
 		//Threads will be created here.
 	}
 	
+	@Override
+	public void loadexternalview(){
+		HashMap<Integer, String[]> toreturn = new HashMap<Integer, String[]>();
+		try {
+			String userId = (String) Controller.shsuser.getattr("userId");
+			String pseudouserId = Controller.shscipher.crypt(userId,this.symInstance,this.decryptmode);
+			ResultSet result = Controller.shsdb.select(this.filestb,"id,key,pathdef","pseudouserId LIKE "+wrap(pseudouserId)),
+			result1;
+			String pseudokey,content,pseudopath,path,_sep,fileId;
+			String[] temp;
+			int i = 0;
+			
+			while(result.next()){
+				path = ""; _sep="";
+				pseudokey = result.getString("key");
+				pseudopath = result.getString("pathdef");
+				pseudopath = Controller.shscipher.crypt(pseudopath, pseudouserId, this.symInstance,this.decryptmode);
+				temp = pseudopath.split(this.sep);
+								
+				for (String t : temp) {
+					result1 = Controller.shsdb.select(this.pathtb,"pathname","def LIKE "+wrap(t));
+					path += _sep+result1.getString("pathname");
+					_sep = this.sep;
+				}
+				
+				fileId = result.getString("id");
+				toreturn.put(i, new String[]{fileId,path});
+				i++;				
+			}
+		} catch (SQLException e) {
+			Controller.shsgui.triggernotice(e);
+		}
+		this.externalviewdata = toreturn;		
+	}
 	
+	public void loadinternalview(){
+		this.internalviewdata = gettickets();
+	}
 	
 	///////////////////LOADUSERVIEW-END/////////////////////////
 	
@@ -229,40 +283,65 @@ public class Config extends _Config {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void downloadfile(String path,int fileId){
-				
+	public HashMap<String,String> downloadfile(String fileId){
+		return preloadInternalfile(fileId);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void viewfile(String id,Viewertype status){
+	public HashMap<String,String> previewfile(String id,Viewertype status){
 		HashMap<String,String> file = new HashMap<String,String>();
 		if(status.equals(this.owner)){
-			file = this.previewInternalfile(id);
+			file = this.preloadInternalfile(id);
 		}else if(status.equals(this.reader)){
-			file = this.previewExternalfile(id);
+			file = this.preloadExternalfile(id);
 		}
-		HIERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
-		//path,content
+		
+		return file;
 	}
 	
 	/**
-	 * 
+	 * Diese Methode bereitet die Datei vor der Anzeige oder dem Herunterladen vor, für den Besitzer der Datei
 	 * @param fileid
 	 * @return {@link HashMap} HashMap<String,String> = (filepath->"",content->"")
 	 */
-	private HashMap<String,String> previewInternalfile(String fileid){
-		//key
+	private HashMap<String,String> preloadInternalfile(String fileId){
+		HashMap<String, String> toreturn = new HashMap<String, String>();		
+		try {
+			ResultSet result = Controller.shsdb.select(this.filestb,"key,content,pathdef","id="+fileId);
+			String pseudokey = result.getString("key");
+			String content = result.getString("content");
+			String pathdef = result.getString("pathdef");
+			pseudokey = Controller.shscipher.crypt(pseudokey, this.symInstance, this.decryptmode);
+			content = Controller.shscipher.crypt(content, pseudokey, this.symInstance, this.decryptmode);
+			pathdef = Controller.shscipher.crypt(pathdef, this.symInstance, this.decryptmode);
+			
+			String[] temp = pathdef.split("/");
+			pathdef="";
+			String sep="";
+			for (String t : temp) {
+				result = Controller.shsdb.select(this.pathtb,"pathname","def LIKE '"+t+"'");
+				pathdef +=sep+result.getString("pathname");
+				sep="/";
+			}
+
+			toreturn.put("filepath",pathdef);
+			toreturn.put("content",content);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return toreturn;
 	}
 	
 	/**
-	 * 
+	 * Diese Methode bereitet die Datei vor der Anzeige vor, für den nicht-Besitzer der Datei
 	 * @param fileid
 	 * @return {@link HashMap} HashMap<String,String> = (filepath->"",content->"")
 	 */
-	private HashMap<String,String> previewExternalfile(String ticketId){
+	private HashMap<String,String> preloadExternalfile(String ticketId){
 		HashMap<String, String> toreturn = new HashMap<String, String>();
 		HashMap<String, String> temp = this.readticket(ticketId);//fileid + key + path
 		toreturn.put("filepath", temp.get("filepath"));
@@ -344,11 +423,9 @@ public class Config extends _Config {
 	
 	/**
 	 * {@inheritDoc}
-	 */
-	@Override
-	/**
 	 * @author Shazem(Patrick)
 	 */
+	@Override
 	public void createticket(int fileId,String[] userList){
 		try {
 			ResultSet result;

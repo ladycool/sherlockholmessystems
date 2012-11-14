@@ -9,19 +9,20 @@ import java.util.HashMap;
 public abstract class _Cipher {
 	
 	private int keysize = 0;
-	protected String asymInstance = "", symInstance = "", master="";
+	protected String asymInstance = "", symInstance = "", master="master";
 	
 	protected _Cipher(int keysize,String symInstance, String asymInstance){
 		_init(keysize, symInstance, asymInstance);
 	}
 
-	
+	protected _Cipher(){
+		//do nothing
+	}
 	
 	private void _init(int keysize,String symInstance, String asymInstance){
 		if(this.keysize == 0 && this.symInstance.isEmpty() && this.asymInstance.isEmpty()){
 			this.keysize = keysize;
 			this.symInstance = symInstance;
-			this.master = "master";
 			this.asymInstance = asymInstance;
 		}
 	}

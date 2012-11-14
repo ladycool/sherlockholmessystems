@@ -10,6 +10,7 @@ import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyRep;
 import java.security.SecureRandom;
 import java.sql.ResultSet;
 import java.util.HashMap;
@@ -43,8 +44,15 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		this.masterkey = this.createsymmetricKey();
 		this.shssymkey = this.createsymmetricKey();
 		this.shsasymkeypair = this.createAsymmetricKey();
+		
 	}
 	
+	private Shscipher(String masterkey,String shssymkey,String privateky,String publickey){
+		super();
+		this.masterkey = new SecretKeySpec(masterkey.getBytes(),this.symInstance);
+		this.shssymkey = new SecretKeySpec(shssymkey.getBytes(),this.symInstance);
+		//Key temp = (Key) new KeyRep(null, publickey, publickey, null) //(Key) publickey.getBytes();
+	}
 	/**
 	 * @doc Erzeugt einen Singelton
 	 * @return
@@ -129,7 +137,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		        keygen.init(random);
 		        key = keygen.generateKey();
 			}else{
-				key = new SecretKeySpec(pseudokey.getBytes(),this.asymInstance);//AES
+				key = new SecretKeySpec(pseudokey.getBytes(),this.symInstance);//AES
 			}
 		} catch (GeneralSecurityException e) {
 			//e.printStackTrace();

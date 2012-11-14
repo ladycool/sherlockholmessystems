@@ -31,7 +31,7 @@ public abstract class _Config {
 	 * PUBLIC
 	 */
 	//paths
-	private final String 
+	public final String 
 	jsp = ".jsp",
 	sep = "/"
 	;
@@ -126,10 +126,11 @@ public abstract class _Config {
 	
 	usertb="user",
 	dbuserId="userid",
-	userid = dbuserId,
+	userId = dbuserId,
 	keys="keys",
 	keytb="key",
 	filestb ="files",
+	pathtb = "path_definition",
 	username="username",
 	password="",
 	txtlinebreak="<shsbr/>",
@@ -169,11 +170,23 @@ public abstract class _Config {
 	;
 	
 	
+	//THREADS and THREADS-RELATED
+	public final String
+	threadinternal = "maininternal",
+	threadexternal = "mainexternal"
+	;
+	protected HashMap<Integer, String[]> externalviewdata = new HashMap<Integer,String[]>();
+	protected HashMap<Integer, String[]> internalviewdata = new HashMap<Integer,String[]>();
+	protected boolean loadingisdone = false;
+	
+	
 	
 	/**
 	 * @author Shazem (Patrick)
 	 */
 	//METHODS NORMAL
+
+	
 	protected String random(int length){
 		String toreturn="";
 		for (int i = 0; i < length; i++) {
@@ -198,7 +211,7 @@ public abstract class _Config {
 		if(fulltxt.contains(searchtxt)){
 			fulltxt = fulltxt.replace(searchtxt,"");
 		}
-		return searchtxt;
+		return fulltxt;
 	}
 	
 	/**
@@ -221,6 +234,22 @@ public abstract class _Config {
 	protected String wrap(String towrap){
 		return wrap(towrap,"'");
 	}
+	
+	public void setloadingisdone(){
+		this.loadingisdone = true;
+	}
+	
+	public boolean getloadingisdone(){
+		return this.loadingisdone;
+	}
+	
+	public HashMap<Integer, String[]> getinternalviewdata(){
+		return this.internalviewdata;
+	}
+	
+	public HashMap<Integer, String[]> getexternalviewdata(){
+		return this.externalviewdata;
+	}
 	//METHODS ABSTRACT
 	/**
 	 * @doc In progress
@@ -238,26 +267,42 @@ public abstract class _Config {
 	 * loadUserView
 	 */
 	
-	protected abstract void uploadfile(String path,String toggleId);
+	public abstract void uploadfile(String path,String toggleId);
 	
-	protected abstract void downloadfile(String path,int fileId);
+	/**
+	 * Selbsterklärend
+	 */
+	public abstract void loadinternalview();
 	
-	protected abstract void viewfile(String id,Viewertype status);
+	/**
+	 * Selbsterklärend
+	 */
+	public abstract void loadexternalview();
+	
+	
+	public abstract HashMap<String,String> downloadfile(String fileId);
+	
+	/**
+	 * @param id: --> fileId beim internen Dateien, -->ticketId bei externen Datei
+	 * @param status: owner | reader
+	 * @return {@link HashMap} HashMap<String,String> = (filepath->"",content->"")
+	 */
+	protected abstract HashMap<String,String> previewfile(String id,Viewertype status);
 	
 	/**
 	 * Passiert beim Laden der Hauptseite.
 	 * @return {@link HashMap} HashMap<Integer, String[]>: Integer = Zähler, String[]={0->ticketId,1->sent_by,2->filename}
 	 */
-	protected abstract HashMap<Integer, String[]> gettickets();
+	public abstract HashMap<Integer, String[]> gettickets();
 	
 	/**
 	 * Geschiet während dem Versuch sich eine Fremddatei anzusehen
 	 * @param fileId
 	 * @return {@link HashMap} HashMap<String,String>:"fileId"->fileId, "pseudokey"->Schlüssel zur Entschlüsselung der Datei
 	 */
-	protected abstract HashMap<String, String> readticket(String fileId);
+	public abstract HashMap<String, String> readticket(String fileId);
 	
-	protected abstract void createticket(int fileId,String[] userList);
+	public abstract void createticket(int fileId,String[] userList);
 
 
 	

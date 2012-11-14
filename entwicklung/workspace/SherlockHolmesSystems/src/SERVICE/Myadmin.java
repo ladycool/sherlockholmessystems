@@ -200,6 +200,7 @@ public class Myadmin implements Database {
 
 	@Override
 	public String text(int id){
+		/*
 		String toreturn="";
 		try {
 			String lang;
@@ -216,6 +217,8 @@ public class Myadmin implements Database {
 			Controller.shsgui.triggernotice(e);
 		}
 		return toreturn;
+		*/
+		return "Die Datenbankanbindung fehlt";
 	}
 	
 	@Override
