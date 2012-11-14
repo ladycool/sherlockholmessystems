@@ -82,9 +82,9 @@ td.headerB{
    -moz-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     box-shadow:rgba(0,0,0,0.15) 0 0 1px;
-    color: rgb(119,136,153);
+    color: rgb(0,191,255);
     font:bold 14px Arial, Helvetica, Sans-serif;
-   	text-shadow: 1px 2px 3px #999;
+   	text-shadow: 1px 1px 1px #999;
     margin:0 auto 30px;
 	overflow:hidden;
 }

@@ -20,12 +20,12 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="loginlabel"><%=Controller.shsdb.text("Username") %></td>
+		<td class="loginlabel"><%=Controller.shsdb.text("Benutzername") %></td>
 		<td class="logininput"><%=Controller.shsgui.defaultTXTInput(Controller.shsconfig.usernameId)%></td>
 	</tr>
 	
 	<tr>
-		<td class="loginlabel"><%=Controller.shsdb.text("Password")%></td>
+		<td class="loginlabel"><%=Controller.shsdb.text("Passwort")%></td>
 		<td class="logininput"><%=Controller.shsgui.createInput("password",Controller.shsconfig.passwordId,50)%></td>
 	</tr>
 	

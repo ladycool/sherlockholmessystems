@@ -15,12 +15,12 @@
 		</td></tr><!-- HEADER END-->
 		<tr><!-- MAIN -->
 			<td class="headerB" id="<%=Controller.shsconfig.mainwesttdId%>"><!-- Header für main WEST -->
-				My buddies :)
+				Benutzerliste
 			</td><!-- Später DATENBANK AUFRUF -->
 			<td class="headerB" id="<%=Controller.shsconfig.mainnordtdId%>"><!-- Header für main NORD -->
 				<table>
 					<tr>
-						<td>My folders</td><!-- Später DATENBANK AUFRUF -->
+						<td>Eigene Ordner</td><!-- Später DATENBANK AUFRUF -->
 						<td class="right"><%=Controller.shsgui.createImg(Controller.shsconfig.mainnordarrowId, Controller.shsconfig.mainnordId, 
 															Controller.shsconfig.arrowup, Controller.shsconfig.arrowdown,"verti") %></td>
 					</tr>
@@ -44,7 +44,7 @@
 			<td class="headerB"><!-- Header für main SOUTH -->
 				<table>
 					<tr>
-						<td>My buddie's folders</td><!-- Später DATENBANK AUFRUF -->
+						<td>Fremde Ordner</td><!-- Später DATENBANK AUFRUF -->
 						<td class="right">
 							<%=Controller.shsgui.createImg(Controller.shsconfig.mainsoutharrowId, Controller.shsconfig.mainsouthId, 
 												Controller.shsconfig.arrowdown, Controller.shsconfig.arrowup,"verti") %>
@@ -65,7 +65,7 @@
 			<td class="headerB" colspan="2"><!-- Header für Console -->
 				<table>
 					<tr>
-						<td>Console</td><!-- Später DATENBANK AUFRUF -->
+						<td>Meldungen</td><!-- Später DATENBANK AUFRUF -->
 						<td class="right">
 							<%=Controller.shsgui.createImg(Controller.shsconfig.consolearrowId, Controller.shsconfig.consoleId, 
 															Controller.shsconfig.arrowdown, Controller.shsconfig.arrowup,"verti") %>
