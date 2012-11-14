@@ -54,7 +54,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		//Key temp = (Key) new KeyRep(null, publickey, publickey, null) //(Key) publickey.getBytes();
 	}
 	/**
-	 * @doc Erzeugt einen Singelton
+	 * Erzeugt einen Singelton
 	 * @return
 	 */
 	public static Shscipher getInstance(int keysize, String symInstance, String asymInstance){
@@ -65,6 +65,20 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		//SETTER-END
 		return _cipher;
 	}
+	
+	/**
+	 * Erzeugt einen Singelton
+	 * @return
+	 */
+	public static Shscipher getInstance(String masterkey,String shssymkey,String privateky,String publickey){
+		//SETTER-START
+		if(_cipher == null){
+			_cipher = new Shscipher(masterkey, shssymkey, privateky, publickey);
+		}
+		//SETTER-END
+		return _cipher;
+	}
+	
 	
 	/**
 	 * {@inheritDoc}

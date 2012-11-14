@@ -218,7 +218,7 @@ public class Myadmin implements Database {
 		}
 		return toreturn;
 		*/
-		return "Die Datenbankanbindung fehlt";
+		return ""+id;
 	}
 	
 	@Override

@@ -132,7 +132,7 @@ public abstract class _Config {
 	filestb ="files",
 	pathtb = "path_definition",
 	username="username",
-	password="",
+	password="password",
 	txtlinebreak="<shsbr/>",
 	stamp = "CURRENT_TIMESTAMP";
 	;	

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 import CONTROLLER.Controller;
@@ -89,15 +90,15 @@ public class Config extends _Config {
 	 */
 	private User signup(HashMap<String, String>attributes){
 		HashMap<String, String> toinsert = new HashMap<String, String>();
-		String username = attributes.get("username");		
+		String username = attributes.get(this.username);		
 		ResultSet result = Controller.shsdb.select(this.usertb,"username", "username LIKE '"+username+"'","");
 		User user = null;
 		
 		try {
-			if(result.getString("username").isEmpty()){
+			if(result.getString(this.username).isEmpty()){
 				
 				//Tabelle: user
-				String password = attributes.get(this.passwordId);
+				String password = attributes.get(this.password);
 				String userId = this.random(username.length()+password.length());
 				
 				//userId eindeutig festlegen
@@ -111,7 +112,7 @@ public class Config extends _Config {
 				 * password = Base64.decode(password)
 				 */
 				password = Base64.encode(password.getBytes());//password to save
-				attributes.put(this.passwordId, password);
+				attributes.put(this.password, password);
 				
 				String pseudouserId = this.insert(userId,username);
 				pseudouserId = Base64.encode(pseudouserId.getBytes());//pseudouserId to save
@@ -126,7 +127,7 @@ public class Config extends _Config {
 				Controller.shsdb.insert(this.usertb, toinsert,"");
 				
 				
-				//Tabelle: key
+				//Tabelle: keys
 				Controller.shscipher = Shscipher.getInstance(this.keysize,this.symInstance,this.asymInstance);
 				String cryptedkey="",tocrypt2 = "";
 				
@@ -168,9 +169,40 @@ public class Config extends _Config {
 	 * @param attributes
 	 * @return
 	 */
-	private User signin(HashMap<String,String>attributes){
-		String username = attributes.get("username");
-		return null;	
+	private User signin(HashMap<String,String>attributes){		
+		User user = null;		
+		try {
+			String username = attributes.get(this.username);
+			ResultSet result = Controller.shsdb.select(this.usertb, "*", "username LIKE '"+username+"'");
+			if(result.getString("username").isEmpty()){//Exit mit User == null
+				String text = Controller.shsdb.text(12).replace("%%",username);
+				Controller.shsgui.triggernotice(text);
+			}else{
+				//Tabelle user
+				String pseudouserId = result.getString("userId");
+				pseudouserId = new String(Base64.decode(pseudouserId));				
+				String userId = this.remove(pseudouserId, username);
+				
+				String pseudopassword = result.getString("password");
+				pseudopassword = new String(Base64.decode(pseudopassword));
+				String password = this.remove(pseudopassword, userId);
+				
+				if(password.equals(attributes.get(this.password))){
+					//erfolgreiche Authentifikation
+					//Hier kannst du weiter arbeiten Luis 2012.11.14
+					/*
+					 * Benutzt die Methode signup als Stüztmethode
+					 * Dein Chiper-objekt wird folgendes sein: Shscipher getInstance(String masterkey,String shssymkey,String privateky,String publickey)
+					 * 
+					 */
+				}else{//Exit mit User == null
+					Controller.shsgui.triggernotice(Controller.shsdb.text(14));
+				}
+			}
+		} catch (SQLException | Base64DecodingException e) {
+			Controller.shsgui.triggernotice(e);
+		}
+		return user;	
 	}
 	
     ////////////////////LOGIN-END/////////////////////////////
