@@ -26,7 +26,7 @@
 
 .loginDiv {
 	width: 600px;
-	 background:#fefefe;
+	 background:#eff3f6;
     border: 1px solid #C3D4DB;
 	border-top:1px;
     -webkit-border-radius:5px;
@@ -50,7 +50,7 @@ td.shstitle{
 	font:normal 18px Arial, Helvetica, Sans-serif;
 	font-size: 30px;
 	font-weight: bold;
-	color: #777777;
+	color: #808080;
 	margin:3px 0 4px;
     padding-bottom: 15px;
     padding-left: 8px;
@@ -58,33 +58,57 @@ td.shstitle{
 }
 
 td.body{
-	border: solid 1px;
-	border-top-left-radius: 10px 10px;
-	border-bottom-right-radius: 10px 10px;
-	background-color: #778899;/*LightSlateGrey*/
-	/*http://www.w3schools.com/cssref/css_colornames.asp*/
-	max-height:330px;
+	background:#eff3f6;
+    border: 1px solid white;
+	border-top:1px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    -moz-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    color:#444;
+    font:normal 12px/14px Arial, Helvetica, Sans-serif;
+    margin:0 auto 30px;
+	overflow:hidden;
 }
 
 td.headerB{
-	border: solid 2px;
-	border-top-left-radius: 10px 10px;
-	border-bottom-right-radius: 10px 10px;
-	background-color: #87CEFA;/*LightSkyblue*/ /* Alternative -> #708090;/*SlateGrey*/
+	background:rgb(192,192,192);
+   -moz-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    color: rgba(255,0,0, 0.7);
+    font:bold 14px Arial, Helvetica, Sans-serif;
+    margin:0 auto 30px;
+	overflow:hidden;
 }
 
 td.headerA{
-	border: solid 5px;
-	border-top-left-radius: 10px 10px;
-	border-bottom-right-radius: 10px 10px;
-	background-color: #B0C4DE;/*LightSteelBlue*/ /* Alternative -> #1E90FF;/*DodgerBlue*/
+	background:#4169e1;
+    -moz-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    color:white;
+    font:bold 18px Arial, Helvetica, Sans-serif;
+    margin:0 auto 30px;
+	overflow:hidden;
 }
 
 td.console{
-	border: solid 1px;
-	border-top-left-radius: 10px 10px;
-	border-bottom-right-radius: 10px 10px;
-	max-height:100px;
+	background:white;
+    border: 1px solid white;
+	border-top:1px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    -moz-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    color:#444;
+    font:normal 12px/14px Arial, Helvetica, Sans-serif;
+    margin:0 auto 30px;
+	overflow:hidden;
 }
 
 div.popup{
@@ -97,8 +121,36 @@ div.popup{
 }
 
 body{
-	background:#eff3f6;
+	margin-top: 50px;
+	background: #778899;
 	
+}
+
+#controllboard {
+	background: white;
+}
+
+
+.main {
+	width: 700px;
+	 background:white;
+    border: 1px solid #C3D4DB;
+	border-top:1px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    -moz-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    color:#444;
+    font:normal 12px/14px Arial, Helvetica, Sans-serif;
+    margin:0 auto 30px;
+    padding: 1px 1px 1px 1px;
+	overflow:hidden;
+}
+
+.console {
+	background: white;
 }
 
 
