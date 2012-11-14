@@ -18,6 +18,7 @@
 			<%=Controller.shsconfig.programName %>
 			<%=Controller.shsgui.createImg("","",Controller.shsconfig.print) %>
 		</td>
+	</tr>
 	<tr>
 		<td class="loginlabel"><%=Controller.shsdb.text("Username") %></td>
 		<td class="logininput"><%=Controller.shsgui.defaultTXTInput(Controller.shsconfig.usernameId)%></td>

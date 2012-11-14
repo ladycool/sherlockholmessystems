@@ -1,6 +1,7 @@
 <%@ page import="CONTROLLER.Controller" %>
 
-<!-- Die Datenbankanbindung sollte ebenfalls hier erfolgen -->
+<!-- Die Datenbankanbindung sollte ebenfalls hier erfolgen, Ausgabebefehl: out.system()-->
+
 
 <%switch(request.getParameter("case")){
 case"setting": //--> NICE TO HAVE

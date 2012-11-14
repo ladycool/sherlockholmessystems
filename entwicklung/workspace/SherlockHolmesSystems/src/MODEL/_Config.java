@@ -100,7 +100,7 @@ public abstract class _Config {
 	savesym = "savesym",
 	savepubk = "savepubk",
 	saveprik = "saveprik",
-	
+	savemaster = "savemaster",
 	
 	popupId = "popup",
 	title = "Sherlock Holmes Systems"
@@ -118,9 +118,10 @@ public abstract class _Config {
 	public final String
 	driver="jdbc:mysql:",//com.mysql.jdbc.Driver
 	port="3306",//3306
-	url="//jonathan.sv.hs-mannheim.de/phpMyAdmin/",//141.19.141.151
+	url="https://jonathan.sv.hs-mannheim.de", // "//jonathan.sv.hs-mannheim.de/phpMyAdmin/",//141.19.141.151
+	host="localhost",
 	db="kirkelstillsystems",
-	url_db= driver+url+db,//driver+url +":"+port+"/"+db,
+	url_db= driver+url+sep+host+sep+db,//driver+url +":"+port+"/"+db,
 	dbusername="kirkelstill",
 	dbpassword="kirkelstill",
 	

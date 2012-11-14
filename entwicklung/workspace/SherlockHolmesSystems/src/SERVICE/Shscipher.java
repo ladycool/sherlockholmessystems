@@ -8,10 +8,18 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyRep;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.spec.EncodedKeySpec;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.sql.ResultSet;
 import java.util.HashMap;
 
@@ -40,18 +48,55 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 */
 	private static Shscipher _cipher = null;
 	private Shscipher(int keysize, String symInstance, String asymInstance) {
+		//settings
 		super(keysize, symInstance, asymInstance);
+		
+		//create
 		this.masterkey = this.createsymmetricKey();
 		this.shssymkey = this.createsymmetricKey();
 		this.shsasymkeypair = this.createAsymmetricKey();
-		
 	}
 	
-	private Shscipher(String masterkey,String shssymkey,String privateky,String publickey){
-		super();
+	private Shscipher(HashMap<String,Object> settings,HashMap<String,String> keys){
+		//settings
+		super(settings);
+		
+		//load
+		String 
+		masterkey = (String)keys.get("masterkey"),
+		secretkey = (String)keys.get("secretkey"),
+		privatekey = (String)keys.get("privatekey"),
+		publickey = (String)keys.get("publickey");
+		
+		////load masterkey
 		this.masterkey = new SecretKeySpec(masterkey.getBytes(),this.symInstance);
-		this.shssymkey = new SecretKeySpec(shssymkey.getBytes(),this.symInstance);
-		//Key temp = (Key) new KeyRep(null, publickey, publickey, null) //(Key) publickey.getBytes();
+		////load secretkey
+		this.shssymkey = new SecretKeySpec(secretkey.getBytes(),this.symInstance);
+		
+		
+		try {
+			/*
+			 * Alternative1: KeyRep-Klasse
+			 * Alternative2: EncodedKeySpec-Klasse-->
+			 * 					http://stackoverflow.com/questions/5263156/rsa-keypair-generation-and-storing-to-keystore 
+			 * NICHT LÖSCHEN (Patrick)
+			 */
+			KeyFactory keyfactory = KeyFactory.getInstance(this.asymInstance);
+			EncodedKeySpec pkSpec;
+			////load public key
+			pkSpec = new X509EncodedKeySpec(publickey.getBytes());
+			PublicKey pubK = keyfactory.generatePublic(pkSpec);
+			
+			////load private key
+			pkSpec = new PKCS8EncodedKeySpec(privatekey.getBytes());
+			PrivateKey priK = keyfactory.generatePrivate(pkSpec);
+			
+			this.shsasymkeypair = new KeyPair(pubK, priK);
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+			Controller.shsgui.triggernotice(e);
+		}
+		
+		
 	}
 	/**
 	 * Erzeugt einen Singelton
@@ -70,10 +115,10 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 * Erzeugt einen Singelton
 	 * @return
 	 */
-	public static Shscipher getInstance(String masterkey,String shssymkey,String privateky,String publickey){
+	public static Shscipher getInstance(HashMap<String,Object> settings, HashMap<String,String> keys){
 		//SETTER-START
 		if(_cipher == null){
-			_cipher = new Shscipher(masterkey, shssymkey, privateky, publickey);
+			_cipher = new Shscipher(settings, keys);
 		}
 		//SETTER-END
 		return _cipher;
@@ -99,9 +144,12 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 */
 	@Override
 	public HashMap<String, byte[]> getkey() {
+		X509EncodedKeySpec x509ks = null;
 		HashMap<String, byte[]> toreturn = new HashMap<String,byte[]>();
-		toreturn.put("prik", this.shsasymkeypair.getPrivate().getEncoded());
-		toreturn.put("pubk", this.shsasymkeypair.getPublic().getEncoded());
+		x509ks = new X509EncodedKeySpec(this.shsasymkeypair.getPrivate().getEncoded());
+		toreturn.put("prik", x509ks.getEncoded());
+		x509ks = new X509EncodedKeySpec(this.shsasymkeypair.getPublic().getEncoded());
+		toreturn.put("prik", x509ks.getEncoded());
 		
 		return toreturn;
 	}

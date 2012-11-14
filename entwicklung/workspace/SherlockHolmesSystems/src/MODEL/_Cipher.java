@@ -15,8 +15,8 @@ public abstract class _Cipher {
 		_init(keysize, symInstance, asymInstance);
 	}
 
-	protected _Cipher(){
-		//do nothing
+	protected _Cipher(HashMap<String,Object> settings){
+		_init((int)settings.get("keysize"),(String)settings.get("symInstance"),(String)settings.get("asymInstance"));
 	}
 	
 	private void _init(int keysize,String symInstance, String asymInstance){

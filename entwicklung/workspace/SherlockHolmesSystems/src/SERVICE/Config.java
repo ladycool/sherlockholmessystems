@@ -12,7 +12,11 @@ import CONTROLLER.Controller;
 import MODEL._Config;
 import MODEL.enums.Viewertype;
 
-
+/**
+ * 
+ * @author Shazem (Patrick)
+ *
+ */
 public class Config extends _Config {
 	
 	/*
@@ -101,16 +105,7 @@ public class Config extends _Config {
 				String password = attributes.get(this.password);
 				String userId = this.random(username.length()+password.length());
 				
-				//userId eindeutig festlegen
-				//////////////////////TO DO ---> passwortcipher(String username, String passwort = pseudopasswort, pseudouserid)
 				password = this.insert(password, userId);//pseudo-password
-				/*
-				 * @Luis:
-				 * username,password
-				 * pseudouserid = Base64.decode(pseudouserid)
-				 * userid = remove(pseudouserid,username)
-				 * password = Base64.decode(password)
-				 */
 				password = Base64.encode(password.getBytes());//password to save
 				attributes.put(this.password, password);
 				
@@ -148,6 +143,15 @@ public class Config extends _Config {
 				tocrypt2 = new String(tocrypt1.get("prik"))+this.saveprik; // Analog zum savesym
 				cryptedkey = Controller.shscipher.crypt(tocrypt2,this.masterInstance,this.encryptmode);
 				Controller.shsdb.insert(this.keytb,"",userId+","+cryptedkey,"");//DATABASE
+				
+				//Verschlüsselung und Speicherung des master Key
+				tocrypt = Controller.shscipher.getkey(this.masterInstance);
+				tocrypt2 = new String(tocrypt) + this.savemaster;
+				tocrypt2 = this.insert(tocrypt2, password);
+				tocrypt2 = this.insert(tocrypt2, userId);
+				cryptedkey = Base64.encode(tocrypt2.getBytes());
+				Controller.shsdb.insert(this.keytb,"",userId+","+cryptedkey,"");//DATABASE
+				
 				
 				HashMap<String,Object> userattr = new HashMap<String,Object>();
 				userattr.put(this.username,attributes.get(this.username));
