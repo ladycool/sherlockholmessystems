@@ -229,12 +229,12 @@ public class Config extends _Config {
 					String privKey;
 					String symKey;				
 					cryptedKey = undecryptedKeys.get(0);
-					symKey = Controller.shscipher.crypt(cryptedKey, keys.get("masterkey"),this.masterInstance, this.decryptmode);
+					symKey = Controller.shscipher.crypt(cryptedKey, keys.get("masterkey"),this.symInstance, this.decryptmode);
 					symKey = this.remove(symKey, this.savesym);
 					keys.put("secretkey", symKey);
 					
 					cryptedKey = undecryptedKeys.get(1);
-					privKey = Controller.shscipher.crypt(cryptedKey, keys.get("masterkey"), this.masterInstance, this.decryptmode);
+					privKey = Controller.shscipher.crypt(cryptedKey, keys.get("masterkey"), this.symInstance, this.decryptmode);
 					privKey = this.remove(privKey,this.saveprik);
 					keys.put("privatekey", privKey);
 					
