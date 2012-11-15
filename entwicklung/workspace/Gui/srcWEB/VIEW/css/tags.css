@@ -1,0 +1,29 @@
+@Engin, Ehsan, Stella
+
+body[id="shsbody"]{
+	background-color: #808080; /*dark gray*/	
+}
+
+select,input[type="text"],input[type="password"]{
+	background-color: #E0FFFF; /*silver like*/
+}
+
+legend{
+	color: #228B22;
+}
+
+td[id="controllboard_west_td"]{
+	width: 250px;
+	
+}
+
+div{
+	width: 100%;
+	/*height: 100%;*/
+	overflow: auto;
+}
+
+table{
+	width: 100%;
+	/*height: 100%;*/
+}
