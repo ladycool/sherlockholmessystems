@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.w3c.dom.Element;
+
 import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 
@@ -196,9 +198,57 @@ public class Config extends _Config {
 					//Hier kannst du weiter arbeiten Luis 2012.11.14
 					/*
 					 * Benutzt die Methode signup als Stüztmethode
-					 * Dein Chiper-objekt wird folgendes sein: Shscipher getInstance(String masterkey,String shssymkey,String privateky,String publickey)
+					 * Dein Cipher-objekt wird folgendes sein: Shscipher getInstance(String masterkey,String shssymkey,String privateky,String publickey)
 					 * 
-					 */
+					 */ 
+					// Shscipher getInstance(String masterkey,String shssymkey? (oder secretkey) ,String privatekey,String publickey)
+					
+					HashMap<String, String> keys = new HashMap<String, String>();
+					
+					//this.keysize, this.symInstance, this.asymInstance
+					ResultSet keyResult = Controller.shsdb.select(this.keytb, "pseudo_userId", "pseudo_userId LIKE '"+userId+"'");
+					String encryptedkey;
+					String cropkey;
+					HashMap<Integer, String> undecryptedKeys = new HashMap<Integer, String>();
+					int counter=0;
+					while(keyResult.next()){
+						encryptedkey = new String (Base64.decode(keyResult.getString("pseudo_userId")));
+						if (encryptedkey.contains(this.savemaster)){
+							cropkey = this.remove(encryptedkey,this.savemaster);
+							cropkey = this.remove(cropkey, userId);
+							cropkey = this.remove(cropkey, password);
+							keys.put("masterkey", cropkey);
+						} else {
+							//Abruf der reihenfolge der keys erfolgt hardcodet. Sollte die Reihenfolge der Verschlüsselung sich ändern, muss hier ebenfalls anpassungen erfolgen.
+							undecryptedKeys.put(counter, keyResult.getString("pseudo_userId"));
+							counter++;
+						}
+					}
+					
+					String cryptedKey;
+					String privKey;
+					String symKey;				
+					cryptedKey = undecryptedKeys.get(0);
+					symKey = Controller.shscipher.crypt(cryptedKey, keys.get("masterkey"),this.masterInstance, this.decryptmode);
+					symKey = this.remove(symKey, this.savesym);
+					keys.put("secretkey", symKey);
+					
+					cryptedKey = undecryptedKeys.get(1);
+					privKey = Controller.shscipher.crypt(cryptedKey, keys.get("masterkey"), this.masterInstance, this.decryptmode);
+					privKey = this.remove(privKey,this.saveprik);
+					keys.put("privatekey", privKey);
+					
+					HashMap<String, Object> settings = new HashMap<String, Object>();
+					settings.put("keysize", this.keysize);
+					settings.put("symInstance", this.symInstance);
+					settings.put("asymInstance",this.asymInstance);
+					Controller.shscipher = Shscipher.getInstance(settings, keys);
+					HashMap<String, Object> userattributes = new HashMap<String, Object>();
+					userattributes.put(this.username, username);
+					userattributes.put(this.userId, userId);
+					userattributes.put(this.keys, Controller.shscipher);
+					user = User.getInstance(userattributes);
+
 				}else{//Exit mit User == null
 					Controller.shsgui.triggernotice(Controller.shsdb.text(14));
 				}
@@ -206,6 +256,7 @@ public class Config extends _Config {
 		} catch (SQLException | Base64DecodingException e) {
 			Controller.shsgui.triggernotice(e);
 		}
+		
 		return user;	
 	}
 	
