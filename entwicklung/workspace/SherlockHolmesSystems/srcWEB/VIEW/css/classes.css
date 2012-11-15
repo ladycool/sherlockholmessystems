@@ -6,7 +6,8 @@
 
 .loginlabel{
 	display:block;
-    font:14px/22px Arial, Helvetica, Sans-serif;
+    font:14px/22px Verdana, Tahomma, Geneva;
+    text-shadow: 1px 2px 3px #999;
     margin:3px 0 0 6px;
 }
 
@@ -36,7 +37,8 @@
     -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     color:#444;
-    font:normal 12px/14px Arial, Helvetica, Sans-serif;
+    font:normal 12px/14px Verdana, Tahomma, Geneva;
+    text-shadow: 1px 2px 3px #999;
     margin:0 auto 30px;
 	overflow:hidden;
 }
@@ -47,10 +49,11 @@ td.right{
 
 td.shstitle{
 	text-align: left;
-	font:normal 18px Arial, Helvetica, Sans-serif;
+	font:normal 18px Verdana, Tahomma, Geneva;
+	text-shadow: 1px 1px 1px #999;
 	font-size: 30px;
 	font-weight: bold;
-	color: #808080;
+	color: rgb(65,105,225);
 	margin:3px 0 4px;
     padding-bottom: 15px;
     padding-left: 8px;
@@ -68,18 +71,20 @@ td.body{
     -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     color:#444;
-    font:normal 12px/14px Arial, Helvetica, Sans-serif;
+    font:normal 12px/14px Verdana, Tahomma, Geneva;
+    text-shadow: 1px 2px 3px #999;
     margin:0 auto 30px;
 	overflow:hidden;
 }
 
 td.headerB{
-	background:rgb(192,192,192);
+	background:rgba(192,192,192, 0.5);
    -moz-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     box-shadow:rgba(0,0,0,0.15) 0 0 1px;
-    color: rgba(255,0,0, 0.7);
-    font:bold 14px Arial, Helvetica, Sans-serif;
+    color: rgb(0,191,255);
+    font:normal 14px Verdana, Tahomma, Geneva;
+   	text-shadow: 1px 1px 1px #999;
     margin:0 auto 30px;
 	overflow:hidden;
 }
@@ -90,7 +95,8 @@ td.headerA{
     -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     color:white;
-    font:bold 18px Arial, Helvetica, Sans-serif;
+    font:bold 18px Verdana, Tahomma, Geneva;
+    text-shadow: 1px 1px 1px #999;
     margin:0 auto 30px;
 	overflow:hidden;
 }
@@ -106,15 +112,19 @@ td.console{
     -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     box-shadow:rgba(0,0,0,0.15) 0 0 1px;
     color:#444;
-    font:normal 12px/14px Arial, Helvetica, Sans-serif;
+    font:normal 12px/14px Verdana, Tahomma, Geneva;
     margin:0 auto 30px;
 	overflow:hidden;
 }
 
 div.popup{
-	border: solid 2px;
-	border-top-left-radius: 10px 10px;
-	border-bottom-right-radius: 10px 10px;
+	border-style: solid;
+	border-color:rgb(65,105,225);
+	background:#eff3f6;
+    color:black;
+    font:normal 12px/14px Verdana, Tahomma, Geneva;
+    margin:0 auto 30px;
+	overflow:hidden;
 	position: relative;
 	display: none;
 	resize:both; 
@@ -152,5 +162,6 @@ body{
 .console {
 	background: white;
 }
+
 
 
