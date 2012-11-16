@@ -136,6 +136,7 @@ public class HTML implements GUI {
 	@Override
 	public void triggernotice(String message){
 		String a = Controller.shsconfig.consoleId;
+		System.out.println(message);
 		//ruft die züstandige javascript-Methode auf
 	}
 	
