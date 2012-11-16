@@ -1,5 +1,16 @@
 @Engin, Ehsan, Stella
 
+<<<<<<< .mine
+
+
+
+
+=======
+div[id="shsbody"]{
+	background-color: #808080; /*dark gray*/
+	width:100%;	
+}
+>>>>>>> .theirs
 
 select,input[type="text"],input[type="password"]{
 	background-color: #white; /*silver like*/

@@ -14,21 +14,14 @@
 
 
 <table>
-	<tr><td class="shstitle" colspan="2">
-			<%=Controller.shsconfig.programName %>
-			<%=Controller.shsgui.createImg("","",Controller.shsconfig.print) %>
-		</td>
-	</tr>
 	<tr>
-		<td class="loginlabel"><%=Controller.shsdb.text("Benutzername") %></td>
+		<td class="loginlabel"><%=Controller.shsdb.text("username") %></td>
 		<td class="logininput"><%=Controller.shsgui.defaultTXTInput(Controller.shsconfig.usernameId)%></td>
 	</tr>
-	
 	<tr>
-		<td class="loginlabel"><%=Controller.shsdb.text("Passwort")%></td>
+		<td class="loginlabel"><%=Controller.shsdb.text("Password")%></td>
 		<td class="logininput"><%=Controller.shsgui.createInput("password",Controller.shsconfig.passwordId,50)%></td>
 	</tr>
-	
 </table>
 
 <div id="<%=Controller.shsconfig.signupId%>" style="display:none;">
@@ -36,18 +29,18 @@
 </div>
 
 <table>
-	<tr><td class="right" style="padding-top:10px;">
+	<tr><td style="text-align:right;">
 		<!-- Not a memeber yet -->	
 		<%=	
 			"<span id='"+spanId+"'>"+					
-			Controller.shsgui.createA("clicktochange('signup')",Controller.shsdb.text("Noch kein Mitglied?"))+
+			Controller.shsgui.createA("clicktochange('signup')",1000000000)+
 			Controller.shsgui.space(10,Controller.shsconfig.horiz) +
 			"</span>"+
-			Controller.shsgui.createInput("submit",submitId,Controller.shsdb.text("Anmelden")) +
-			Controller.shsgui.createInput("hidden", Controller.shsconfig.signactionId, "signin") //name="signaction"
+			Controller.shsgui.createInput("submit",submitId,Controller.shsdb.text(2222)) 
 		%>
-		<input type="hidden" id="<%=bakupId%>" value="">
 		
+		<input type="hidden" id="<%=bakupId %>" name="<%=bakupId %>" value=""/>
+		<input type="hidden" id="<%=Controller.shsconfig.signactionId %>" name="<%=Controller.shsconfig.signactionId %>" value="signin"/><!-- id="signaction" -->
 		<script>
 			function clicktochange(action){					
 				bakupId = "#backup";
@@ -56,16 +49,16 @@
 				submitId = "#usercreator";
 											
 				if(action == "signup"){
-					tohtml = "<input type='button' title='"+<%=Controller.shsdb.text("\"Zur&uuml;ck&nbsp;zum&nbsp;Anmeldeformular\"")%>+"' value='"+<%=Controller.shsdb.text("\"Zur&uuml;ck\"")%>+"' onclick='clicktochange(\"signin\")'/>";
-					tohtml += "&nbsp;&nbsp;<input type='reset' value='"+<%=Controller.shsdb.text("\"Reset\"")%>+"'/>&nbsp;&nbsp;";
+					tohtml = "<input type='button' title='"+<%=Controller.shsdb.text(333)%>+"' value='"+<%=Controller.shsdb.text(333)%>+"' onclick='clicktochange(\"signin\")'/>";
+					tohtml += "&nbsp;&nbsp;<input type='reset' value='"+<%=Controller.shsdb.text(55)%>+"'/>&nbsp;&nbsp;";
 					
 					if($(bakupId).val() == ''){//So wird es sichergestellt dass die ursprüngliche Form des span-Tags aufbewahren wird
 						$(bakupId).val($(spanId).html());
 					}
-					$(submitId).val(<%=Controller.shsdb.text("'Registrieren'")%>);
+					$(submitId).val(<%=Controller.shsdb.text(11111)%>);
 				}else if(action == "signin"){
 					tohtml = $(bakupId).val();
-					$(submitId).val(<%=Controller.shsdb.text("'Anmelden'")%>);
+					$(submitId).val(<%=Controller.shsdb.text(2222)%>);
 				}				
 				animateToggle("signup","verti");
 				$(spanId).html(tohtml);
