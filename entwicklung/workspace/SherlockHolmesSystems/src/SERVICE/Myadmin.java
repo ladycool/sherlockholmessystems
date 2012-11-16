@@ -61,18 +61,18 @@ public class Myadmin implements Database {
 			// Setup the connection with the DB
 			// "jdbc:mysql://https://jonathan.sv.hs-mannheim.de/phpMyAdmin/:443/database","username","password"
 			
-				toreturn = DriverManager.getConnection(Controller.shsconfig.url_db,Controller.shsconfig.dbusername,Controller.shsconfig.dbpassword);
-				System.out.println("The biding has been proceeded");
+			toreturn = DriverManager.getConnection(Controller.shsconfig.url_db,Controller.shsconfig.dbusername,Controller.shsconfig.dbpassword);
+			System.out.println("The biding has been proceeded1");
 		} catch (SQLException | ClassNotFoundException e) {
 			Controller.shsgui.triggernotice(e);System.out.println(e.getMessage());
-			/*
-			try{				
-				toreturn = DriverManager.getConnection("jdbc:mysql:localhost:3306/kirkelstillsystems","root","");
-				System.out.println("The biding has been proceeded");
-			}catch(SQLException e2){
-				System.out.println(e2.getMessage());
-			Controller.shsgui.triggernotice(e2);
-			}		*/
+			
+//			try{				
+//				toreturn = DriverManager.getConnection("jdbc:mysql://localhost:3306/kirkelstillsystems","root","m13");
+//				System.out.println("The biding has been proceeded2");
+//			}catch(SQLException e2){
+//				System.out.println(e2.getMessage());
+//			Controller.shsgui.triggernotice(e2);
+//			}		
 			
 		}
 		
@@ -87,7 +87,7 @@ public class Myadmin implements Database {
 			if (!fields.equals("")) {
 				query += " (" + fields + ") ";
 			}
-			query += "VALUES(" + values + ")";
+			query += "VALUES('" + values + "')";
 			
 			connect.createStatement().executeQuery(query);
 			
@@ -102,8 +102,8 @@ public class Myadmin implements Database {
 	public void insert(String table,String[] fields,String[] values,String info){
 		String implodedfields="",implodedvalues="",comma="";
 		for (int i = 0; i < values.length; i++) {
-			implodedfields = comma+fields[i];
-			implodedfields = comma+values[i];
+			implodedfields = implodedfields+comma+fields[i];
+			implodedvalues = implodedvalues+comma+values[i];
 			comma=",";
 		}
 		insert(table,implodedfields,implodedvalues,info);
@@ -111,8 +111,9 @@ public class Myadmin implements Database {
 	
 	@Override
 	public void insert(String table,HashMap<String,String>attributes,String info){
-		String[] fields = (String[]) attributes.keySet().toArray();
-		String[] values = (String[]) attributes.values().toArray();
+		attributes.keySet().toArray();
+		String[] fields = attributes.keySet().toArray(new String[attributes.keySet().size()]);
+		String[] values = attributes.values().toArray(new String[attributes.values().size()]);
 		insert(table, fields, values, info);
 	}
 	
