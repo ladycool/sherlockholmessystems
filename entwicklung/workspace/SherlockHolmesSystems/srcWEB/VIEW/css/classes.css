@@ -5,16 +5,16 @@
 }
 
 .loginlabel{
+	width: 120px;
 	display:block;
     font:14px/22px Verdana, Tahomma, Geneva;
     text-shadow: 1px 2px 3px #999;
-    margin:3px 0 0 6px;
+    margin:0 0 0 6px;
 }
 
 .logininput{
-	
 	 border:3px solid #F7F9FA;
-    -webkit-border-radius:3px;
+	-webkit-border-radius:3px;
     -moz-border-radius:3px;
     border-radius:3px;
     -moz-box-shadow:2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95a2a7 inset;
@@ -26,7 +26,7 @@
 }
 
 .loginDiv {
-	width: 400px;
+	width: 450px;
 	 background:#eff3f6;
     border: 1px solid #C3D4DB;
 	border-top:1px;
@@ -39,8 +39,9 @@
     color:#444;
     font:normal 12px/14px Verdana, Tahomma, Geneva;
     text-shadow: 1px 2px 3px #999;
-    margin:0 auto 30px;
+    /*margin:0 auto 30px;*/
 	overflow:hidden;
+	padding-right: 5px;
 }
 
 td.right{
@@ -61,9 +62,8 @@ td.shstitle{
 	font-size: 30px;
 	font-weight: bold;
 	color: rgb(65,105,225);
-	margin:3px 0 4px;
     padding-bottom: 15px;
-    padding-left: 8px;
+    padding-left: 5px;
     
 }
 
@@ -173,6 +173,10 @@ body{
 
 .console {
 	background: white;
+}
+
+#spanbackId {
+	margin: 0 55px 0 0;
 }
 
 
