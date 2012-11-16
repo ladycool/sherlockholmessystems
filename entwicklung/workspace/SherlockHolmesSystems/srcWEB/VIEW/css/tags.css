@@ -1,15 +1,11 @@
 @Engin, Ehsan, Stella
 
-div[id="shsbody"]{
-	background-color: #808080; /*dark gray*/
-	width:90%;	
-}
 
 select,input[type="text"],input[type="password"]{
 	background-color: #white; /*silver like*/
 }
 
-input[type="button"], input[type=submit] {
+input[type="button"], input[type="submit"], input[type="reset"] {
 	-moz-border-radius:2px;
     -webkit-border-radius:2px;
     border-radius:15px;
@@ -31,7 +27,7 @@ input[type="button"], input[type=submit] {
 	padding:7px 21px;
 }
 
-input[type="buttonMain"] {
+input[type="buttonMain"] {/*Engin: was ist buttonmain??????*/
 	width: 50px;
 	-moz-border-radius:2px;
     -webkit-border-radius:2px;

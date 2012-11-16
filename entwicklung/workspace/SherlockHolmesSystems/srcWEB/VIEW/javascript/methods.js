@@ -36,9 +36,6 @@ function blockToggle(imgId,blockId,direction){//Aufgepasst diese Methode kann nu
 	//alert($('#shsbody').css('width'));
 }
 
-function popup(){
-	//Hier sollte ihr besonders darauf achten dass das Popup-fenster erzeugt werden sollte wo der Cursor (die Maus) sich gerade befindet :) 
-}
 
 function fupload(){
 	/**
@@ -138,6 +135,8 @@ function popup(event,popupdim,ajaxdata){
 		popuptop -= popupheight;
 	}
 	
+	updatecontainer(popupid,ajaxdata);
+	
 	popupleft +=px;
 	popuptop +=px;
 	popupwidth +=px;
@@ -147,21 +146,28 @@ function popup(event,popupdim,ajaxdata){
 			top: popuptop,
 			width: popupwidth,
 			height: popupheight
-	      });
-	$(popupid).show('50');//hide() -> to shut it down	
+	      }).show('50');
+	//hide() -> to shut it down	
 	//http://www.joelpeterson.com/blog/2010/12/quick-and-easy-windowless-popup-overlay-in-jquery/
 	//show(), hide(), popup(), fadein(), fadeout()
+}
 
+
+function updatecontainer(containerId,ajaxdata){
+	if(containerId.charAt(0) != "#"){containerId = "#"+containerId;}
+	var toreplace = "CLOSETAG";
+	var closetag = "";
+	
 	$.ajax({
 		type: "POST",
 		cache: true,
 		dataType: "html",
 		data: ajaxdata,
-		url: "VIEW/VIEWCONTROLLER/ajaxhandler.jsp",//ICH BIN HIER ___________________________________
+		url: "VIEW/VIEWCONTROLLER/ajaxhandler.jsp",
 		success:function(text){
-			alert(ajaxdata);
+			text = text.replace(toreplace,closetag);
+			$(containerId).html(text);
 		}
 	});
 }
-
 

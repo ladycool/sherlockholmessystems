@@ -1,6 +1,7 @@
 package MODEL;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.crypto.Cipher;
@@ -88,6 +89,9 @@ public abstract class _Config {
 	consoletdId = consoleId+"_td",
 	passwordId = "password",
 	usernameId = "username",
+	fullnameId = "fullname",
+	addressId = "address",
+	phonenrId = "phonenr",
 	
 	programName = "Holmes Secure",
 	
@@ -98,7 +102,6 @@ public abstract class _Config {
 	uploadtypeB = "fromdb",
 	uploadtypeC = "external",
 	savesym = "savesym",
-	savepubk = "savepubk",
 	saveprik = "saveprik",
 	savemaster = "savemaster",
 	
@@ -118,10 +121,10 @@ public abstract class _Config {
 	public final String
 	driver="jdbc:mysql:",//com.mysql.jdbc.Driver
 	port="3306",//3306
-	url="https://jonathan.sv.hs-mannheim.de", // "//jonathan.sv.hs-mannheim.de/phpMyAdmin/",//141.19.141.151
+	url="jonathan.sv.hs-mannheim.de", // "//jonathan.sv.hs-mannheim.de/phpMyAdmin/",
 	host="localhost",
 	db="kirkelstillsystems",
-	url_db= driver+url+sep+host+sep+db,//driver+url +":"+port+"/"+db,
+	url_db= driver+sep+sep+url+":"+port+sep+db,//driver+url +":"+port+"/"+db,
 	dbusername="kirkelstill",
 	dbpassword="kirkelstill",
 	
@@ -129,7 +132,8 @@ public abstract class _Config {
 	dbuserId="userid",
 	userId = dbuserId,
 	keys="keys",
-	keytb="key",
+	keytb="keys",
+	pubkeytb="public_keys",
 	filestb ="files",
 	pathtb = "path_definition",
 	username="username",
@@ -176,8 +180,8 @@ public abstract class _Config {
 	threadinternal = "maininternal",
 	threadexternal = "mainexternal"
 	;
-	protected HashMap<Integer, String[]> externalviewdata = new HashMap<Integer,String[]>();
-	protected HashMap<Integer, String[]> internalviewdata = new HashMap<Integer,String[]>();
+	protected HashMap<String, ArrayList<String>> externalviewdata = new HashMap<String, ArrayList<String>>();
+	protected HashMap<String, ArrayList<String>> internalviewdata = new HashMap<String, ArrayList<String>>();
 	protected boolean loadingisdone = false;
 	
 	
@@ -240,15 +244,23 @@ public abstract class _Config {
 		this.loadingisdone = true;
 	}
 	
-	public boolean getloadingisdone(){
+	public boolean loadingstatus(){//System.nanoTime();
+		long curtime, lapsedtime = 0,trialnr=0;
+		while(!this.loadingisdone && trialnr < 40){
+			curtime = System.currentTimeMillis();
+			while(lapsedtime <= 500){//jede halbe Sekunde
+				lapsedtime = System.currentTimeMillis() - curtime;
+			}
+			trialnr++;
+		}
 		return this.loadingisdone;
 	}
 	
-	public HashMap<Integer, String[]> getinternalviewdata(){
+	public HashMap<String, ArrayList<String>> getinternalviewdata(){
 		return this.internalviewdata;
 	}
 	
-	public HashMap<Integer, String[]> getexternalviewdata(){
+	public HashMap<String, ArrayList<String>> getexternalviewdata(){
 		return this.externalviewdata;
 	}
 	//METHODS ABSTRACT
@@ -258,9 +270,9 @@ public abstract class _Config {
 	 * @param attributes: benutzerspezifische Eigenschaften
 	 * @return User || null
 	 */
-	protected abstract User loginSHS(String type,HashMap<String,String>attributes);
+	public abstract User loginSHS(String type,HashMap<String,String>attributes);
 	
-	protected abstract void loadUserView(User user); 
+	public abstract void loadUserView(); 
 	
 	/*
 	 * loginSHS
@@ -294,7 +306,7 @@ public abstract class _Config {
 	 * Passiert beim Laden der Hauptseite.
 	 * @return {@link HashMap} HashMap<Integer, String[]>: Integer = Zähler, String[]={0->ticketId,1->sent_by,2->filename}
 	 */
-	public abstract HashMap<Integer, String[]> gettickets();
+	public abstract HashMap<String, ArrayList<String>> gettickets();
 	
 	/**
 	 * Geschiet während dem Versuch sich eine Fremddatei anzusehen

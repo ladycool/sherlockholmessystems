@@ -59,27 +59,31 @@ public class Myadmin implements Database {
 			Class.forName("com.mysql.jdbc.Driver");// "oracle.jdbc.driver.OracleDriver"
 			System.out.println("MySQL JDBC driver loaded ok.");
 			// Setup the connection with the DB
-			// "jdbc:mysql://https://jonathan.sv.hs-mannheim.de/phpMyAdmin/:443/database","username","password"
+			// "jdbc:mysql://https://jonathan.sv.hs-mannheim.de/phpMyAdmin/:3306/database","username","password"
 			
 				toreturn = DriverManager.getConnection(Controller.shsconfig.url_db,Controller.shsconfig.dbusername,Controller.shsconfig.dbpassword);
-				System.out.println("The biding has been proceeded");
+				//System.out.println("The biding has been proceeded1");
 		} catch (SQLException | ClassNotFoundException e) {
 			Controller.shsgui.triggernotice(e);System.out.println(e.getMessage());
 			/*
 			try{				
-				toreturn = DriverManager.getConnection("jdbc:mysql:localhost:3306/kirkelstillsystems","root","");
-				System.out.println("The biding has been proceeded");
+				toreturn = DriverManager.getConnection("jdbc:mysql://localhost:1433/kirkelstillsystems","root","deburnatshazem");
+				System.out.println("The biding has been proceeded2");
 			}catch(SQLException e2){
 				System.out.println(e2.getMessage());
-			Controller.shsgui.triggernotice(e2);
-			}		*/
-			
+				Controller.shsgui.triggernotice(e2);
+			}		
+			*/
 		}
 		
 		return toreturn;
 	}
 
-
+	@Override
+	public void insert(String table,String values,String info){
+		this.insert(table,"",values,info);
+	}
+	
 	@Override
 	public void insert(String table, String fields, String values, String info){
 		try {
@@ -181,7 +185,7 @@ public class Myadmin implements Database {
 			if (!others.isEmpty()) {
 				query += " "+others;
 			}
-
+			System.out.println(query);
 			result = connect.createStatement().executeQuery(query);
 			
 		} catch (SQLException e) {
@@ -200,7 +204,6 @@ public class Myadmin implements Database {
 
 	@Override
 	public String text(int id){
-		/*
 		String toreturn="";
 		try {
 			String lang;
@@ -210,15 +213,14 @@ public class Myadmin implements Database {
 				lang = (String) Controller.shsuser.getattr("language");
 			}
 			
-			String field = "text_"+lang;
+			String field = lang;
 			ResultSet result = this.select("text", field,"id="+id,"");
+			result.next();
 			toreturn = result.getString(field);
 		} catch (SQLException e) {
 			Controller.shsgui.triggernotice(e);
 		}
 		return toreturn;
-		*/
-		return ""+id;
 	}
 	
 	@Override

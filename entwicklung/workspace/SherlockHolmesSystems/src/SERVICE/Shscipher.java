@@ -218,6 +218,10 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	}
 	
 	/**
+	 * TO DO registerKeys()
+	 */
+	
+	/**
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unused")
