@@ -8,8 +8,14 @@
 	defaultAction = "'" + Controller.shsconfig.signactionB + "'" //signup
 	;
 
+	String
+	username = (String)session.getAttribute(Controller.shsconfig.usernameId)
+	;
+	
+	if(username == null){ username="";}
    //Controller.shsdb.text("username")
-   out.print(Controller.shsdb != null);
+   //out.print(Controller.shsdb != null);
+   
 %>
 
 
@@ -21,7 +27,7 @@
 	</tr>
 	<tr>
 		<td class="loginlabel"><%=Controller.shsdb.text("Benutzername") %></td>
-		<td class="logininput"><%=Controller.shsgui.defaultTXTInput(Controller.shsconfig.usernameId)%></td>
+		<td class="logininput"><%=Controller.shsgui.createInput("text",Controller.shsconfig.usernameId,username,50,"")%></td>
 	</tr>
 	
 	<tr>

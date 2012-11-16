@@ -1,7 +1,8 @@
 	<!-- protected HashMap<String, ArrayList<String>> externalviewdata -->
 	<%@ page import="CONTROLLER.Controller" %>
 	<%
-		String[] filedata;//ticketid,filename
+		//obwohl der Checker mekert ist alles richtig, das Objekt wird nämlich bereits voher erzeugt.
+		filedata = new String[]{};//ticketid,filename
 	%>
 	
 	<table><tr>

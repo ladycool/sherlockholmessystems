@@ -94,5 +94,10 @@ public interface Database {
 	 * @return
 	 */
 	public String text(String message);
+	
+	/**
+	 * Schliesst die Verbindung zu, die beim Anlegen des Objekts aufgebaut wurde
+	 */
+	public void close();
 	// Zusätzliches---END
 }

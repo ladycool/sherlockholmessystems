@@ -92,6 +92,8 @@ public abstract class _Config {
 	fullnameId = "fullname",
 	addressId = "address",
 	phonenrId = "phonenr",
+	languageId = "language",
+	noticeId = "notice",
 	
 	programName = "Holmes Secure",
 	
@@ -175,14 +177,17 @@ public abstract class _Config {
 	;
 	
 	
-	//THREADS and THREADS-RELATED
+	//THREADS and THREADS-RELATED + Session and Session-related
 	public final String
 	threadinternal = "maininternal",
-	threadexternal = "mainexternal"
+	threadexternal = "mainexternal",
+	notice = "notice",
+	inputdata = "inputdata"
 	;
 	protected HashMap<String, ArrayList<String>> externalviewdata = new HashMap<String, ArrayList<String>>();
 	protected HashMap<String, ArrayList<String>> internalviewdata = new HashMap<String, ArrayList<String>>();
 	protected boolean loadingisdone = false;
+	
 	
 	
 	
@@ -244,7 +249,7 @@ public abstract class _Config {
 		this.loadingisdone = true;
 	}
 	
-	public boolean loadingstatus(){//System.nanoTime();
+	protected boolean loadingstatus(){//System.nanoTime();
 		long curtime, lapsedtime = 0,trialnr=0;
 		while(!this.loadingisdone && trialnr < 40){
 			curtime = System.currentTimeMillis();

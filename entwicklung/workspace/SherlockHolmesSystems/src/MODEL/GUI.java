@@ -53,6 +53,7 @@ public interface GUI {
 	
 	/**
 	 * Analog zu der Methode: createInput. Zusatzlich wird hier eine Datenbank verbindung mit der Tabelle "element_names" aufgebaut.
+	 * @deprecated Verglichen zu der Anwendungshäufigkeit ist der Implementieraufwand im Moment zu hoch
 	 * @return
 	 */
 	public String createSelect();

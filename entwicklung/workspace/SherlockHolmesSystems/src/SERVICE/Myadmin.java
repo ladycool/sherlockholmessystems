@@ -185,7 +185,7 @@ public class Myadmin implements Database {
 			if (!others.isEmpty()) {
 				query += " "+others;
 			}
-			System.out.println(query);
+			//System.out.println(query);
 			result = connect.createStatement().executeQuery(query);
 			
 		} catch (SQLException e) {
@@ -202,18 +202,18 @@ public class Myadmin implements Database {
 		return select(table, fields, condition,"");
 	}
 
+	///////////////Zusätzlich-Start/////////////////////////
 	@Override
 	public String text(int id){
 		String toreturn="";
 		try {
-			String lang;
-			if(Controller.shsuser == null){
-				lang = Controller.shsconfig.getlang();
-			}else{
-				lang = (String) Controller.shsuser.getattr("language");
+			String field = Controller.shsconfig.getlang();
+			if(Controller.shsuser != null){
+				if(!((String) Controller.shsuser.getattr("language")).isEmpty()){
+					field = (String) Controller.shsuser.getattr("language");
+				}
 			}
-			
-			String field = lang;
+
 			ResultSet result = this.select("text", field,"id="+id,"");
 			result.next();
 			toreturn = result.getString(field);
@@ -228,7 +228,7 @@ public class Myadmin implements Database {
 		return message;
 	}
 	
-	
+	@Override
 	public void close() {
 		try {
 			if(connect != null){connect.close();}
@@ -236,4 +236,6 @@ public class Myadmin implements Database {
 			Controller.shsgui.triggernotice(e);
 		}
 	}
+	
+///////////////Zusätzlich-End/////////////////////////
 }

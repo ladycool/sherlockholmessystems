@@ -181,6 +181,7 @@ public class Config extends _Config {
 		try {
 			String username = attributes.get(this.username);
 			ResultSet result = Controller.shsdb.select(this.usertb, "*", "username LIKE '"+username+"'");
+			result.next();
 			if(result.getString("username").isEmpty()){//Exit mit User == null
 				String text = Controller.shsdb.text(12).replace("%%",username);
 				Controller.shsgui.triggernotice(text);
@@ -277,6 +278,8 @@ public class Config extends _Config {
 		
 		threadinternal.start();
 		threadexternal.start();
+		
+		this.loadingstatus();
 	}
 	
 	@Override

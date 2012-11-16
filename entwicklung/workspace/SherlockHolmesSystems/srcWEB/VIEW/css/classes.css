@@ -47,6 +47,13 @@ td.right{
 	text-align: right;
 }
 
+td.notice{
+	text-align: left;
+	border-top: solid gray 1px;
+	color: red;
+}
+
+
 td.shstitle{
 	text-align: left;
 	font:normal 18px Verdana, Tahomma, Geneva;
@@ -118,12 +125,10 @@ td.console{
 }
 
 div.popup{
-<<<<<<< HEAD
 	border: solid 2px;
 	border-top-left-radius: 10px 10px;
 	border-bottom-right-radius: 10px 10px;
 	position: absolute;
-=======
 	border-style: solid;
 	border-color:rgb(65,105,225);
 	background:#eff3f6;
@@ -132,7 +137,6 @@ div.popup{
     margin:0 auto 30px;
 	overflow:hidden;
 	position: relative;
->>>>>>> ed66c3831dcf626784af7ac45b350e23432caa10
 	display: none;
 	resize: both; 
 }
@@ -170,6 +174,7 @@ body{
 .console {
 	background: white;
 }
+
 
 
 
