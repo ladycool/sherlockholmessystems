@@ -1,13 +1,18 @@
 <%@ page import="CONTROLLER.Controller" %>
-
+<%
+	String name = Controller.shsuser.getattr("fullname") +" ["+Controller.shsuser.getattr("username")+"]";
+	String tile = "";
+%>
 <table><tr>
 	<td  class="left">
-		Peter Lustig
+		<%=Controller.shsgui.createA("",name) %>
 	</td>
-	<td class="right">
-		<%=Controller.shsgui.createInput("buttonMain", "", "LOGOUT") %>
-		<%=Controller.shsgui.createInput("buttonMain", "", "Hilfe") %>
-		<%=Controller.shsgui.createInput("buttonMain","","Einstellung",
-				"popup(event,'"+"',{width:100,height:100},{name:'john',location:'mannheim'})")%>
+	<td>
+		<%=Controller.shsgui.createInput("button","","Einstellung",
+				"popup(event,{width:100,height:100},{action:'setting'})")%>
+		<%=Controller.shsgui.space(2, Controller.shsconfig.horiz) %>
+		<%=Controller.shsgui.createInput("button", "", "Hilfe") %>
+		<%=Controller.shsgui.createInput("button", "", "LOGOUT") %>
+		<!-- Der Button Tag in css führt dazu das die Buttons in umgekehrten Reihenfolge angezeigt werden: Was nicht gut ist -->
 	</td>
 </tr></table>

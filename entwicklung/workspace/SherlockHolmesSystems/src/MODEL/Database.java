@@ -20,11 +20,20 @@ public interface Database {
 	 */
 	public void insert(String table, String fields, String values, String info);
 	
+	/**
+	 * @see public void insert(String table, String fields, String values, String info);
+	 */
 	public void insert(String table,String[] fields,String[] values,String info);
 	
+	/**
+	 * @see public void insert(String table, String fields, String values, String info);
+	 */
 	public void insert(String table,HashMap<String, String>attributes,String info);
 	
-	
+	/**
+	 * @see public void insert(String table, String fields, String values, String info);
+	 */
+	public void insert(String table, String values, String info);
 	
 	/**
 	 * @doc UPDATE-Befehl in mysql == UPDATE Erweiterng der update-Methode
@@ -85,5 +94,10 @@ public interface Database {
 	 * @return
 	 */
 	public String text(String message);
+	
+	/**
+	 * Schliesst die Verbindung zu, die beim Anlegen des Objekts aufgebaut wurde
+	 */
+	public void close();
 	// Zusätzliches---END
 }

@@ -21,7 +21,7 @@ public interface GUI {
 	 * @param onclick
 	 * @return <input type="type" id="id" value="value"/>
 	 */
-	public String createInput(String type,String id,String value,String onclick);
+	public String createInput(String type,String id,Object value,String onclick);
 	
 	/**
 	 * <input/>-Feld in HTML. Diese Methode sollte bei Input-Tags benutzt werden die eine bestimmte Länge benötigen
@@ -32,7 +32,7 @@ public interface GUI {
 	 * @param onclick
 	 * @return <input type="type" id="id" value="value"/>
 	 */
-	public String createInput(String type,String id,String value,int length,String onclick);
+	public String createInput(String type,String id,Object value,int length,String onclick);
 	
 
 	/**
@@ -53,6 +53,7 @@ public interface GUI {
 	
 	/**
 	 * Analog zu der Methode: createInput. Zusatzlich wird hier eine Datenbank verbindung mit der Tabelle "element_names" aufgebaut.
+	 * @deprecated Verglichen zu der Anwendungshäufigkeit ist der Implementieraufwand im Moment zu hoch
 	 * @return
 	 */
 	public String createSelect();
@@ -115,28 +116,28 @@ public interface GUI {
 	 * @param mouseover
 	 * @param mouseout
 	 * @param otherEvents Bsp: "ondbleclick=\"do something\""
-	 * @param textId
+	 * @param text
 	 * @return String: <a></a>
 	 */
-	public String createA(String id,String click,String mouseover,String mouseout,String otherEvents,int textId);
+	public String createA(String id,String click,String mouseover,String mouseout,String otherEvents,Object text);
 	
 	/**
 	 * Vereinfachte Form der Methode: createA(String id,String href,String mouseover,String mouseout,String event,int textId)
 	 * @param href
 	 * @param mouseover
 	 * @param mouseout
-	 * @param textId
+	 * @param text
 	 * @return String: <a></a>
 	 */
-	public String createA(String click,String mouseover,String mouseout,int textId);
+	public String createA(String click,String mouseover,String mouseout,Object text);
 	
 	/**
 	 * Vereinfachte Form der Methode: createA(String id,String href,String mouseover,String mouseout,String event,int textId)
 	 * @param click
-	 * @param textId
+	 * @param text
 	 * @return String: <a></a>
 	 */
-	public String createA(String click,int textId);
+	public String createA(String click,Object text);
 	
 	/**
 	 * Reicht Meldung zur Konsole weiter.

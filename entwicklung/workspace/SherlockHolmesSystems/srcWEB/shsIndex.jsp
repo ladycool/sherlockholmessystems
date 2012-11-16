@@ -29,7 +29,7 @@
 
 	//destroy
 	public void jspdestroy(){
-		
+		Controller.shsdb.close();
 	}
 %>
 
@@ -42,7 +42,7 @@
 		<script src="<%=absPath+Controller.shsconfig.jquery %>" type="text/javascript"></script>	
 		<script src="<%=absPath+Controller.shsconfig.jsmeth %>" type="text/javascript"></script>	
 		
-		<title>Controller.shsconfig.title</title>
+		<title><%=Controller.shsconfig.title%></title>
 	</head>
 	
 	<body>

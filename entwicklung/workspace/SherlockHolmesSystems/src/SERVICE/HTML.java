@@ -25,8 +25,17 @@ public class HTML implements GUI {
 	
 	
 	@Override
-	public String createInput(String type,String id,String value,int length,String onclick) {
-		String input = "<input type=\""+type+"\" id=\""+id+"\" name=\""+id+"\" value=\""+value+"\"";	
+	public String createInput(String type,String id,Object value,int length,String onclick) {
+		if(value instanceof String){
+			value = (String)value;
+		}else if(value instanceof Integer){
+			value = Controller.shsdb.text((int)value);
+		}
+		
+		String input = "<input type=\""+type+"\" id=\""+id+"\" value=\""+value+"\"";
+		if(!(type.equals("submit") || type.equals("button"))){
+			input += " name=\""+id+"\"";
+		}
 		if(length > 0){
 			input += " size=\""+length+"\"";
 		}
@@ -38,7 +47,7 @@ public class HTML implements GUI {
 	}
 	
 	@Override
-	public String createInput(String type,String id,String value,String onclick) {
+	public String createInput(String type,String id,Object value,String onclick) {
 		return createInput(type,id,value,0,onclick);
 	}
 	
@@ -143,7 +152,14 @@ public class HTML implements GUI {
 	}
 	
 	@Override
-	public String createA(String id,String click,String mouseover,String mouseout,String otherEvents,int textId){
+	public String createA(String id,String click,String mouseover,String mouseout,String otherEvents,Object text){
+		if(text instanceof String){
+			text = (String)text;
+		}else if(text instanceof Integer){
+			text = Controller.shsdb.text((int)text);
+		}
+		
+		
 		String toreturn = "<a ";
 		if(!id.isEmpty()){
 			//id += "_a";
@@ -165,19 +181,19 @@ public class HTML implements GUI {
 			toreturn += "onclick=\""+click+"\" ";
 		}
 		
-		toreturn +=otherEvents+">"+Controller.shsdb.text(textId)+"</a>";
+		toreturn +=otherEvents+">"+text+"</a>";
 		
 		return toreturn;
 	}
 		
 	@Override
-	public String createA(String click,String mouseover,String mouseout,int textId){
-		return createA("",click, mouseover, mouseout,"", textId);
+	public String createA(String click,String mouseover,String mouseout,Object text){
+		return createA("",click, mouseover, mouseout,"", text);
 	}
 	
 	@Override
-	public String createA(String click, int textId) {
-		return createA("",click,"","","",textId);
+	public String createA(String click, Object text) {
+		return createA("",click,"","","",text);
 	}
 
 	@Override
