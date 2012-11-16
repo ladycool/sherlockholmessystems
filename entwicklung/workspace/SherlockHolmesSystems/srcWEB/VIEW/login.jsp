@@ -9,7 +9,7 @@
 		<form action="" method="POST"><!-- Zusatzpfad zum Testen: /VIEW/controllboard.jsp -->
 			<%@ include file="/VIEW/VIEWCONTROLLER/signin.jsp" %>
 		</form>
-		<%if(!((String)session.getAttribute(Controller.shsconfig.notice)).isEmpty()){%>
+		<%if(session.getAttribute(Controller.shsconfig.notice) != null){%>
 			<table><tr>
 			<td class="notice" id="<%=Controller.shsconfig.consoleId%>"><%=session.getAttribute(Controller.shsconfig.notice) %></td>
 			</tr></table>

@@ -74,6 +74,14 @@ public class Myadmin implements Database {
 				Controller.shsgui.triggernotice(e2);
 			}		
 			*/
+//			try{				
+//				toreturn = DriverManager.getConnection("jdbc:mysql://localhost:3306/kirkelstillsystems","root","m13");
+//				System.out.println("The biding has been proceeded2");
+//			}catch(SQLException e2){
+//				System.out.println(e2.getMessage());
+//			Controller.shsgui.triggernotice(e2);
+//			}		
+			
 		}
 		
 		return toreturn;
@@ -91,7 +99,6 @@ public class Myadmin implements Database {
 			if (!fields.equals("")) {
 				query += " (" + fields + ") ";
 			}
-			query += "VALUES(" + values + ")";
 			System.out.println(query);
 			connect.createStatement().executeQuery(query);
 			
@@ -107,8 +114,8 @@ public class Myadmin implements Database {
 	public void insert(String table,String[] fields,String[] values,String info){
 		String implodedfields="",implodedvalues="",comma="";
 		for (int i = 0; i < values.length; i++) {
-			implodedfields = comma+fields[i];
-			implodedfields = comma+values[i];
+			implodedfields = implodedfields+comma+fields[i];
+			implodedvalues = implodedvalues+comma+values[i];
 			comma=",";
 		}
 		insert(table,implodedfields,implodedvalues,info);
@@ -116,8 +123,9 @@ public class Myadmin implements Database {
 	
 	@Override
 	public void insert(String table,HashMap<String,String>attributes,String info){
-		String[] fields = (String[]) attributes.keySet().toArray();
-		String[] values = (String[]) attributes.values().toArray();
+		attributes.keySet().toArray();
+		String[] fields = attributes.keySet().toArray(new String[attributes.keySet().size()]);
+		String[] values = attributes.values().toArray(new String[attributes.values().size()]);
 		insert(table, fields, values, info);
 	}
 	
