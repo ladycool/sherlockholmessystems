@@ -2,6 +2,7 @@ package test;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
@@ -23,9 +24,18 @@ public class Launch {
 	public static void main(String[] args) throws Base64DecodingException, SQLException{
 		
 		Myadmin a  = Myadmin.getInstance();
-		ResultSet result = a.select("text", "deu", "id=3");
-		result.next();
-		System.out.println(result.getString("deu"));
+		String result = a.text(55);
+		//result.next();
+		System.out.println(result);
+		/*
+		
+		HashMap<String, String> attributes = new HashMap<String, String>();
+		attributes.put(Controller.shsconfig.username, "test");
+		attributes.put(Controller.shsconfig.password, "test");
+		attributes.put(Controller.shsconfig.language, "eng");
+		
+		Controller.shsuser = Controller.shsconfig.loginSHS("signup",attributes);
+		*/
 	}
 
 }

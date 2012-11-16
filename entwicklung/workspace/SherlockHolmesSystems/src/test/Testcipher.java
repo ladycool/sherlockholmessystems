@@ -13,12 +13,14 @@ public class Testcipher {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		String key = "dsk üüdclsädäööldcö";
+		String wer= "dsk üüdclsädäööldcö";
 		Shscipher a = Shscipher.getInstance(Controller.shsconfig.keysize, 
 				Controller.shsconfig.symInstance, 
 				Controller.shsconfig.asymInstance);
 		
-		//a.crypt(key, instance, Cipher.ENCRYPT_MODE);
+		String b = a.crypt(wer, "AES", Cipher.ENCRYPT_MODE);
+		
+		System.out.println(b);
 	}
 
 }

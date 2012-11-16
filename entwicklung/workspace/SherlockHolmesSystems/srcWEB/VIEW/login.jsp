@@ -11,7 +11,7 @@
 		</form>
 		<%if(!((String)session.getAttribute(Controller.shsconfig.notice)).isEmpty()){%>
 			<table><tr>
-			<td class="notice" id="<%=Controller.shsconfig.noticeId%>"><%=session.getAttribute(Controller.shsconfig.notice) %></td>
+			<td class="notice" id="<%=Controller.shsconfig.consoleId%>"><%=session.getAttribute(Controller.shsconfig.notice) %></td>
 			</tr></table>
 		<%}%>
 	</div>

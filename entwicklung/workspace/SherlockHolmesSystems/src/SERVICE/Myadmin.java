@@ -53,18 +53,18 @@ public class Myadmin implements Database {
 	 * @return
 	 */
 	private Connection dbconnect() {
-		Connection toreturn = null;
+		Connection toreturn = null;//http://p2p.wrox.com/jsp-basics/65998-illegal-operation-empty-result-set.html
 		try {
 			// Load the MySQL JDBC driver
 			Class.forName("com.mysql.jdbc.Driver");// "oracle.jdbc.driver.OracleDriver"
-			System.out.println("MySQL JDBC driver loaded ok.");
 			// Setup the connection with the DB
 			// "jdbc:mysql://https://jonathan.sv.hs-mannheim.de/phpMyAdmin/:3306/database","username","password"
 			
 				toreturn = DriverManager.getConnection(Controller.shsconfig.url_db,Controller.shsconfig.dbusername,Controller.shsconfig.dbpassword);
 				//System.out.println("The biding has been proceeded1");
 		} catch (SQLException | ClassNotFoundException e) {
-			Controller.shsgui.triggernotice(e);System.out.println(e.getMessage());
+			Controller.shsgui.triggernotice(e);
+			System.out.println(e.getMessage());
 			/*
 			try{				
 				toreturn = DriverManager.getConnection("jdbc:mysql://localhost:1433/kirkelstillsystems","root","deburnatshazem");
@@ -92,13 +92,14 @@ public class Myadmin implements Database {
 				query += " (" + fields + ") ";
 			}
 			query += "VALUES(" + values + ")";
-			
+			System.out.println(query);
 			connect.createStatement().executeQuery(query);
 			
 			if(info.isEmpty()){info =this.text(344);}
 			Controller.shsgui.triggernotice(info);
 		} catch (SQLException e) {
 			Controller.shsgui.triggernotice(e);
+			e.printStackTrace();
 		}
 	}
 
@@ -189,7 +190,8 @@ public class Myadmin implements Database {
 			result = connect.createStatement().executeQuery(query);
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			e.getMessage();
+			Controller.shsgui.triggernotice(e);
 		}
 
 		return result;

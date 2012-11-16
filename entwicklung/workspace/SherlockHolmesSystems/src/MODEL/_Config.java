@@ -93,7 +93,6 @@ public abstract class _Config {
 	addressId = "address",
 	phonenrId = "phonenr",
 	languageId = "language",
-	noticeId = "notice",
 	
 	programName = "Holmes Secure",
 	
@@ -140,6 +139,7 @@ public abstract class _Config {
 	pathtb = "path_definition",
 	username="username",
 	password="password",
+	language="language",
 	txtlinebreak="<shsbr/>",
 	stamp = "CURRENT_TIMESTAMP";
 	;	

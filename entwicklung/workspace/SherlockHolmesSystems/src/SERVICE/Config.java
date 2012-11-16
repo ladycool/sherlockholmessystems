@@ -91,18 +91,20 @@ public class Config extends _Config {
 	}
 	
 	/**
-	 * @author Shazem (Patrick): ERLEDIGT, NOCH NICHT GETESTET
+	 * @author Shazem (Patrick): ERLEDIGT, TESTE GERADE
 	 * 					An alle Entwickler, das solltet ihr als Beispiel benutzen.
 	 * @param attributes
 	 * @return
 	 */
 	private User signup(HashMap<String, String>attributes){
 		HashMap<String, String> toinsert = new HashMap<String, String>();
-		String username = attributes.get(this.username);		
-		ResultSet result = Controller.shsdb.select(this.usertb,"username", "username LIKE '"+username+"'","");
+		String username = attributes.get(this.username);
+		ResultSet result = Controller.shsdb.select(this.usertb,"username", "username LIKE "+this.wrap(username));
+		//create a pseudo and delete it later.
 		User user = null;
 		
 		try {
+			result.next();
 			if(result.getString(this.username).isEmpty()){
 				
 				//Tabelle: user
