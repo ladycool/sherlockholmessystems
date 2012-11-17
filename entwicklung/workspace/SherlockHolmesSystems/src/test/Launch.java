@@ -22,16 +22,20 @@ public class Launch {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws Base64DecodingException, SQLException{
-		/*Dieser Test ist gultig und erfolgreich
-		 * 
+		//Dieser Test ist gultig und erfolgreich
+		  
 		HashMap<String, String> attributes = new HashMap<String, String>();
 		attributes.put(Controller.shsconfig.username, "test3");
 		attributes.put(Controller.shsconfig.password, "test3");
 		attributes.put(Controller.shsconfig.language, "eng");
 		
+		System.out.println(attributes.toString());
+		attributes.remove(Controller.shsconfig.language);
+		System.out.println(attributes.toString());
+		/*
 		Controller.shsuser = Controller.shsconfig.loginSHS("signup",attributes);
 		System.out.println(Controller.shsuser == null);
-		 */
+		 
 
 		
 		HashMap<String, String> attributes = new HashMap<String, String>();
@@ -39,6 +43,8 @@ public class Launch {
 		attributes.put(Controller.shsconfig.password, "test3");
 		Controller.shsuser = Controller.shsconfig.loginSHS("signin",attributes);
 		System.out.println(Controller.shsuser == null);
+		*/
+		
 		
 	}
 

@@ -311,24 +311,29 @@ public class Config extends _Config {
 		HashMap<String, ArrayList<String>> toreturn = new HashMap<String,ArrayList<String>>();
 
 		try {
-			String pseudouserId = (String) Controller.shsuser.getattr("userId") + (String) Controller.shsuser.getattr("username");
+			String _pseudouserId = (String) Controller.shsuser.getattr("userId") + (String) Controller.shsuser.getattr("username");
+			byte[] pseudouserId = _pseudouserId.getBytes();
 			pseudouserId = Controller.shscipher.crypt(pseudouserId,this.symInstance,this.encryptmode);
-			ResultSet 
-			result = Controller.shsdb.select(this.filestb,"id,key,pathdef","pseudouserId LIKE "+wrap(pseudouserId)),
-			result1;
+			ResultSet result=null,result1;
+			try{
+				result = Controller.shsdb.select(this.filestb,"id,key,pathdef","pseudouserId LIKE "+wrap(pseudouserId));
+			}catch(Exception e){
+				//Für den Fall, dass die Suche leer ist
+			}
 			
-			String pseudokey,pseudopath,path,sep,fileId,filename="";
+			String path,sep,fileId,filename="";
+			byte[] pseudopath,pseudokey;
 			String[] temp;
 			int i = 0;
 			
 			while(result.next()){
 				path = ""; sep="";
-				pseudokey = result.getString("key");
+				pseudokey = result.getBytes("key");
 				pseudokey = Controller.shscipher.crypt(pseudokey,this.symInstance,this.decryptmode);
-				pseudopath = result.getString("pathdef");
+				pseudopath = result.getBytes("pathdef");
 				pseudopath = Controller.shscipher.crypt(pseudopath, pseudokey, this.symInstance,this.decryptmode);
-				temp = pseudopath.split(this.sep);
-								
+				
+				temp = new String(pseudopath).split(this.sep);			
 				for (String t : temp) {
 					result1 = Controller.shsdb.select(this.pathtb,"pathname","def LIKE "+wrap(t));
 					result1.next();
@@ -347,6 +352,7 @@ public class Config extends _Config {
 					toreturn.get(path).add(fileId+this.sep+this.sep+filename);
 				}				
 			}
+			Controller.shsdb.text(33);
 		} catch (SQLException e) {
 			Controller.shsgui.triggernotice(e);
 		}
@@ -367,31 +373,55 @@ public class Config extends _Config {
 	@Override
 	public void uploadfile(String localpath,String newpath){
 		try {
-			HashMap<String,String> toinsert = new HashMap<String, String>();
+			HashMap<String,Object> toinsert = new HashMap<String, Object>();
 			//pseudo user
-			String pseudouserId = (String)Controller.shsuser.getattr("userId") + (String)Controller.shsuser.getattr("username");
+			String _pseudouserId = (String)Controller.shsuser.getattr("userId") + (String)Controller.shsuser.getattr("username");
 			//Ich habe mich an der Stelle gegen Base64 um für den Fall dass die userId geknackt wird die Zuordnung nicht direkt zu erkennen
 			//pseudouserId = Base64.encode(pseudouserId.getBytes());
-			pseudouserId = wrap(Controller.shscipher.crypt(pseudouserId, this.symInstance, this.encryptmode));
+			byte[] pseudouserId = Controller.shscipher.crypt(_pseudouserId.getBytes(), this.symInstance, this.encryptmode);
 			toinsert.put("pseudouserId", pseudouserId);
 			
-			String[]temp = localpath.split("/");
-			String pseudokey = this.random(this.keysize);
-			String content = wrap(Controller.shscipher.encryptfile(localpath, pseudokey));			
-			pseudokey = wrap(Controller.shscipher.crypt(pseudokey, this.symInstance, this.encryptmode));
+			
+			byte[] pseudokey = super.random(this.keysize);
+			byte[] content = (byte[])wrap(Controller.shscipher.encryptfile(localpath, pseudokey));			
+			pseudokey = (byte[])wrap(Controller.shscipher.crypt(pseudokey, this.symInstance, this.encryptmode));
 			
 			toinsert.put("key", pseudokey);
 			toinsert.put("content", content);
 			
-			ResultSet result = Controller.shsdb.select("path_definition", "def", "pathname LIKE '"+newpath+"'");			
-			result.next();
-			String pathdef = result.getString("def")+"/"+temp[temp.length-1];
-			pathdef = wrap(Controller.shscipher.crypt(pathdef, this.symInstance, this.encryptmode));
+			ResultSet result=null;
+			try{
+				newpath = (String)wrap(newpath);
+				result = Controller.shsdb.select(this.pathtb, "def", "pathname LIKE "+newpath);
+			}catch(Exception e){}
+			
+			String root = "";
+			if(result.first()){
+				root = result.getString("def");
+			}else{
+				//create new folder
+				this.internalviewdata.put(newpath, new ArrayList<String>());
+			}
+
+			String[]temp = localpath.split("/");
+			byte[] pathdef = (root+"/"+temp[temp.length-1]).getBytes();
+			pathdef = Controller.shscipher.crypt(pathdef, this.symInstance, this.encryptmode);
+			pathdef = (byte[])super.wrap(pathdef);
 			
 			toinsert.put("pathdef", pathdef);
 			toinsert.put("date",this.stamp);
 			
 			Controller.shsdb.insert(this.filestb, toinsert, Controller.shsdb.text(44));
+			result = Controller.shsdb.select(this.filestb, "MAX(id) AS id");
+			
+			Controller.shsgui.triggernotice(Controller.shsdb.text(32));
+			
+			//Eine Vereinfachung von this.loadinternalview();
+			result.first();
+			String fileId = result.getString("id");
+			String filename = temp[temp.length-1];
+			this.internalviewdata.get(newpath).add(fileId+this.sep+this.sep+filename);			
+			
 		} catch (SQLException e) {
 			Controller.shsgui.triggernotice(e);
 		}
@@ -411,7 +441,7 @@ public class Config extends _Config {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public HashMap<String,String> previewfile(String id,Viewertype status){
+	public HashMap<String,String> previewfile(String id,String status){
 		HashMap<String,String> file = new HashMap<String,String>();
 		if(status.equals(this.owner)){
 			file = this.preloadInternalfile(id);
@@ -431,18 +461,23 @@ public class Config extends _Config {
 		HashMap<String, String> toreturn = new HashMap<String, String>();		
 		try {
 			ResultSet result = Controller.shsdb.select(this.filestb,"key,content,pathdef","id="+fileId);
-			String pseudokey = result.getString("key");
-			String content = result.getString("content");
-			String pathdef = result.getString("pathdef");
+			result.next();
+			byte[] pseudokey = result.getBytes("key");
+			byte[] _content = result.getBytes("content");
+			byte[] _pathdef = result.getBytes("pathdef");
 			pseudokey = Controller.shscipher.crypt(pseudokey, this.symInstance, this.decryptmode);
-			content = Controller.shscipher.crypt(content, pseudokey, this.symInstance, this.decryptmode);
-			pathdef = Controller.shscipher.crypt(pathdef, this.symInstance, this.decryptmode);
+			_content = Controller.shscipher.crypt(_content, pseudokey, this.symInstance, this.decryptmode);
+			_pathdef = Controller.shscipher.crypt(_pathdef, this.symInstance, this.decryptmode);
+			
+			String pathdef = new String(_pathdef);
+			String content = new String(_content);
 			
 			String[] temp = pathdef.split("/");
 			pathdef="";
 			String sep="";
 			for (String t : temp) {
 				result = Controller.shsdb.select(this.pathtb,"pathname","def LIKE '"+t+"'");
+				result.next();
 				pathdef +=sep+result.getString("pathname");
 				sep="/";
 			}
@@ -463,21 +498,87 @@ public class Config extends _Config {
 	 */
 	private HashMap<String,String> preloadExternalfile(String ticketId){
 		HashMap<String, String> toreturn = new HashMap<String, String>();
-		HashMap<String, String> temp = this.readticket(ticketId);//fileid + key + path
-		toreturn.put("filepath", temp.get("filepath"));
+		HashMap<String, Object> temp = this.readticket(ticketId);//fileid + key + path
 		
-		String pseudokey = temp.get("pseudokey");
-		String fileId = temp.get("fileId");
-		String content = Controller.shscipher.readfile(pseudokey, fileId);
-		content = content.replace(this.txtlinebreak, "<br/>");
-		toreturn.put("content", content);
 		
+		byte[] pseudokey = (byte[])temp.get("pseudokey");
+		String fileId = (String)temp.get("fileId");
+		byte[] content = Controller.shscipher.readfile(pseudokey, fileId);
+		
+		toreturn.put("filepath", (String)temp.get("filepath"));
+		toreturn.put("content", new String(content));
 		return toreturn;
+	}
+	
+	public void createfolder(){
+		
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void delete(String status,String datatype,String data){
+		if(status.equals(this.owner)){
+			deletedata(datatype,data);
+		}else if(status.equals(this.reader)){
+			hidedata(datatype,data);//ticketId
+		}
+	}
+	
+	private void deletedata(String datatype,String data){
+		try {
+			if(datatype.equals(this.foldertype)){
+				ArrayList<String> todelete = this.internalviewdata.get(data);//data = path
+				String filedata[],ticketstodel[],fileId = "",ticketsalad;
+				byte[]pseudokey,tickets;
+				ResultSet result;
+				
+				for (String val : todelete) {
+					filedata = val.split(this.sep+this.sep);
+					fileId = filedata[0];			
+				
+					result = Controller.shsdb.select(this.filestb,"key,k_ticketsId","id ="+fileId);
+					result.first();
+					pseudokey = result.getBytes("key");
+					pseudokey = Controller.shscipher.crypt(pseudokey,this.symInstance,this.decryptmode);
+					
+					if((tickets = result.getBytes("k_ticketsId")) != null){
+						tickets = Controller.shscipher.crypt(tickets,pseudokey,this.symInstance,this.decryptmode);
+						ticketsalad = new String(tickets);
+						ticketstodel = ticketsalad.split(this.ticketsep);
+						for (String id : ticketstodel) {
+							Controller.shsdb.delete(this.tickettb,"id="+id,"");
+						}
+					}
+					
+					Controller.shsdb.delete(this.filestb,"id="+fileId,"");
+				}
+				
+				//Vereinfachte reload-Methode
+				this.internalviewdata.remove(data);
+				
+			}else if(datatype.equals(this.filetype)){
+				
+			}else if(datatype.equals(this.tickettype)){
+				
+			}
+		} catch (SQLException e) {
+			Controller.shsgui.triggernotice(e);
+		}
 	}
 	
 	////////////////////LOAD-FILE-END////////////////////////
 	
 	//////////////////////////////TICKETS-START/////////////////////////////////
+	private void hidedata(String dataId,String datatype){
+		if(datatype.equals(this.foldertype)){
+			
+		}else if(datatype.equals(this.filetype)){
+			
+		}
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -517,25 +618,26 @@ public class Config extends _Config {
 	 * * @author Shazem(Patrick)
 	 */
 	@Override
-	public HashMap<String, String> readticket(String ticketId){
-		HashMap<String, String> toreturn = new HashMap<String, String>();
+	public HashMap<String, Object> readticket(String ticketId){
+		HashMap<String, Object> toreturn = new HashMap<String, Object>();
 		try{
 			String my_username = super.wrap((String) Controller.shsuser.getattr("username"));
 			ResultSet result = Controller.shsdb.select("tickets","sent_by,fileId,filename,`key`","id="+ticketId+" AND sent_to LIKE "+my_username);
+			result.next();
 			
-			String sent_by = result.getString("sent_by");
+			byte[] sent_by = result.getBytes("sent_by");
 			sent_by = Controller.shscipher.crypt(sent_by, this.asymInstance, this.decryptmode);
-			String filename = result.getString("filename");
+			byte[] filename = result.getBytes("filename");
 			filename = Controller.shscipher.crypt(filename, this.asymInstance, this.decryptmode);
-			String path = sent_by+this.sep+filename;
+			String path = new String(sent_by)+this.sep+new String(filename);
 			
-			String pseudokey = result.getString("key");
+			byte[] pseudokey = result.getBytes("key");
 			pseudokey = Controller.shscipher.crypt(pseudokey,this.asymInstance,this.decryptmode);
 			
-			String fileId = result.getString("fileId");
+			byte[] fileId = result.getBytes("fileId");
 			fileId = Controller.shscipher.crypt(fileId,this.asymInstance,this.decryptmode);
 			
-			toreturn.put("fileId",fileId);
+			toreturn.put("fileId",new String(fileId));
 			toreturn.put("pseudokey",pseudokey);
 			toreturn.put("filepath", path);
 		}catch(SQLException e){

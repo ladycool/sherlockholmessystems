@@ -261,10 +261,10 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte[] crypt(byte[] tocrypt,String key,String instance,int cipherMODE){
+	public byte[] crypt(byte[] tocrypt,byte[] key,String instance,int cipherMODE){
 		byte[] toreturn = null;
 		try {
-			Key _key = new SecretKeySpec(key.getBytes(),instance);
+			Key _key = new SecretKeySpec(key,instance);
 			Cipher cipher = Cipher.getInstance(instance);
 			cipher.init(cipherMODE, _key);			
 			
@@ -322,7 +322,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte[] encryptfile(String filepath,String pseudokey){
+	public byte[] encryptfile(String filepath,byte[] pseudokey){
 		byte[] toreturn = null,tocrypt;
 		ArrayList<byte[]>temp = new ArrayList<byte[]>();
 		try {
@@ -351,7 +351,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte[] readfile(String pseudokey,String fileId){
+	public byte[] readfile(byte[] pseudokey,String fileId){
 		byte[] content = null;
 		try {
 			ResultSet result=null;

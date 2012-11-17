@@ -91,14 +91,14 @@ public abstract class _Cipher {
 	 * @param instance: asymmetrisch || symmetrisch(master || secret)
 	 * @param cipherMODE: Cipher.ENCRYPT_MODE || Cipher.DECRYPT_MODE
 	 */
-	public abstract byte[] crypt(byte[] tocrypt,String key,String instance,int cipherMODE);
+	public abstract byte[] crypt(byte[] tocrypt,byte[] key,String instance,int cipherMODE);
 	/**
 	 * Diese Methode wird beim Upload von Datei vewendet. Die dient lediglig der Verschlüsselung
 	 * @param filepath
 	 * @param pseudokey: String der Länge 16Bytes, der als Schlüsselwurzel diennen soll.
 	 * @return String: verschlüsselte Form des Dateiinhaltes
 	 */
-	public abstract byte[] encryptfile(String filepath,String pseudokey);
+	public abstract byte[] encryptfile(String filepath,byte[] pseudokey);
 	
 	/**
 	 * Diese Methode liest Dateien aus der Tabelle "files".
@@ -106,7 +106,7 @@ public abstract class _Cipher {
 	 * @param fileId: Id der Datei.
 	 * @return String.
 	 */
-	public abstract byte[] readfile(String pseudokey,String fileId);
+	public abstract byte[] readfile(byte[] pseudokey,String fileId);
 	
 
 

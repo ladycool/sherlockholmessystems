@@ -2,6 +2,7 @@ package MODEL;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface Database {
@@ -18,27 +19,37 @@ public interface Database {
 	 *            Meldung angezeigt werden
 	 * @throws Exception
 	 */
-	public void insert(String table, String fields, String values, String info);
+	public void insert(String table, String fields, Object values, String info);
 	
 	/**
-	 * @see public void insert(String table, String fields, String values, String info);
+	 * @see public void insert(String table, String fields, Object values, String info);
 	 */
-	public void insert(String table,String[] fields,String[] values,String info);
+	public void insert(String table,String[] fields,Object[] values,String info);
 	
 	/**
-	 * @see public void insert(String table, String fields, String values, String info);
+	 * @see public void insert(String table, String fields, Object values, String info);
 	 */
-	public void insert(String table,HashMap<String, String>attributes,String info);
+	public void insert(String table,Object[] values,String info);
 	
 	/**
-	 * @see public void insert(String table, String fields, String values, String info);
+	 * @see public void insert(String table, String fields, Object values, String info);
 	 */
-	public void insert(String table, String values, String info);
+	public void insert(String table,HashMap<String, Object>attributes,String info);
 	
 	/**
-	 * @see public void insert(String table, String fields, String values, String info);
+	 * @see public void insert(String table, String fields, Object values, String info);
 	 */
-	public void insert(String table,String values);
+	public void insert(String table,ArrayList<Object>attributes,String info);
+	
+	/**
+	 * @see public void insert(String table, String fields, Object values, String info);
+	 */
+	public void insert(String table, Object values, String info);
+	
+	/**
+	 * @see public void insert(String table, String fields, Object values, String info);
+	 */
+	public void insert(String table,Object values);
 	
 	/**
 	 * @doc UPDATE-Befehl in mysql == UPDATE Erweiterng der update-Methode
@@ -82,6 +93,14 @@ public interface Database {
 	 * @return
 	 */
 	public ResultSet select(String table, String fields, String condition);
+	
+	/**
+	 * @see ResultSet select(String table, String fields, String condition,String others);
+	 * @param table
+	 * @param fields
+	 * @return
+	 */
+	public ResultSet select(String table, String fields);
 	// CRUD-Befehle---END
 
 	// Zusätzliches---START	

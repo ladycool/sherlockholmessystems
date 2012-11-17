@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import CONTROLLER.Controller;
@@ -88,25 +89,25 @@ public class Myadmin implements Database {
 	}
 
 	@Override
-	public void insert(String table,String values){
+	public void insert(String table,Object values){
 		this.insert(table,values,"");
 	}
 	
 	@Override
-	public void insert(String table,String values,String info){
+	public void insert(String table,Object values,String info){
 		values = "NULL,"+values;
 		this.insert(table,"",values,info);
 	}
 	
 	@Override
-	public void insert(String table, String fields, String values, String info){
+	public void insert(String table, String fields, Object values, String info){
 		try {
 			String query = "INSERT INTO "+ table+" ";
 			if (!fields.equals("")) {
 				query += "(" + fields + ") ";
 			}
 			query += "VALUES ("+values+")";
-			System.out.println(query);
+			//System.out.println(query);
 			connect.createStatement().executeUpdate(query);
 			
 			if(info.isEmpty()){info=this.text(32);}
@@ -116,10 +117,11 @@ public class Myadmin implements Database {
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Override
-	public void insert(String table,String[] fields,String[] values,String info){
-		String implodedfields="",implodedvalues="",comma="";
+	public void insert(String table,String[] fields,Object[] values,String info){
+		String implodedfields="",comma="";
+		Object implodedvalues="";
 		for (int i = 0; i < values.length; i++) {
 			implodedfields += comma+fields[i];
 			implodedvalues += comma+values[i];
@@ -129,13 +131,28 @@ public class Myadmin implements Database {
 	}
 	
 	@Override
-	public void insert(String table,HashMap<String,String>attributes,String info){
+	public void insert(String table,Object[] values,String info){
+		Object implodedvalues="";
+		String comma="";
+		for (int i = 0; i < values.length; i++) {
+			implodedvalues += comma+values[i];
+			comma=",";
+		}
+		insert(table,implodedvalues,info);
+	}
+	
+	@Override
+	public void insert(String table,HashMap<String,Object>attributes,String info){
 		String[] fields = attributes.keySet().toArray(new String[attributes.keySet().size()]);
-		String[] values = attributes.values().toArray(new String[attributes.values().size()]);
+		Object[] values = attributes.values().toArray(new Object[attributes.values().size()]);
 		insert(table, fields, values, info);
 	}
 	
-	
+	@Override
+	public void insert(String table,ArrayList<Object>attributes,String info){
+		Object[] values = attributes.toArray();
+		insert(table,values,info);
+	}
 	
 	@Override
 	public void update(String table, String[] fields, String[] values,String condition,String info){
@@ -218,6 +235,11 @@ public class Myadmin implements Database {
 		return select(table, fields, condition,"");
 	}
 
+	@Override
+	public ResultSet select(String table, String fields){
+		return select(table,fields,"","");
+	}
+	
 	///////////////Zusätzlich-Start/////////////////////////
 	@Override
 	public String text(int id){
