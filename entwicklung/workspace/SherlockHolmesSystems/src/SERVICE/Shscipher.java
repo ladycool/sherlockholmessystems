@@ -1,6 +1,7 @@
 package SERVICE;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.crypto.Cipher;
@@ -249,7 +251,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String crypt(String tocrypt,String instance,int cipherMODE) {
+	public byte[] crypt(byte[] tocrypt,String instance,int cipherMODE) {
 		//cipherMODE = Cipher.ENCRYPT_MODE || Cipher.DECRYPT_MODE		
 		Cipher cipher = this.getCipher(instance, cipherMODE);
 		return this.crypt(cipher,tocrypt);
@@ -259,8 +261,8 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String crypt(String tocrypt,String key,String instance,int cipherMODE){
-		String toreturn="";
+	public byte[] crypt(byte[] tocrypt,String key,String instance,int cipherMODE){
+		byte[] toreturn = null;
 		try {
 			Key _key = new SecretKeySpec(key.getBytes(),instance);
 			Cipher cipher = Cipher.getInstance(instance);
@@ -276,13 +278,16 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	
 	
 	@SuppressWarnings("deprecation")
-	private String crypt(Cipher cipher,String tocrypt){
-		String toreturn="";
+	private byte[] crypt(Cipher cipher,byte[] tocrypt){
+		//byte[] toreturn;
+		ArrayList<byte[]> _toreturn =  new ArrayList<byte[]>();
+		
 		int blocksize = cipher.getBlockSize();
-		byte[] tocryptbytes = new byte[blocksize];
-		byte[] crypted = new byte[cipher.getOutputSize(blocksize)];System.out.println("Start" + blocksize+"---"+crypted.length);
+		byte[] tocryptbytes;
+		byte[] crypted = new byte[cipher.getOutputSize(blocksize)];
+		//System.out.println("Start" + blocksize+"---"+crypted.length);
 		int 
-		maxlength = tocrypt.getBytes().length,
+		maxlength = tocrypt.length,
 		start = -blocksize,
 		end = start+blocksize; //=0
 		try{	
@@ -292,22 +297,24 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 			
 				if(end < maxlength){
 					tocryptbytes = new byte[blocksize];
-					tocrypt.getBytes(start,end,tocryptbytes,0);
-					crypted = cipher.update(tocryptbytes);
-					toreturn += new String(crypted);
+					for (int i=start,j=0; i < end; i++,j++) {
+						tocryptbytes[j] = tocrypt[i];
+					}
+					_toreturn.add(cipher.update(tocryptbytes));
 				}else{
 					//end = maxlength;
 					tocryptbytes = new byte[maxlength - start];
-					tocrypt.getBytes(start,maxlength,tocryptbytes,0);
-					crypted = cipher.doFinal(tocryptbytes);
-					toreturn += new String(crypted);
+					for (int i=start,j=0; i < maxlength; i++,j++) {
+						tocryptbytes[j] = tocrypt[i];
+					}
+					_toreturn.add(cipher.doFinal(tocryptbytes));
 					break;
 				}			
 			}
 		} catch (GeneralSecurityException e) {
 			Controller.shsgui.triggernotice(e);
 		}
-		return toreturn;
+		return this.arraylisttobytearray(_toreturn);
 	}
 	
 	
@@ -315,19 +322,20 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String encryptfile(String filepath,String pseudokey){
-		String toreturn = "";
+	public byte[] encryptfile(String filepath,String pseudokey){
+		byte[] toreturn = null,tocrypt;
+		ArrayList<byte[]>temp = new ArrayList<byte[]>();
 		try {
 			//Lesen der Datei
-			BufferedReader file = new BufferedReader(new InputStreamReader(new FileInputStream(new File(filepath)),"UTF8"));
-			String tocrypt = "",str="";
-			while((str = file.readLine()) != null){
-			    tocrypt += str+Controller.shsconfig.txtlinebreak;//Puffern <shsbr/>
-			    //System.out.println(str);
+			byte[] cbuf = new byte[1024];
+			DataInputStream file = new DataInputStream(new FileInputStream(new File(filepath)));
+			while(file.read(cbuf) != -1){
+				temp.add(cbuf);
 			}
-			//tocrypt += Controller.shsuser.getattr("metadata");
 			file.close();
-
+			
+			//Convertierung von Arraylist<byte[]> to byte[]
+			tocrypt = this.arraylisttobytearray(temp);
 			
 			//Verschlüsselung des Inhaltes
 			toreturn = this.crypt(tocrypt,pseudokey,this.symInstance,Cipher.ENCRYPT_MODE);
@@ -343,8 +351,8 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String readfile(String pseudokey,String fileId){
-		String content = "";
+	public byte[] readfile(String pseudokey,String fileId){
+		byte[] content = null;
 		try {
 			ResultSet result=null;
 			try{
@@ -355,7 +363,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 			}
 			
 			if(result.first()){
-				content = result.getString("content");
+				content = result.getBytes("content");
 				
 				//Entschlüsselung des Inhaltes
 				content = this.crypt(content,pseudokey,this.symInstance,Cipher.DECRYPT_MODE);
@@ -375,7 +383,26 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	}
 	
 	
-
+	private byte[] arraylisttobytearray(ArrayList<byte[]> toconvert){
+		byte[] toreturn = null;
+		int newlength=0,continueindex=0;
+		byte[] temp;
+		for (byte[] b : toconvert) {
+			newlength += b.length;
+			temp = toreturn;
+			toreturn = new byte[newlength];
+			if(temp != null){				
+				for (int i = 0; i < temp.length; i++) {
+					toreturn[i] = temp[i];
+				}
+				continueindex = temp.length;
+			}
+			for (int i = 0; i < b.length; i++) {
+				toreturn[continueindex+i] = b[i];
+			}
+		}
+		return toreturn;
+	}
 	
 	
 

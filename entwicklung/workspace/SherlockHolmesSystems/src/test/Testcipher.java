@@ -13,18 +13,22 @@ public class Testcipher {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		String wer= "dsk üüdclsädäööldcö";
+		String wer= "Ha";
+		System.out.println("Text = "+wer);
+		byte[] _wer = wer.getBytes();
 		Shscipher a = Shscipher.getInstance(Controller.shsconfig.keysize, 
-				"AES/CBC/PKCS5Padding", 
+				"AES", 
 				Controller.shsconfig.asymInstance);
 		
-		String b = a.crypt(wer, "AES/CBC/PKCS5Padding", Cipher.ENCRYPT_MODE);
+		byte[] b = a.crypt(_wer, "RSA", Cipher.ENCRYPT_MODE);
 		
-		System.out.println(b);
+		System.out.println("b_byte= "+b);
+		System.out.println("b_string= "+new String(b));
 		
-		String c = a.crypt(b, "AES/CBC/PKCS5Padding", Cipher.DECRYPT_MODE);
+		byte[] c = a.crypt(b, "RSA", Cipher.DECRYPT_MODE);
 		
-		//System.out.println(c);
+		System.out.println("c_byte= "+c);
+		System.out.println("c:string= "+new String(c));
 	}
 
 }
