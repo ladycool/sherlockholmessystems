@@ -36,6 +36,11 @@ public interface Database {
 	public void insert(String table, String values, String info);
 	
 	/**
+	 * @see public void insert(String table, String fields, String values, String info);
+	 */
+	public void insert(String table,String values);
+	
+	/**
 	 * @doc UPDATE-Befehl in mysql == UPDATE Erweiterng der update-Methode
 	 * @param table
 	 * @param fields

@@ -88,21 +88,28 @@ public class Myadmin implements Database {
 	}
 
 	@Override
+	public void insert(String table,String values){
+		this.insert(table,values,"");
+	}
+	
+	@Override
 	public void insert(String table,String values,String info){
+		values = "NULL,"+values;
 		this.insert(table,"",values,info);
 	}
 	
 	@Override
 	public void insert(String table, String fields, String values, String info){
 		try {
-			String query = "INSERT INTO "+ table;
+			String query = "INSERT INTO "+ table+" ";
 			if (!fields.equals("")) {
-				query += " (" + fields + ") ";
+				query += "(" + fields + ") ";
 			}
+			query += "VALUES ("+values+")";
 			System.out.println(query);
-			connect.createStatement().executeQuery(query);
+			connect.createStatement().executeUpdate(query);
 			
-			if(info.isEmpty()){info =this.text(344);}
+			if(info.isEmpty()){info=this.text(32);}
 			Controller.shsgui.triggernotice(info);
 		} catch (SQLException e) {
 			Controller.shsgui.triggernotice(e);
@@ -114,8 +121,8 @@ public class Myadmin implements Database {
 	public void insert(String table,String[] fields,String[] values,String info){
 		String implodedfields="",implodedvalues="",comma="";
 		for (int i = 0; i < values.length; i++) {
-			implodedfields = implodedfields+comma+fields[i];
-			implodedvalues = implodedvalues+comma+values[i];
+			implodedfields += comma+fields[i];
+			implodedvalues += comma+values[i];
 			comma=",";
 		}
 		insert(table,implodedfields,implodedvalues,info);
@@ -123,7 +130,6 @@ public class Myadmin implements Database {
 	
 	@Override
 	public void insert(String table,HashMap<String,String>attributes,String info){
-		attributes.keySet().toArray();
 		String[] fields = attributes.keySet().toArray(new String[attributes.keySet().size()]);
 		String[] values = attributes.values().toArray(new String[attributes.values().size()]);
 		insert(table, fields, values, info);
@@ -143,9 +149,9 @@ public class Myadmin implements Database {
 			if(!condition.isEmpty()){
 				query += " WHERE ("+condition+")";
 			}
-			connect.createStatement().executeQuery(query);
+			connect.createStatement().executeUpdate(query);
 			
-			if(info.equals("")){info = this.text(655);}
+			if(info.equals("")){info = this.text(33);}
 			Controller.shsgui.triggernotice(info);
 		} catch (SQLException e) {
 			Controller.shsgui.triggernotice(info);
@@ -171,7 +177,7 @@ public class Myadmin implements Database {
 			}
 			connect.createStatement().executeQuery(query);
 			
-			if(info.equals("")){info = this.text(4444);}
+			if(info.equals("")){info = this.text(34);}
 			Controller.shsgui.triggernotice(info);
 			
 		} catch (SQLException e) {
@@ -219,8 +225,8 @@ public class Myadmin implements Database {
 		try {
 			String field = Controller.shsconfig.getlang();
 			if(Controller.shsuser != null){
-				if(!((String) Controller.shsuser.getattr("language")).isEmpty()){
-					field = (String) Controller.shsuser.getattr("language");
+				if(!((String) Controller.shsuser.getattr(Controller.shsconfig.userlang)).isEmpty()){
+					field = (String) Controller.shsuser.getattr(Controller.shsconfig.userlang);
 				}
 			}
 

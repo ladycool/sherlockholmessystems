@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import javax.crypto.Cipher;
 
+import CONTROLLER.Controller;
 import MODEL.enums.*;
 import SERVICE.*;
 
@@ -133,7 +134,7 @@ public abstract class _Config {
 	dbuserId="userid",
 	userId = dbuserId,
 	keys="keys",
-	keytb="keys",
+	keytb="`keys`",
 	pubkeytb="public_keys",
 	filestb ="files",
 	pathtb = "path_definition",
@@ -144,6 +145,13 @@ public abstract class _Config {
 	stamp = "CURRENT_TIMESTAMP";
 	;	
 	
+	//OTHERS
+	public String
+	userlang = "language",
+	pubk = "pubk",
+	prik = "prik"
+	;
+	
 	
 	//Cipher
 	public int 
@@ -153,7 +161,7 @@ public abstract class _Config {
 	;
 	public String
 	symInstance = "AES",
-	asymInstance = "RSA",
+	asymInstance = "RSA",//"RSA/ECB/PKCS1Padding"
 	masterInstance = "master"
 	;
 	
@@ -242,7 +250,12 @@ public abstract class _Config {
 	}
 	
 	protected String wrap(String towrap){
+		towrap = towrap.replace("'","\\'"); //ohne die Kappselung würde jeder String, der ein Hochkomma beinhaltet, eine Fehlermeldung beim sql-insert verursachen.
 		return wrap(towrap,"'");
+	}
+	
+	protected String unwrap(String towrap){
+		return towrap.replace("\\'", "'"); //sieh wrap();
 	}
 	
 	public void setloadingisdone(){

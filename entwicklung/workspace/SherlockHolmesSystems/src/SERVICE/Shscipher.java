@@ -82,14 +82,14 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 			 * NICHT LÖSCHEN (Patrick)
 			 */
 			KeyFactory keyfactory = KeyFactory.getInstance(this.asymInstance);
-			EncodedKeySpec pkSpec;
+			EncodedKeySpec asymkSpec;
 			////load public key
-			pkSpec = new X509EncodedKeySpec(publickey.getBytes());
-			PublicKey pubK = keyfactory.generatePublic(pkSpec);
+			asymkSpec = new X509EncodedKeySpec(publickey.getBytes());
+			PublicKey pubK = keyfactory.generatePublic(asymkSpec);
 			
 			////load private key
-			pkSpec = new PKCS8EncodedKeySpec(privatekey.getBytes());
-			PrivateKey priK = keyfactory.generatePrivate(pkSpec);
+			asymkSpec = new PKCS8EncodedKeySpec(privatekey.getBytes());
+			PrivateKey priK = keyfactory.generatePrivate(asymkSpec);
 			
 			this.shsasymkeypair = new KeyPair(pubK, priK);
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
@@ -144,12 +144,14 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 */
 	@Override
 	public HashMap<String, byte[]> getkey() {
-		X509EncodedKeySpec x509ks = null;
+		EncodedKeySpec asymkSpec = null;
 		HashMap<String, byte[]> toreturn = new HashMap<String,byte[]>();
-		x509ks = new X509EncodedKeySpec(this.shsasymkeypair.getPrivate().getEncoded());
-		toreturn.put("prik", x509ks.getEncoded());
-		x509ks = new X509EncodedKeySpec(this.shsasymkeypair.getPublic().getEncoded());
-		toreturn.put("prik", x509ks.getEncoded());
+		
+		asymkSpec = new X509EncodedKeySpec(this.shsasymkeypair.getPrivate().getEncoded());
+		toreturn.put(Controller.shsconfig.prik, asymkSpec.getEncoded());
+		
+		asymkSpec = new PKCS8EncodedKeySpec(this.shsasymkeypair.getPublic().getEncoded());
+		toreturn.put(Controller.shsconfig.pubk, asymkSpec.getEncoded());
 		
 		return toreturn;
 	}
@@ -199,7 +201,8 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		        keygen.init(random);
 		        key = keygen.generateKey();
 			}else{
-				key = new SecretKeySpec(pseudokey.getBytes(),this.symInstance);//AES
+				//SecretKeySpec skeySpec = new SecretKeySpec(getCryptoKeyByteArray(length=16));
+				key = new SecretKeySpec(pseudokey.getBytes(),this.symInstance);//AES pseudo.length() = 16
 			}
 		} catch (GeneralSecurityException e) {
 			//e.printStackTrace();
@@ -247,19 +250,9 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 */
 	@Override
 	public String crypt(String tocrypt,String instance,int cipherMODE) {
-		//cipherMODE = Cipher.ENCRYPT_MODE || Cipher.DECRYPT_MODE
-		String toreturn="";
-		try {
-			Cipher cipher = getCipher(instance, cipherMODE);
-			
-			byte[] crypted = cipher.doFinal(tocrypt.getBytes("UTF8"));
-			toreturn = new String(crypted,"UTF8");//UTF-8 -> So werden ebenfalls die Sonderzeichen des europaischen Raums mitberücksichtigt
-			
-		} catch (GeneralSecurityException | UnsupportedEncodingException e) {
-			Controller.shsgui.triggernotice(e);
-		}
-		
-		return toreturn;
+		//cipherMODE = Cipher.ENCRYPT_MODE || Cipher.DECRYPT_MODE		
+		Cipher cipher = this.getCipher(instance, cipherMODE);
+		return this.crypt(cipher,tocrypt);
 	}
 	
 	/**
@@ -272,13 +265,51 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 			Key _key = new SecretKeySpec(key.getBytes(),instance);
 			Cipher cipher = Cipher.getInstance(instance);
 			cipher.init(cipherMODE, _key);			
-			byte[] crypted = cipher.doFinal(tocrypt.getBytes("UTF8"));
-			toreturn = new String(crypted,"UTF8");//UTF-8 -> So werden ebenfalls die Sonderzeichen des europaischen Raums mitberücksichtigt	
-		} catch (GeneralSecurityException | UnsupportedEncodingException e) {
+			
+			toreturn = this.crypt(cipher,tocrypt);
+			
+		} catch (GeneralSecurityException e) {
 			Controller.shsgui.triggernotice(e);
 		}
 		return toreturn;
 	}
+	
+	
+	@SuppressWarnings("deprecation")
+	private String crypt(Cipher cipher,String tocrypt){
+		String toreturn="";
+		int blocksize = cipher.getBlockSize();
+		byte[] tocryptbytes = new byte[blocksize];
+		byte[] crypted = new byte[cipher.getOutputSize(blocksize)];System.out.println("Start" + blocksize+"---"+crypted.length);
+		int 
+		maxlength = tocrypt.getBytes().length,
+		start = -blocksize,
+		end = start+blocksize; //=0
+		try{	
+			while(true){
+				start += blocksize;
+				end += blocksize;		
+			
+				if(end < maxlength){
+					tocryptbytes = new byte[blocksize];
+					tocrypt.getBytes(start,end,tocryptbytes,0);
+					crypted = cipher.update(tocryptbytes);
+					toreturn += new String(crypted);
+				}else{
+					//end = maxlength;
+					tocryptbytes = new byte[maxlength - start];
+					tocrypt.getBytes(start,maxlength,tocryptbytes,0);
+					crypted = cipher.doFinal(tocryptbytes);
+					toreturn += new String(crypted);
+					break;
+				}			
+			}
+		} catch (GeneralSecurityException e) {
+			Controller.shsgui.triggernotice(e);
+		}
+		return toreturn;
+	}
+	
 	
 	/**
 	 * {@inheritDoc}
@@ -315,18 +346,28 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	public String readfile(String pseudokey,String fileId){
 		String content = "";
 		try {
-			//Datei aus der Db holen
-			ResultSet result = Controller.shsdb.select("files","content","id="+fileId,"");
-			content = result.getString("content");
+			ResultSet result=null;
+			try{
+				//Datei aus der Db holen
+				result = Controller.shsdb.select("files","content","id="+fileId,"");
+			} catch (Exception e) {
+				//In java erzeugt ein leeres SELECT-Ergebnis eine Exception (So dumm ist java)
+			}
 			
-			//Entschlüsselung des Inhaltes
-			content = this.crypt(content,pseudokey,this.symInstance,Cipher.DECRYPT_MODE);
-						
-			//Entpuffern: Entfernung von <shsbr/>
-			//toreturn = content.split(Controller.shsconfig.txtlinebreak);
-			//Jede weitere Methode wird sich ums Entpuffern kümmern
-			
+			if(result.first()){
+				content = result.getString("content");
+				
+				//Entschlüsselung des Inhaltes
+				content = this.crypt(content,pseudokey,this.symInstance,Cipher.DECRYPT_MODE);
+							
+				//Entpuffern: Entfernung von <shsbr/>
+				//toreturn = content.split(Controller.shsconfig.txtlinebreak);
+				//Jede weitere Methode wird sich ums Entpuffern kümmern
+			}else{
+				Controller.shsgui.triggernotice(Controller.shsdb.text(41));
+			}
 		} catch (Exception e) {
+			Controller.shsgui.triggernotice(Controller.shsdb.text(41));
 			Controller.shsgui.triggernotice(e);
 		}
 			

@@ -91,25 +91,41 @@ public class Config extends _Config {
 	}
 	
 	/**
-	 * @author Shazem (Patrick): ERLEDIGT, TESTE GERADE
+	 * @author Shazem (Patrick): ERLEDIGT, GETESTET
 	 * 					An alle Entwickler, das solltet ihr als Beispiel benutzen.
 	 * @param attributes
 	 * @return
 	 */
 	private User signup(HashMap<String, String>attributes){
 		HashMap<String, String> toinsert = new HashMap<String, String>();
-		String username = attributes.get(this.username);
-		ResultSet result = Controller.shsdb.select(this.usertb,"username", "username LIKE "+this.wrap(username));
+		String 
+		username = attributes.get(this.username),
+		usernameW = super.wrap(username)
+		;
+		int todelete=0;
+		
+		ResultSet result = null;
+
 		//create a pseudo and delete it later.
+		
 		User user = null;
 		
 		try {
-			result.next();
-			if(result.getString(this.username).isEmpty()){
+			try {
+				result = Controller.shsdb.select(this.usertb,this.username,"username LIKE "+super.wrap(username));
+			} catch (Exception e) {
+				//In java erzeugt ein leeres SELECT-Ergebnis eine Exception (So dumm ist java)
+			}
+			
+			//result.next(); wird hier bei result.first() ersetzt
+			if(!result.first()){
 				
 				//Tabelle: user
-				String password = attributes.get(this.password);
-				String userId = this.random(username.length()+password.length());
+				String 
+				password = attributes.get(this.password),
+				userId = this.random(username.length()+password.length()),
+				userIdw = super.wrap(userId)
+				;
 				
 				password = this.insert(password, userId);//pseudo-password
 				password = Base64.encode(password.getBytes());//password to save
@@ -121,7 +137,7 @@ public class Config extends _Config {
 				
 				toinsert.putAll(attributes);
 				for (String elt : toinsert.keySet()) {
-					elt = wrap(elt);
+					toinsert.put(elt, super.wrap(toinsert.get(elt)));
 				}
 				toinsert.put("created_date", "NOW()");
 				toinsert.put("last_mod_date",this.stamp);
@@ -137,31 +153,37 @@ public class Config extends _Config {
 				tocrypt2 = new String(tocrypt) + this.savesym; //Zu dem bereits vorhandenen Schlüssel wird ein Stück text hinzugefügt um die Zuordnug beim
 																			//Entschlüsseln zu ermöglichen.
 				cryptedkey = Controller.shscipher.crypt(tocrypt2,this.masterInstance,this.encryptmode);
-				Controller.shsdb.insert(this.keytb,"",userId+","+cryptedkey,"");//DATABASE
+				cryptedkey = super.wrap(cryptedkey);
+				Controller.shsdb.insert(this.keytb,userIdw+","+cryptedkey+",NULL");//DATABASE:keys
 				
 				HashMap<String, byte[]>tocrypt1 = Controller.shscipher.getkey();
 				
 				//NICHT Verschlüsselung und Speicherung des public Key
-				Controller.shsdb.insert(this.pubkeytb,userId+","+new String(tocrypt1.get("pubk")),"");//DATABASE
+				String publickey = new String(tocrypt1.get(this.pubk));
+				publickey = super.wrap(publickey);
+				Controller.shsdb.insert(this.pubkeytb,usernameW+","+publickey+",NULL");//DATABASE:public_keys
 				
 				//Verschlüsselung und Speicherung des private Key
-				tocrypt2 = new String(tocrypt1.get("prik"))+this.saveprik; // Analog zum savesym
+				tocrypt2 = new String(tocrypt1.get(this.prik))+this.saveprik; // Analog zum savesym
 				cryptedkey = Controller.shscipher.crypt(tocrypt2,this.masterInstance,this.encryptmode);
-				Controller.shsdb.insert(this.keytb,"",userId+","+cryptedkey,"");//DATABASE
+				cryptedkey = super.wrap(cryptedkey);
+				Controller.shsdb.insert(this.keytb,userIdw+","+cryptedkey+",NULL");//DATABASE:keys
 				
 				//Verschlüsselung und Speicherung des master Key
 				tocrypt = Controller.shscipher.getkey(this.masterInstance);
-				tocrypt2 = this.insert(tocrypt2, password);
-				tocrypt2 = this.insert(tocrypt2, userId);
+				tocrypt2 = this.insert(tocrypt2, password+userId);
+				tocrypt2 = this.insert(tocrypt2, password+userId);
 				tocrypt2 = new String(tocrypt) + this.savemaster;
 				cryptedkey = Base64.encode(tocrypt2.getBytes());
-				Controller.shsdb.insert(this.keytb,"",userId+","+cryptedkey,"");//DATABASE
+				cryptedkey = super.wrap(cryptedkey);
+				Controller.shsdb.insert(this.keytb,userIdw+","+cryptedkey+",NULL");//DATABASE:keys
 				
 				
 				HashMap<String,Object> userattr = new HashMap<String,Object>();
 				userattr.put(this.username,attributes.get(this.username));
 				userattr.put(this.userId,userId);
 				userattr.put(this.keys,Controller.shscipher);
+				userattr.put(this.userlang,attributes.get(this.languageId));
 				user = User.getInstance(userattr);
 			}else{
 				Controller.shsgui.triggernotice("FEHLERMELDUNG");
@@ -466,7 +488,7 @@ public class Config extends _Config {
 			String my_username = (String) Controller.shsuser.getattr("username");
 			my_username = Controller.shscipher.crypt(my_username,this.asymInstance,this.encryptmode);
 			
-			ResultSet result = Controller.shsdb.select("tickets","id,sent_by,filename","sent_to LIKE "+this.wrap(my_username));
+			ResultSet result = Controller.shsdb.select("tickets","id,sent_by,filename","sent_to LIKE "+super.wrap(my_username));
 			String ticketId,sent_by,filename;
 			while(result.next()){
 				ticketId = result.getString("id");
@@ -498,7 +520,7 @@ public class Config extends _Config {
 	public HashMap<String, String> readticket(String ticketId){
 		HashMap<String, String> toreturn = new HashMap<String, String>();
 		try{
-			String my_username = this.wrap((String) Controller.shsuser.getattr("username"));
+			String my_username = super.wrap((String) Controller.shsuser.getattr("username"));
 			ResultSet result = Controller.shsdb.select("tickets","sent_by,fileId,filename,`key`","id="+ticketId+" AND sent_to LIKE "+my_username);
 			
 			String sent_by = result.getString("sent_by");

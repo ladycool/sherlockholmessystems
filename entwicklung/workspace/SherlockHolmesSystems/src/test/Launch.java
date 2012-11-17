@@ -22,20 +22,24 @@ public class Launch {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws Base64DecodingException, SQLException{
-		
-		Myadmin a  = Myadmin.getInstance();
-		String result = a.text(55);
-		//result.next();
-		System.out.println(result);
-		/*
-		
+		/*Dieser Test ist gultig und erfolgreich
+		 * 
 		HashMap<String, String> attributes = new HashMap<String, String>();
-		attributes.put(Controller.shsconfig.username, "test");
-		attributes.put(Controller.shsconfig.password, "test");
+		attributes.put(Controller.shsconfig.username, "test3");
+		attributes.put(Controller.shsconfig.password, "test3");
 		attributes.put(Controller.shsconfig.language, "eng");
 		
 		Controller.shsuser = Controller.shsconfig.loginSHS("signup",attributes);
-		*/
+		System.out.println(Controller.shsuser == null);
+		 */
+
+		
+		HashMap<String, String> attributes = new HashMap<String, String>();
+		attributes.put(Controller.shsconfig.username, "test3");
+		attributes.put(Controller.shsconfig.password, "test3");
+		Controller.shsuser = Controller.shsconfig.loginSHS("signin",attributes);
+		System.out.println(Controller.shsuser == null);
+		
 	}
 
 }

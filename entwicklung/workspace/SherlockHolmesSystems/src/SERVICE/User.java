@@ -11,7 +11,9 @@ import java.util.HashMap;
 
 public class User{
 	private HashMap<String, Object> attributes;
-	private ArrayList<String> restrictedSETAttr,restrictedGETAttr;
+	private ArrayList<String> 
+	restrictedSETAttr = new ArrayList<String>(),
+	restrictedGETAttr = new ArrayList<String>();
 	private static User singelton;
 	
 	

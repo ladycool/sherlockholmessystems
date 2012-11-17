@@ -14,14 +14,37 @@ case"userinfo":
 	break;
 case"signout"://Noch nicht sicher
 	break;
-case"file":
+case"file"://muss
+	String 
+	type = request.getParameter("type");
+	id = request.getParameter("id");
+	
+	hashMap<> filedata = Controller.shsconfig.previewfile();
+	;
+
+	
+	//if type = intern --> id = fileid
+			//direkt in file-tbl
+			/*
+			secretkey ents(pseuso)
+			*/
+			
+	//else if type = extern --> id = ticket
+		// in ticket-tbl --> fileid
+		// in file-tbl
+		
+		
+	//ergebnis = Controller.shscipher.crypt(tocrypt,pseudokey, "aes", decript)	
+			
+	//out.print(ergebnis)
+	
 	//no break
-case"folder":
+case"folder"://muss
 	break;
-case"upload":
+case"upload"://muss
 	
 	break;
-case"share":
+case"share"://muss
 	break;
 case"unshare":
 	break;
@@ -29,13 +52,14 @@ case"rename"://file & folder --> NICE TO HAVE
 	break;
 case"delete"://file & folder
 	break;
-case"openfolder":
+case"openfolder"://nice to have
 	break;
-case"closefolder":
+case"closefolder"://nice to have
 	break;
-case"createfolder":
+case"createfolder"://muss
+	//neu Verzeichnis
 	break;
-case"showexternalfolder":
+case"showexternalfolder"://muss
 	break;
 default:
 

@@ -1,6 +1,6 @@
 package test;
 
-import javax.crypto.Cipher;
+import javax.crypto.*;
 
 import SERVICE.Shscipher;
 
@@ -15,12 +15,16 @@ public class Testcipher {
 		// TODO Auto-generated method stub
 		String wer= "dsk üüdclsädäööldcö";
 		Shscipher a = Shscipher.getInstance(Controller.shsconfig.keysize, 
-				Controller.shsconfig.symInstance, 
+				"AES/CBC/PKCS5Padding", 
 				Controller.shsconfig.asymInstance);
 		
-		String b = a.crypt(wer, "AES", Cipher.ENCRYPT_MODE);
+		String b = a.crypt(wer, "AES/CBC/PKCS5Padding", Cipher.ENCRYPT_MODE);
 		
 		System.out.println(b);
+		
+		String c = a.crypt(b, "AES/CBC/PKCS5Padding", Cipher.DECRYPT_MODE);
+		
+		//System.out.println(c);
 	}
 
 }
