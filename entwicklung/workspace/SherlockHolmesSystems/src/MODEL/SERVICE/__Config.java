@@ -1,4 +1,4 @@
-package MODELcontroller;
+package MODEL.SERVICE;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -152,7 +152,8 @@ public class __Config {
 	ajlocalpath = "localpath",
 	ajnewpath = "newpath",
 	ajdatatyp = "datatyp",
-	ajdata = "data"
+	ajdata = "data",
+	ajuserlist = "ajuserlist"
 	;
 	
 	
@@ -168,6 +169,7 @@ public class __Config {
 	filetype = "file",
 	tickettype = "ticket"
 	;
+	public final String[]retrictedsigns = {"'","/","\\"};
 	
 	
 	

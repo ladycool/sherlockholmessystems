@@ -42,8 +42,8 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	//How to create a pdf file in java (Nice to have) --> http://www.vogella.com/articles/JavaPDF/article.html
 	
 	private SecretKey masterkey;
-	private SecretKey shssymkey;
-	private KeyPair shsasymkeypair;
+	private SecretKey shssymkey = null;
+	private KeyPair shsasymkeypair = null;
 	
 	/*
 	 * PRIVATE
@@ -59,47 +59,15 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		this.shsasymkeypair = this.createAsymmetricKey();
 	}
 	
-	private Shscipher(HashMap<String,Object> settings,HashMap<String,String> keys){
+	private Shscipher(HashMap<String,Object> settings,byte[] masterkey){
 		//settings
 		super(settings);
 		
 		//load
-		String 
-		masterkey = (String)keys.get("masterkey"),
-		secretkey = (String)keys.get("secretkey"),
-		privatekey = (String)keys.get("privatekey"),
-		publickey = (String)keys.get("publickey");
-		
-		////load masterkey
-		this.masterkey = new SecretKeySpec(masterkey.getBytes(),this.symInstance);
-		////load secretkey
-		this.shssymkey = new SecretKeySpec(secretkey.getBytes(),this.symInstance);
-		
-		
-		try {
-			/*
-			 * Alternative1: KeyRep-Klasse
-			 * Alternative2: EncodedKeySpec-Klasse-->
-			 * 					http://stackoverflow.com/questions/5263156/rsa-keypair-generation-and-storing-to-keystore 
-			 * NICHT LÖSCHEN (Patrick)
-			 */
-			KeyFactory keyfactory = KeyFactory.getInstance(this.asymInstance);
-			EncodedKeySpec asymkSpec;
-			////load public key
-			asymkSpec = new X509EncodedKeySpec(publickey.getBytes());
-			PublicKey pubK = keyfactory.generatePublic(asymkSpec);
-			
-			////load private key
-			asymkSpec = new PKCS8EncodedKeySpec(privatekey.getBytes());
-			PrivateKey priK = keyfactory.generatePrivate(asymkSpec);
-			
-			this.shsasymkeypair = new KeyPair(pubK, priK);
-		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-			Controller.shsgui.triggernotice(e);
-		}
-		
-		
+		this.masterkey = new SecretKeySpec(masterkey,this.symInstance);
 	}
+	
+
 	/**
 	 * Erzeugt einen Singelton
 	 * @return
@@ -117,10 +85,10 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 * Erzeugt einen Singelton
 	 * @return
 	 */
-	public static Shscipher getInstance(HashMap<String,Object> settings, HashMap<String,String> keys){
+	public static Shscipher getInstance(HashMap<String,Object> settings, byte[] masterkey){
 		//SETTER-START
 		if(_cipher == null){
-			_cipher = new Shscipher(settings, keys);
+			_cipher = new Shscipher(settings, masterkey);
 		}
 		//SETTER-END
 		return _cipher;
@@ -192,7 +160,6 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	}
 	
 	
-	@SuppressWarnings("unused")
 	@Override
 	protected SecretKey createsymmetricKey(String pseudokey) {
 		SecretKey key = null;
@@ -229,7 +196,6 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unused")
 	@Override
 	protected KeyPair createAsymmetricKey() {
 		KeyPair keypair = null;
@@ -247,6 +213,49 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		return keypair;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean load(HashMap<Integer,byte[]> keys){
+		boolean keysloaded = true;
+		if(this.shssymkey == null && this.shsasymkeypair == null){
+			keysloaded = false;
+			try {
+				KeyFactory keyfactory = KeyFactory.getInstance(this.asymInstance);
+				EncodedKeySpec asymkSpec;
+				PublicKey pubK = null;
+				PrivateKey priK = null;
+				
+				for (int i = 0; i < 3; i++) {
+					if(i == 0){//load secret key
+						this.shssymkey = new SecretKeySpec(keys.get(i),this.symInstance);
+					}else if(i == 1){//load public key
+						asymkSpec = new X509EncodedKeySpec(keys.get(i));
+						pubK = keyfactory.generatePublic(asymkSpec);
+					}else if(i == 2){//load private key
+						asymkSpec = new PKCS8EncodedKeySpec(keys.get(i));
+						priK = keyfactory.generatePrivate(asymkSpec);
+					}
+					/*
+					 * Alternative1: KeyRep-Klasse
+					 * Alternative2: EncodedKeySpec-Klasse-->
+					 * 					http://stackoverflow.com/questions/5263156/rsa-keypair-generation-and-storing-to-keystore 
+					 * NICHT LÖSCHEN (Patrick)
+					 */	
+				}
+				
+				this.shsasymkeypair = new KeyPair(pubK, priK);
+				keysloaded = true;
+			} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+				keysloaded = false;
+				Controller.shsgui.triggernotice(e);
+			}
+		}
+		return keysloaded;
+	}
+	
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -277,14 +286,13 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	}
 	
 	
-	@SuppressWarnings("deprecation")
 	private byte[] crypt(Cipher cipher,byte[] tocrypt){
 		//byte[] toreturn;
 		ArrayList<byte[]> _toreturn =  new ArrayList<byte[]>();
 		
 		int blocksize = cipher.getBlockSize();
 		byte[] tocryptbytes;
-		byte[] crypted = new byte[cipher.getOutputSize(blocksize)];
+		//byte[] crypted = new byte[cipher.getOutputSize(blocksize)];
 		//System.out.println("Start" + blocksize+"---"+crypted.length);
 		int 
 		maxlength = tocrypt.length,
@@ -325,6 +333,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	public byte[] encryptfile(String filepath,byte[] pseudokey){
 		byte[] toreturn = null,tocrypt;
 		ArrayList<byte[]>temp = new ArrayList<byte[]>();
+		
 		try {
 			//Lesen der Datei
 			byte[] cbuf = new byte[1024];

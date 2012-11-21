@@ -89,18 +89,18 @@ public class Myadmin implements Database {
 	}
 
 	@Override
-	public void insert(String table,Object values){
+	public void insert(String table,String values){
 		this.insert(table,values,"");
 	}
 	
 	@Override
-	public void insert(String table,Object values,String info){
+	public void insert(String table,String values,String info){
 		values = "NULL,"+values;
 		this.insert(table,"",values,info);
 	}
 	
 	@Override
-	public void insert(String table, String fields, Object values, String info){
+	public void insert(String table, String fields, String values, String info){
 		try {
 			String query = "INSERT INTO "+ table+" ";
 			if (!fields.equals("")) {
@@ -119,9 +119,9 @@ public class Myadmin implements Database {
 	}
 	
 	@Override
-	public void insert(String table,String[] fields,Object[] values,String info){
+	public void insert(String table,String[] fields,String[] values,String info){
 		String implodedfields="",comma="";
-		Object implodedvalues="";
+		String implodedvalues="";
 		for (int i = 0; i < values.length; i++) {
 			implodedfields += comma+fields[i];
 			implodedvalues += comma+values[i];
@@ -131,8 +131,8 @@ public class Myadmin implements Database {
 	}
 	
 	@Override
-	public void insert(String table,Object[] values,String info){
-		Object implodedvalues="";
+	public void insert(String table,String[] values,String info){
+		String implodedvalues="";
 		String comma="";
 		for (int i = 0; i < values.length; i++) {
 			implodedvalues += comma+values[i];
@@ -142,17 +142,37 @@ public class Myadmin implements Database {
 	}
 	
 	@Override
-	public void insert(String table,HashMap<String,Object>attributes,String info){
+	public void insert(String table,HashMap<String,String>attributes,String info){
 		String[] fields = attributes.keySet().toArray(new String[attributes.keySet().size()]);
-		Object[] values = attributes.values().toArray(new Object[attributes.values().size()]);
+		String[] values = attributes.values().toArray(new String[attributes.values().size()]);
 		insert(table, fields, values, info);
 	}
 	
 	@Override
-	public void insert(String table,ArrayList<Object>attributes,String info){
-		Object[] values = attributes.toArray();
+	public void insert(String table,HashMap<String,String>attributes){
+		String[] fields = attributes.keySet().toArray(new String[attributes.keySet().size()]);
+		String[] values = attributes.values().toArray(new String[attributes.values().size()]);
+		insert(table, fields, values,"");
+	}
+	
+	@Override
+	public void insert(String table,ArrayList<String>attributes,String info){
+		String[] values = (String[]) attributes.toArray();
 		insert(table,values,info);
 	}
+	
+	@Override
+	public void insert(String table,ArrayList<String>attributes){
+		String[] values = (String[]) attributes.toArray();
+		insert(table,values,"");
+	}
+
+	
+	@Override
+	public void update(String table, String[] fields, String[] values,String condition){
+		update(table, fields, values, condition,"");
+	}
+
 	
 	@Override
 	public void update(String table, String[] fields, String[] values,String condition,String info){
@@ -160,7 +180,7 @@ public class Myadmin implements Database {
 			String query = "UPDATE "+ table + " SET ";
 			String comma="";
 			for (int i = 0; i < fields.length; i++) {
-				query += comma+fields[i]+"='"+values[i]+"'";
+				query += comma+fields[i]+"="+values[i];
 				comma = ",";
 			}
 			if(!condition.isEmpty()){
@@ -175,11 +195,18 @@ public class Myadmin implements Database {
 		}
 			
 	}
-
+	
+	@Override
+	public void update(String table, HashMap<String,String>attributes,String condition){
+		String[] fields = attributes.keySet().toArray(new String[attributes.keySet().size()]);
+		String[] values = attributes.values().toArray(new String[attributes.values().size()]);
+		update(table, fields, values, condition,"");
+	}
+	
 	@Override
 	public void update(String table, HashMap<String,String>attributes,String condition, String info){
-		String[] fields = (String[]) attributes.keySet().toArray();
-		String[] values = (String[]) attributes.values().toArray();
+		String[] fields = attributes.keySet().toArray(new String[attributes.keySet().size()]);
+		String[] values = attributes.values().toArray(new String[attributes.values().size()]);
 		update(table, fields, values, condition, info);
 	}
 
@@ -213,7 +240,6 @@ public class Myadmin implements Database {
 			if(!condition.isEmpty()){
 				query += " WHERE("+condition+")";
 			}
-
 			if (!others.isEmpty()) {
 				query += " "+others;
 			}
@@ -264,6 +290,23 @@ public class Myadmin implements Database {
 	@Override
 	public String text(String message){
 		return message;
+	}
+	
+	@Override
+	public int max(String table){
+		int toreturn=0;
+		try {
+			ResultSet result=null;
+			try{
+			result = this.select(table,"MAX(id) AS id");
+			}catch(Exception e){}
+			if(result.first()){
+				toreturn = result.getInt("id");
+			}
+		} catch (Exception e) {
+			Controller.shsgui.triggernotice(e);
+		}
+		return toreturn;
 	}
 	
 	@Override

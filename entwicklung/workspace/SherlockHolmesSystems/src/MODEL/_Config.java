@@ -3,7 +3,7 @@ package MODEL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import MODELcontroller.__Config;
+import MODEL.SERVICE.__Config;
 import SERVICE.User;
 
 public abstract class _Config extends __Config{
@@ -41,6 +41,17 @@ public abstract class _Config extends __Config{
 		return fulltxt;
 	}
 	
+	protected String remove(String fulltxt,byte[]searchstream){
+		String searchtxt = searchstream.toString();
+		return remove(fulltxt, searchtxt);
+	}
+	
+	protected byte[] remove(byte[] fullstream,byte[]searchstream){
+		String fulltxt = fullstream.toString();
+		String searchtxt = searchstream.toString();
+		return remove(fulltxt, searchtxt).getBytes();
+	}
+	
 	/**
 	 * newtxt = fulltxt(teil1) + inserttxt + fulltxt(teil2)
 	 * @author Shazem
@@ -54,11 +65,28 @@ public abstract class _Config extends __Config{
 		return fulltxt;
 	}
 	
-	protected Object wrap(Object towrap, String with){
+	protected String insert(String fulltxt,byte[]inserttxt){
+		String temp = new String(inserttxt);
+		return insert(fulltxt,temp);
+	}
+	
+	protected String insert(byte[]fullstream,String inserttxt){
+		String fulltxt = new String(fullstream);
+		return insert(fulltxt, inserttxt);
+	}
+	
+	protected byte[] insert(byte[] fullstream, byte[] insertstream){
+		String fulltxt = new String(fullstream);
+		String inserttxt = new String(insertstream);
+		return insert(fulltxt, inserttxt).getBytes();
+	}
+	
+	
+	protected String wrap(String towrap, String with){
 		return with + towrap + with;
 	}
 	
-	protected Object wrap(Object towrap){
+	protected String wrap(String towrap){
 		//towrap = towrap.replace("'","\\'"); //ohne die Kappselung würde jeder String, der ein Hochkomma beinhaltet, eine Fehlermeldung beim sql-insert verursachen.
 		return wrap(towrap,"'");
 	}
@@ -130,7 +158,8 @@ public abstract class _Config extends __Config{
 	public abstract HashMap<String,String> previewfile(String id,String status);
 	
 	/**
-	 * Passiert beim Laden der Hauptseite.
+	 * Diese Methode holt alle aktive Tickets die für den benutzer beabsichtigt sind
+	 * Diese wird bsp. beim Laden der Hauptseite aufgerufen 
 	 * @return {@link HashMap} HashMap<Integer, String[]>: Integer = Zähler, String[]={0->ticketId,1->sent_by,2->filename}
 	 */
 	public abstract HashMap<String, ArrayList<String>> gettickets();
@@ -142,8 +171,10 @@ public abstract class _Config extends __Config{
 	 */
 	public abstract HashMap<String, Object> readticket(String fileId);
 	
-	public abstract void createticket(int fileId,String[] userList);
+	public abstract void createticket(int fileId,String[] userlist);
 
+	public abstract void deleteticket(int fileId,String[]userlist,String[] ticketIdlist);
+	
 	/**
 	 * Diese Methode löscht sowohl Ordner, als auch Dateien und Tickets
 	 * und aktualisiert das jeweilige Viewobjekt
@@ -153,4 +184,9 @@ public abstract class _Config extends __Config{
 	 */
 	public abstract void delete(String status,String datatype,String data);
 	
+	/**
+	 * selbsterklärend
+	 * @param foldername
+	 */
+	public abstract String createfolder(String foldername);
 }

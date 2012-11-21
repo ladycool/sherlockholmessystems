@@ -1,6 +1,12 @@
 package test;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.crypto.*;
+
+import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
+import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 import SERVICE.Shscipher;
 
@@ -10,25 +16,28 @@ public class Testcipher {
 
 	/**
 	 * @param args
+	 * @throws SQLException 
+	 * @throws Base64DecodingException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException, Base64DecodingException {
 		// TODO Auto-generated method stub
-		String wer= "Ha";
-		System.out.println("Text = "+wer);
-		byte[] _wer = wer.getBytes();
-		Shscipher a = Shscipher.getInstance(Controller.shsconfig.keysize, 
-				"AES", 
-				Controller.shsconfig.asymInstance);
+		String _a = "this is a test";
+		byte[] a = "this is a test".getBytes();
+		String b = "'"+Base64.encode(a)+"'";
 		
-		byte[] b = a.crypt(_wer, "RSA", Cipher.ENCRYPT_MODE);
 		
-		System.out.println("b_byte= "+b);
-		System.out.println("b_string= "+new String(b));
+		//String values = "'test_base',"+b+",2,455";
+		//Controller.shsdb.insert("testdb","",values,"");
+		ResultSet res = Controller.shsdb.select("testdb","*","`key`=455");
+		res.first();
 		
-		byte[] c = a.crypt(b, "RSA", Cipher.DECRYPT_MODE);
+		//byte[] byt = res.getBytes("password");
+		String string = res.getString("password");
+		byte[] byt = Base64.decode(string);
 		
-		System.out.println("c_byte= "+c);
-		System.out.println("c:string= "+new String(c));
+		System.out.println(new String(byt)+"---"+a+"--------"+string);
+		Controller.shsdb.close();
+		
 	}
 
 }

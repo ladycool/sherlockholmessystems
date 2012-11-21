@@ -19,37 +19,47 @@ public interface Database {
 	 *            Meldung angezeigt werden
 	 * @throws Exception
 	 */
-	public void insert(String table, String fields, Object values, String info);
+	public void insert(String table, String fields, String values, String info);
 	
 	/**
-	 * @see public void insert(String table, String fields, Object values, String info);
+	 * @see public void insert(String table, String fields, String values, String info);
 	 */
-	public void insert(String table,String[] fields,Object[] values,String info);
+	public void insert(String table,String[] fields,String[] values,String info);
 	
 	/**
-	 * @see public void insert(String table, String fields, Object values, String info);
+	 * @see public void insert(String table, String fields, String values, String info);
 	 */
-	public void insert(String table,Object[] values,String info);
+	public void insert(String table,String[] values,String info);
 	
 	/**
-	 * @see public void insert(String table, String fields, Object values, String info);
+	 * @see public void insert(String table, String fields, String values, String info);
 	 */
-	public void insert(String table,HashMap<String, Object>attributes,String info);
+	public void insert(String table,HashMap<String, String>attributes,String info);
 	
 	/**
-	 * @see public void insert(String table, String fields, Object values, String info);
+	 * @see public void insert(String table, String fields, String values, String info);
 	 */
-	public void insert(String table,ArrayList<Object>attributes,String info);
+	public void insert(String table,HashMap<String,String>attributes);
 	
 	/**
-	 * @see public void insert(String table, String fields, Object values, String info);
+	 * @see public void insert(String table, String fields, String values, String info);
 	 */
-	public void insert(String table, Object values, String info);
+	public void insert(String table,ArrayList<String>attributes);
 	
 	/**
-	 * @see public void insert(String table, String fields, Object values, String info);
+	 * @see public void insert(String table, String fields, String values, String info);
 	 */
-	public void insert(String table,Object values);
+	public void insert(String table,ArrayList<String>attributes,String info);
+	
+	/**
+	 * @see public void insert(String table, String fields, String values, String info);
+	 */
+	public void insert(String table, String values, String info);
+	
+	/**
+	 * @see public void insert(String table, String fields, String values, String info);
+	 */
+	public void insert(String table,String values);
 	
 	/**
 	 * @doc UPDATE-Befehl in mysql == UPDATE Erweiterng der update-Methode
@@ -61,8 +71,31 @@ public interface Database {
 	 */
 	public void update(String table, String[] fields, String[] values,String condition,String info);
 	
+	/**
+	 * 
+	 * @param table
+	 * @param attributes
+	 * @param condition
+	 * @param info
+	 */
 	public void update(String table, HashMap<String,String>attributes,String condition, String info);
 	
+	/**
+	 * 
+	 * @param table
+	 * @param attributes
+	 * @param condition
+	 */
+	public void update(String table, HashMap<String, String> attributes,String condition);
+	
+	/**
+	 * 
+	 * @param table
+	 * @param fields
+	 * @param values
+	 * @param condition
+	 */
+	public void update(String table, String[] fields, String[] values,String condition);
 	
 	
 	/**
@@ -120,8 +153,17 @@ public interface Database {
 	public String text(String message);
 	
 	/**
+	 * Diese Methode gibt den Wert der maximalen Id in der Tabelle table zurück.
+	 * @param table
+	 * @return max(id) oder 0 wenn die Tabelle leer ist.
+	 */
+	public int max(String table);
+	
+	/**
 	 * Schliesst die Verbindung zu, die beim Anlegen des Objekts aufgebaut wurde
 	 */
 	public void close();
 	// Zusätzliches---END
+
+
 }

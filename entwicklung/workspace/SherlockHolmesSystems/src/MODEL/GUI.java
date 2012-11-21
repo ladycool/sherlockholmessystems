@@ -150,4 +150,10 @@ public interface GUI {
 	 * @param message: Nachricht die angezeigt werden sollte.
 	 */
 	public void triggernotice(String message);
+	
+	/**
+	 * Reicht Meldung zur Konsole weiter.
+	 * @param id: id der Nachricht in der Tabelle "text" die angezeigt werden sollte.
+	 */
+	public void triggernotice(int id);
 }

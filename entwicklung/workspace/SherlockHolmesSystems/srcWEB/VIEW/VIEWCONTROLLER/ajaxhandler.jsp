@@ -13,7 +13,9 @@
 
 <%
 String  
-status = request.getParameter(Controller.shsconfig.ajstatus);//owner || reader
+status = request.getParameter(Controller.shsconfig.ajstatus),//owner || reader
+id = request.getParameter(Controller.shsconfig.ajId),//ticketid oder fileid
+userlist[] = request.getParameterValues(Controller.shsconfig.ajuserlist)
 ;
 
 switch(request.getParameter("case")){
@@ -27,10 +29,7 @@ switch(request.getParameter("case")){
 		break;
 	case"signout"://Siehe shsindex.jsp
 		break;
-	case"viewfile"://muss		 		
-		String
-		id = request.getParameter(Controller.shsconfig.ajId);//ticketid oder fileid
-		
+	case"viewfile"://muss		 				
 		HashMap<String,String> filedata = Controller.shsconfig.previewfile(id,status);
 		
 		//output ergebnis
@@ -49,8 +48,14 @@ switch(request.getParameter("case")){
 	
 		break;
 	case"share"://muss
+		int fileId = Integer.parseInt(id);
+		Controller.shsconfig.createticket(fileId, userlist);
 		break;
 	case"unshare"://muss
+		String
+		ticketIdlist[] = request.getParameterValues(Controller.shsconfig.ajuserlist)
+		;
+		Controller.shsconfig.deleteticket(fileId, userlist, ticketIdlist)
 		break;
 	case"rename"://file & folder --> NICE TO HAVE
 		break;
@@ -67,9 +72,16 @@ switch(request.getParameter("case")){
 	case"closefolder"://nice to have--> toggle
 		break;
 	case"createfolder"://muss
-		//neues Verzeichnis
+		String foldername = request.getParameter(Controller.shsconfig.ajnewpath);
+		Controller.shsconfig.createfolder(foldername);
+		
+		//--> reload mainnorth
 		break;
 	case"refresh"://muss
+		break;
+	case"showlist":
+		//first to created ticket --> getallusers
+		//second to delete ticket --> getcurrentreaders
 		break;
 	default:
 

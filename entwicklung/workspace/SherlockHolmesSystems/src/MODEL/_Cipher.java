@@ -108,7 +108,12 @@ public abstract class _Cipher {
 	 */
 	public abstract byte[] readfile(byte[] pseudokey,String fileId);
 	
-
-
+	/**
+	 * Diese Methode lädt nachträglich die Schlüssel des Users auf
+	 * Das Laden wird nur dann ausführt, wenn es die Schlüsselattribute noch leer sind.
+	 * @param keys: 0--> secret key, 1--> public key, 2--> private key
+	 * @return
+	 */
+	public abstract boolean load(HashMap<Integer,byte[]> keys);
 	
 }
