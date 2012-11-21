@@ -107,7 +107,7 @@ public class Myadmin implements Database {
 				query += "(" + fields + ") ";
 			}
 			query += "VALUES ("+values+")";
-			//System.out.println(query);
+			System.out.println(query);
 			connect.createStatement().executeUpdate(query);
 			
 			if(info.isEmpty()){info=this.text(32);}

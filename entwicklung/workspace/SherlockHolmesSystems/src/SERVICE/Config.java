@@ -73,13 +73,14 @@ public class Config extends _Config {
 		String username = attributes.get(this.username);
 		attributes.remove(this.username);
 		username = username.replace("'","");
+		String _username = super.wrap(username);
 		
 		ResultSet result = null;
 		User user = null;
 		
 		try {
 			try {
-				result = Controller.shsdb.select(this.usertb,this.username,"username LIKE "+username);
+				result = Controller.shsdb.select(this.usertb,this.username,"username LIKE "+_username);
 			} catch (Exception e) {
 				//In java erzeugt ein leeres SELECT-Ergebnis eine Exception (So dumm ist java)
 			}
@@ -114,12 +115,15 @@ public class Config extends _Config {
 				
 				toinsert.putAll(attributes);
 				for (String elt : toinsert.keySet()) {
-					toinsert.put(elt, (String)super.wrap(toinsert.get(elt)));
+					toinsert.put(elt, super.wrap(toinsert.get(elt)));
 				}
+				
+				
 				
 				toinsert.put("created_date", "NOW()");
 				toinsert.put("last_mod_date",this.stamp);
 				Controller.shsdb.insert(this.usertb, toinsert);
+				
 				
 				
 				//Tabelle: keys
@@ -131,8 +135,8 @@ public class Config extends _Config {
 				tocrypt = Controller.shscipher.getkey(this.symInstance);
 				cryptedkey = Controller.shscipher.crypt(tocrypt,this.masterInstance,this.encryptmode);
 				tosave = Base64.encode(cryptedkey);
-				tosave = (String) this.wrap(tosave);
-				_userId = userId +this.savesym;
+				tosave = super.wrap(tosave);
+				_userId = super.wrap(userId +this.savesym);
 				Controller.shsdb.insert(this.keytb,_userId+","+tosave+",NULL");//DATABASE:keys
 				
 				
@@ -140,16 +144,16 @@ public class Config extends _Config {
 				
 				//NICHT Verschlüsselung und Speicherung des public Key
 				tocrypt = tocrypt1.get(this.pubk);//public key
-				tosave = (String) super.wrap(Base64.encode(tocrypt));
-				Controller.shsdb.insert(this.pubkeytb,username+","+tosave+",NULL");//DATABASE:public_keys
+				tosave = super.wrap(Base64.encode(tocrypt));
+				Controller.shsdb.insert(this.pubkeytb,_username+","+tosave+",NULL");//DATABASE:public_keys
 				
 				
 				//Verschlüsselung und Speicherung des private Key
 				tocrypt = tocrypt1.get(this.prik); // Analog zum savesym
 				cryptedkey = Controller.shscipher.crypt(tocrypt,this.masterInstance,this.encryptmode);
 				tosave = Base64.encode(cryptedkey);
-				tosave = (String) this.wrap(tosave);
-				_userId = userId +this.saveprik;
+				tosave = super.wrap(tosave);
+				_userId = super.wrap(userId +this.saveprik);
 				Controller.shsdb.insert(this.keytb,_userId+","+tosave+",NULL");//DATABASE:keys
 				
 				
@@ -160,7 +164,8 @@ public class Config extends _Config {
 				tosave = this.insert(tosave, userId);
 				tosave = this.insert(tosave, password);
 				tosave = this.insert(tosave, userId);
-				_userId = userId +this.savemaster;
+				tosave = super.wrap(tosave);
+				_userId = super.wrap(userId +this.savemaster);
 				Controller.shsdb.insert(this.keytb,_userId+","+tosave+",NULL");//DATABASE:keys
 				
 				
