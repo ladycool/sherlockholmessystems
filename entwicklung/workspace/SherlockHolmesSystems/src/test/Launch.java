@@ -26,7 +26,7 @@ public class Launch {
 		
 		String username = "patrick",password="patrick";
 		HashMap<String, String> attributes = new HashMap<String, String>();
-		int i = 1;
+		int i = 0;
 		
 		if(i == 0){
 		
@@ -47,6 +47,9 @@ public class Launch {
 		}
 		
 		System.out.println(Controller.shsuser == null);
+		
+		String localpath = "C:/Users/Sandra/Desktop/Benutzer.txt";
+		String newpath = "Benutzer";
 
 
 		
