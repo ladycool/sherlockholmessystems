@@ -33,4 +33,10 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
 	</natures>
+	<variableList>
+		<variable>
+			<name>SITKEYS</name>
+			<value>file:/C:/Users/Shazem/Documents/my_projects/eclipse/sitsrn_2012/sherlockholmessystems/keys</value>
+		</variable>
+	</variableList>
 </projectDescription>
