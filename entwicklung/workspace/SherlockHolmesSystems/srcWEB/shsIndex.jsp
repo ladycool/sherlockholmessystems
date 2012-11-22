@@ -31,6 +31,7 @@
 	//destroy
 	public void jspdestroy(){
 		Controller.shsdb.close();
+		
 	}
 %>
 

@@ -140,6 +140,7 @@ public class __Config{
 	language="language",
 	txtlinebreak="<shsbr/>",
 	stamp = "CURRENT_TIMESTAMP",
+	defaultordner="home", 
 	dbsep = "+"
 	;	
 	
@@ -175,7 +176,7 @@ public class __Config{
 	public int 
 	keysize = 512,
 	encryptmode = Cipher.ENCRYPT_MODE,
-	decryptmode = Cipher.ENCRYPT_MODE
+	decryptmode = Cipher.DECRYPT_MODE
 	;
 	public String
 	symInstance = "AES",

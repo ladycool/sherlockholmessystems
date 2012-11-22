@@ -24,9 +24,10 @@ public class Launch {
 	public static void main(String[] args) throws Base64DecodingException, SQLException{
 		//Dieser Test ist gultig und erfolgreich
 		
-		String username = "patrick",password="patrick";
+		String username = "patrick1",password="patrick";
 		HashMap<String, String> attributes = new HashMap<String, String>();
-		int i = 1;
+		/*
+		int i = 0;
 		
 		if(i == 0){
 		
@@ -46,9 +47,9 @@ public class Launch {
 			
 		}
 		
-		System.out.println(Controller.shsuser == null);
+		Controller.shsconfig.createfolder("test1");
 
-
+*/	System.out.println(attributes.isEmpty());
 		
 		
 	}
