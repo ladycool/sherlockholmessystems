@@ -39,14 +39,25 @@
 		//Controller.shsconfig.keypath = request.getRealPath("/keys");		
 	
 		//EINLOGGEN_________________________________________________
-		Controller.shsuser = Controller.shsconfig.loginSHS(type,attributes);	
 		
-		
+		if(session.getAttribute("shsuser") == null){
+			Controller.shsuser = Controller.shsconfig.loginSHS(type,attributes);
+			
+			//out.print(Controller.shsuser.getattr("username"));
+			
+			if(type.equals("signup")){
+				//Erstellen des Defaultordners
+				Controller.shsconfig.createfolder(Controller.shsconfig.defaultordner);
+			}
+			
+			
+			session.setAttribute("shsuser", Controller.shsuser);
+		}
 		//out.println(request.getRealPath("/keys"));
 		
 		
 		
-		if(Controller.shsuser != null){
+		if(session.getAttribute("shsuser") != null){
 			if(type.equals(Controller.shsconfig.signactionA)){//sign
 				//show a gimp loading animation
 				Controller.shsconfig.loadUserView();			

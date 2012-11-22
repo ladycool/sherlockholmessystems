@@ -140,6 +140,7 @@ public class __Config{
 	language="language",
 	txtlinebreak="<shsbr/>",
 	stamp = "CURRENT_TIMESTAMP",
+	defaultordner="home", 
 	dbsep = "+"
 	;	
 	

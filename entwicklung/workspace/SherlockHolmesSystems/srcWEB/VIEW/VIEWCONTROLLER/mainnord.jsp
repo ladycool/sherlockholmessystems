@@ -8,7 +8,7 @@
 		<%for(String path : Controller.shsconfig.getinternalviewdata().keySet()){%>
 			<td><div>
 				<ul><li class="folder"><%=path%></li>
-					<ul><%for(String file : Controller.shsconfig.getexternalviewdata().get(path)){
+					<ul><%for(String file : Controller.shsconfig.getinternalviewdata().get(path)){
 							filedata = file.split(Controller.shsconfig.sep+Controller.shsconfig.sep);
 						%>
 						<li class="files"><%=Controller.shsgui.createA("",filedata[1])%></li>

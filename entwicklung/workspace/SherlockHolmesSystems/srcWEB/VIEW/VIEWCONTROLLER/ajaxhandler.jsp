@@ -8,7 +8,17 @@
 <script src="<%=absPath+Controller.shsconfig.jquery %>" type="text/javascript"></script>	
 <script src="<%=absPath+Controller.shsconfig.jsmeth %>" type="text/javascript"></script>
 
-<!-- Die Datenbankanbindung sollte ebenfalls hier erfolgen, Ausgabebefehl: out.system()-->
+<%!
+ int parse(String toparse){
+	int parsed = 0;
+	if(toparse == null){		
+	}else if(toparse.isEmpty()){		
+	}else{
+		parsed = Integer.parseInt(toparse);
+	}
+	return parsed;
+}
+%>
 
 
 <%
@@ -18,8 +28,8 @@ id = request.getParameter(Controller.shsconfig.ajId),//ticketid oder fileid
 userlist[] = request.getParameterValues(Controller.shsconfig.ajuserlist)
 ;
 int 
-fileId = Integer.parseInt(id),
-casenr = Integer.parseInt(request.getParameter("case"));
+fileId = parse(id),
+casenr = parse(request.getParameter("case"));
 
 switch(casenr){
 	case 1: //"setting"--> NICE TO HAVE

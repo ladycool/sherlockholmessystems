@@ -172,6 +172,7 @@ public class Config extends _Config {
 				tosave = super.wrap(Base64.encode(towrite));
 				Controller.shsdb.insert(this.pubkeytb,_username+","+tosave+",NULL");//DATABASE:public_keys
 				
+				
 				//Finally neu USER
 				HashMap<String,Object> userattr = new HashMap<String,Object>();
 				
@@ -183,6 +184,7 @@ public class Config extends _Config {
 				userattr.put(this.keys,Controller.shscipher);
 				userattr.put(this.userlang,attributes.get(this.languageId));
 				user = User.getInstance(userattr);
+				
 			}else{
 				String totrigger = Controller.shsdb.text(12).replace("%%",username);
 				Controller.shsgui.triggernotice(totrigger);
@@ -508,9 +510,9 @@ public class Config extends _Config {
 	
 	@Override
 	public String createfolder(String foldername){
-		ResultSet result = null;
+		ResultSet result = null;System.out.println("---->"+(String)Controller.shsuser.getattr(this.username));
 		String 
-		username = (String)Controller.shsuser.getattr("username"),
+		username = (String)Controller.shsuser.getattr(this.username),
 		_foldername = "'%"+foldername+"%'",			
 		_username = "'%"+username+"%'",
 		toreturn="";	
