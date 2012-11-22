@@ -24,9 +24,9 @@ public class Launch {
 	public static void main(String[] args) throws Base64DecodingException, SQLException{
 		//Dieser Test ist gultig und erfolgreich
 		
-		String username = "patrick",password="patrick";
+		String username = "patjnijbohkick",password="patrick";
 		HashMap<String, String> attributes = new HashMap<String, String>();
-		int i = 0;
+		int i = 1;
 		
 		if(i == 0){
 		
@@ -50,7 +50,9 @@ public class Launch {
 		
 		String localpath = "C:/Users/Sandra/Desktop/Benutzer.txt";
 		String newpath = "Benutzer";
-
+		
+		Controller.shsconfig.uploadfile(localpath, newpath);
+		
 
 		
 		

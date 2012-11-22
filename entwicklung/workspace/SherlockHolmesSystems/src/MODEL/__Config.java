@@ -175,7 +175,7 @@ public class __Config{
 	public int 
 	keysize = 512,
 	encryptmode = Cipher.ENCRYPT_MODE,
-	decryptmode = Cipher.ENCRYPT_MODE
+	decryptmode = Cipher.DECRYPT_MODE
 	;
 	public String
 	symInstance = "AES",
