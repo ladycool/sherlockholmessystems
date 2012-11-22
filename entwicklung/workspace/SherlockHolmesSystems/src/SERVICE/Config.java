@@ -1,12 +1,17 @@
 package SERVICE;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import CONTROLLER.Controller;
-import MODEL._Config;
+import MODEL.SERVICE._Config;
 
 import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
@@ -70,6 +75,7 @@ public class Config extends _Config {
 	 */
 	private User signup(HashMap<String, String>attributes){
 		HashMap<String, String> toinsert = new HashMap<String, String>();
+		String fullname = attributes.get(this.fullnameId);
 		String username = attributes.get(this.username);
 		attributes.remove(this.username);
 		username = username.replace("'","");
@@ -97,6 +103,7 @@ public class Config extends _Config {
 				String userId="";
 				while(true){//Die Userid ist ebenfalls eindeutig
 					userId = new String(super.random(username.length()+password.length()));//Step 1
+					userId = userId.replace("?", "");
 					try {
 						result = Controller.shsdb.select(this.keytb,"userId","userId LIKE '"+userId+"%'");
 					} catch (Exception e) {}
@@ -104,8 +111,7 @@ public class Config extends _Config {
 						break;
 					}
 				}
-				
-				
+							
 				password = super.insert(password,userId);//pseudo-password -- Step2				
 				toinsert.put(this.password,Base64.encode(password.getBytes()));
 				
@@ -126,51 +132,46 @@ public class Config extends _Config {
 				
 				
 				
-				//Tabelle: keys
+				//keys
 				Controller.shscipher = Shscipher.getInstance(this.keysize,this.symInstance,this.asymInstance);
-				byte[] cryptedkey,tocrypt;
-				String tosave,_userId;
+				byte[] towrite;
+				FileOutputStream fos;
+				String tosave;
+				File file;
+				file = new File(this.keypath+userId);
+				file.mkdirs();
 				
-				//Verschlüsselung und Speicherung des geheimen symmetrischen Schlüssels
-				tocrypt = Controller.shscipher.getkey(this.symInstance);
-				cryptedkey = Controller.shscipher.crypt(tocrypt,this.masterInstance,this.encryptmode);
-				tosave = Base64.encode(cryptedkey);
-				tosave = super.wrap(tosave);
-				_userId = super.wrap(userId +this.savesym);
-				Controller.shsdb.insert(this.keytb,_userId+","+tosave+",NULL");//DATABASE:keys
+				towrite = Controller.shscipher.getkey();
+				file = new File(this.secretkeypath.replace("%%",userId));
+				file.createNewFile();
+				fos = new FileOutputStream(file);
+				fos.write(towrite);
+				fos.close();
 				
+				HashMap<String, byte[]>towritepair = Controller.shscipher.getkeys();
 				
-				HashMap<String, byte[]>tocrypt1 = Controller.shscipher.getkey();
+				towrite = towritepair.get(this.prik);
+				file = new File(this.privatekeypath.replace("%%",userId));
+				file.createNewFile();
+				fos = new FileOutputStream(file);
+				fos.write(towrite);
+				fos.close();
 				
-				//NICHT Verschlüsselung und Speicherung des public Key
-				tocrypt = tocrypt1.get(this.pubk);//public key
-				tosave = super.wrap(Base64.encode(tocrypt));
+				towrite = towritepair.get(this.pubk);
+				file = new File(this.publickeypath.replace("%%",userId));
+				file.createNewFile();
+				fos = new FileOutputStream(file);
+				fos.write(towrite);
+				fos.close();
+				
+				//NICHT Verschlüsselung und Speicherung des public Key in die Datenbank
+				tosave = super.wrap(Base64.encode(towrite));
 				Controller.shsdb.insert(this.pubkeytb,_username+","+tosave+",NULL");//DATABASE:public_keys
-				
-				
-				//Verschlüsselung und Speicherung des private Key
-				tocrypt = tocrypt1.get(this.prik); // Analog zum savesym
-				cryptedkey = Controller.shscipher.crypt(tocrypt,this.masterInstance,this.encryptmode);
-				tosave = Base64.encode(cryptedkey);
-				tosave = super.wrap(tosave);
-				_userId = super.wrap(userId +this.saveprik);
-				Controller.shsdb.insert(this.keytb,_userId+","+tosave+",NULL");//DATABASE:keys
-				
-				
-				//Verschlüsselung und Speicherung des master Key
-				tocrypt = Controller.shscipher.getkey(this.masterInstance);	
-				tosave = Base64.encode(tocrypt);
-				tosave = this.insert(tosave, password);
-				tosave = this.insert(tosave, userId);
-				tosave = this.insert(tosave, password);
-				tosave = this.insert(tosave, userId);
-				tosave = super.wrap(tosave);
-				_userId = super.wrap(userId +this.savemaster);
-				Controller.shsdb.insert(this.keytb,_userId+","+tosave+",NULL");//DATABASE:keys
-				
 				
 				//Finally neu USER
 				HashMap<String,Object> userattr = new HashMap<String,Object>();
+				
+				userattr.put(this.fullnameId, fullname);
 				userattr.put(this.username,username);
 				userattr.put(this.userId,userId);
 				userattr.put(this.keys,Controller.shscipher);
@@ -180,7 +181,7 @@ public class Config extends _Config {
 				String totrigger = Controller.shsdb.text(12).replace("%%",username);
 				Controller.shsgui.triggernotice(totrigger);
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | IOException e) {
 			Controller.shsgui.triggernotice(e);
 		}
 		
@@ -208,6 +209,8 @@ public class Config extends _Config {
 				Controller.shsgui.triggernotice(text);
 			}else{
 				//Tabelle user
+				String fullname = result.getString(this.fullnameId);
+				
 				String pseudouserId = result.getString("userId");
 				pseudouserId = new String(Base64.decode(pseudouserId));				
 				String userId = this.remove(pseudouserId, username);
@@ -216,74 +219,48 @@ public class Config extends _Config {
 				pseudopassword = new String(Base64.decode(pseudopassword));
 				String password = this.remove(pseudopassword, userId);
 				
-				if(password.equals(attributes.get(this.password))){//Hier wird es festgestellt ob das Passwort das Richtige ist.
-					//Tabelle keys
+				if(password.equals(attributes.get(this.password))){
+					//Hier wird es festgestellt ob das Passwort das Richtige ist:
+					//PASSWORD + USERID + USERNAME = MASTERKEY
+					
+					//keys
 					HashMap<Integer, byte[]> keys = new HashMap<Integer, byte[]>();
+					File keyfile;
+					FileInputStream fis;
+					byte[] encodedkey;
+					String _keys[] = new String[]{this.secretkeypath.replace("%%", userId),
+												this.publickeypath.replace("%%", userId),
+												this.privatekeypath.replace("%%", userId)};
 					
-					//this.keysize, this.symInstance, this.asymInstance
-					result = Controller.shsdb.select(this.keytb, "*", "userId LIKE '"+userId+"%'");
-					String todecode;
-					byte[] masterkey;
+					for (int i = 0; i < _keys.length; i++) {
+						keyfile = new File(_keys[i]);
+						fis = new FileInputStream(keyfile);
+						encodedkey = new byte[(int) keyfile.length()];
+						fis.read(encodedkey);
+						fis.close();
+						keys.put(i, encodedkey);
+					}
+					
+					HashMap<String,Object> settings = new HashMap<String,Object>();
+					settings.put("keysize",this.keysize);
+					settings.put("symInstance", this.symInstance);
+					settings.put("asymInstance", this.asymInstance);
+					
+					Controller.shscipher = Shscipher.getInstance(settings, keys);
+					//Die neue Instanz vom Shscipher wurde angelegt
+					
+					HashMap<String, Object> userattributes = new HashMap<String, Object>();
+					userattributes.put(this.fullnameId, fullname);
+					userattributes.put(this.username, username);
+					userattributes.put(this.userId, userId);
+					userattributes.put(this.keys, Controller.shscipher);
+					user = User.getInstance(userattributes);
 
-					while(result.next()){
-						pseudouserId = result.getString("userId");
-						todecode = result.getString("key");
-						
-						if(pseudouserId.endsWith(this.savemaster)){
-							todecode = super.remove(todecode, userId);
-							todecode = super.remove(todecode, password);
-							todecode = super.remove(todecode, userId);
-							todecode = super.remove(todecode, password);
-							masterkey = Base64.decode(todecode);//masterkey
-							
-							HashMap<String,Object> settings = new HashMap<String,Object>();
-							settings.put("keysize",this.keysize);
-							settings.put("symInstance", this.symInstance);
-							settings.put("asymInstance", this.asymInstance);
-							
-							Controller.shscipher = Shscipher.getInstance(settings, masterkey);
-							//Die neue Instanz vom Shscipher wurde angelegt
-							
-							byte[] temp = keys.get(1);
-							temp = Controller.shscipher.crypt(temp, this.masterInstance, this.decryptmode);
-							keys.put(1,temp);//secret key
-							
-							temp = keys.get(3);
-							temp = Controller.shscipher.crypt(temp, this.masterInstance, this.decryptmode);
-							keys.put(3,temp);//private key
-							
-						}else if(pseudouserId.endsWith(this.saveprik)){
-							
-							keys.put(3,Base64.decode(todecode));//private key
-							
-						} else if(pseudouserId.endsWith(this.savesym)){
-							
-							keys.put(1,Base64.decode(todecode));//secret key
-							
-						}
-					}
-					
-					result = Controller.shsdb.select(this.pubkeytb, "`key`", "username LIKE "+(String)super.wrap(username));
-					result.first();
-					todecode = result.getString("key");
-					keys.put(2,Base64.decode(todecode));//public key
-					
-					boolean isloaded = Controller.shscipher.load(keys);
-					
-					if(isloaded){
-						HashMap<String, Object> userattributes = new HashMap<String, Object>();
-						userattributes.put(this.username, username);
-						userattributes.put(this.userId, userId);
-						userattributes.put(this.keys, Controller.shscipher);
-						user = User.getInstance(userattributes);
-					}else{
-						Controller.shsgui.triggernotice(Controller.shsdb.text(23));
-					}
 				}else{//Exit mit User == null
 					Controller.shsgui.triggernotice(Controller.shsdb.text(9));
 				}
 			}
-		} catch (SQLException | Base64DecodingException e) {
+		} catch (SQLException | Base64DecodingException | IOException e) {
 			Controller.shsgui.triggernotice(e);
 		}
 		
@@ -671,7 +648,7 @@ public class Config extends _Config {
 		try{
 			String my_username = (String) Controller.shsuser.getattr("username");
 			byte[] _my_username = my_username.getBytes();
-			byte[] publickey = Controller.shscipher.getkey().get(this.pubk);
+			byte[] publickey = Controller.shscipher.getkeys().get(this.pubk);
 			_my_username = Controller.shscipher.crypt(_my_username, publickey, this.asymInstance, this.encryptmode);
 			my_username = super.wrap(Base64.encode(_my_username));
 			

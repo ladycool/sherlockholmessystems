@@ -26,12 +26,12 @@
 		</td>
 	</tr>
 	<tr>
-		<td class="loginlabel"><%=Controller.shsdb.text("Benutzername") %></td>
+		<td class="loginlabel"><%=Controller.shsdb.text(6) %></td>
 		<td class="logininput"><%=Controller.shsgui.createInput("text",Controller.shsconfig.usernameId,username,50,"")%></td>
 	</tr>
 	
 	<tr>
-		<td class="loginlabel"><%=Controller.shsdb.text("Passwort")%></td>
+		<td class="loginlabel"><%=Controller.shsdb.text(7)%></td>
 		<td class="logininput"><%=Controller.shsgui.createInput("password",Controller.shsconfig.passwordId,50)%></td>
 	</tr>
 	
@@ -46,10 +46,10 @@
 		<!-- Not a memeber yet -->	
 		<%=	
 			"<span id='"+spanId+"'>"+					
-			Controller.shsgui.createA("clicktochange('signup')",Controller.shsdb.text("Noch kein Mitglied?"))+
+			Controller.shsgui.createA("clicktochange('signup')",Controller.shsdb.text(4))+
 			Controller.shsgui.space(10,Controller.shsconfig.horiz) +
 			"</span>"+
-			Controller.shsgui.createInput("submit",submitId,Controller.shsdb.text("Anmelden")) +
+			Controller.shsgui.createInput("submit",submitId,Controller.shsdb.text(5)) +
 			Controller.shsgui.createInput("hidden", Controller.shsconfig.signactionId, "signin") //name="signaction"
 		%>
 		<input type="hidden" id="<%=bakupId%>" value="">

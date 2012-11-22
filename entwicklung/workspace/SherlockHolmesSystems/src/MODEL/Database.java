@@ -146,7 +146,6 @@ public interface Database {
 	public String text(int id);
 	
 	/**
-	 * @deprecated
 	 * @param message
 	 * @return
 	 */

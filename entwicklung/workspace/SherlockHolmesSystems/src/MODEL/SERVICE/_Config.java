@@ -1,9 +1,9 @@
-package MODEL;
+package MODEL.SERVICE;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import MODEL.SERVICE.__Config;
+import MODEL.__Config;
 import SERVICE.User;
 
 public abstract class _Config extends __Config{
@@ -15,10 +15,14 @@ public abstract class _Config extends __Config{
 	
 	
 	protected byte[] random(int length){
-		byte[] toreturn = new byte[length];
-		for (int i = 0; i < length; i++) {
-			byte randomsign = (byte) ('a'+Math.random()*128);
-			toreturn[i] = randomsign;
+		byte[] 
+		toreturn = new byte[length],
+		temp = new byte[]{'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b',
+		                'c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+		                '1','2','3','4','5','6','7','8','9','0','+','-','_','!','"','@','%','&','(',')','=','?','*','[',']','^','|','<','>',
+		                ',','.',';',':'};
+		for (int i = 0; i < length; i++) { 
+			toreturn[i] =temp[(int)(Math.random()*(temp.length-1))];
 		}
 		return toreturn;
 	}
@@ -35,21 +39,12 @@ public abstract class _Config extends __Config{
 	 * @return String
 	 */
 	protected String remove(String fulltxt,String searchtxt){
+		//System.out.println(fulltxt +"---"+searchtxt);
 		if(fulltxt.contains(searchtxt)){
 			fulltxt = fulltxt.replace(searchtxt,"");
 		}
+		//System.out.println(fulltxt);
 		return fulltxt;
-	}
-	
-	protected String remove(String fulltxt,byte[]searchstream){
-		String searchtxt = searchstream.toString();
-		return remove(fulltxt, searchtxt);
-	}
-	
-	protected byte[] remove(byte[] fullstream,byte[]searchstream){
-		String fulltxt = fullstream.toString();
-		String searchtxt = searchstream.toString();
-		return remove(fulltxt, searchtxt).getBytes();
 	}
 	
 	/**
@@ -63,22 +58,6 @@ public abstract class _Config extends __Config{
 		int insertpos = this.randomnr(fulltxt.length()-1);
 		fulltxt = fulltxt.substring(0, insertpos) + inserttxt + fulltxt.substring(insertpos);//new fulltxt
 		return fulltxt;
-	}
-	
-	protected String insert(String fulltxt,byte[]inserttxt){
-		String temp = new String(inserttxt);
-		return insert(fulltxt,temp);
-	}
-	
-	protected String insert(byte[]fullstream,String inserttxt){
-		String fulltxt = new String(fullstream);
-		return insert(fulltxt, inserttxt);
-	}
-	
-	protected byte[] insert(byte[] fullstream, byte[] insertstream){
-		String fulltxt = new String(fullstream);
-		String inserttxt = new String(insertstream);
-		return insert(fulltxt, inserttxt).getBytes();
 	}
 	
 	

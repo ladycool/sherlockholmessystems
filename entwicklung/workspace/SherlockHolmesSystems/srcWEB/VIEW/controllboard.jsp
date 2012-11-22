@@ -40,6 +40,10 @@
 		Controller.shsuser = Controller.shsconfig.loginSHS(type,attributes);	
 		
 		
+		out.print(Controller.shsuser == null);
+		
+		
+		
 		if(Controller.shsuser != null){
 			if(type.equals(Controller.shsconfig.signactionA)){//sign
 				//show a gimp loading animation

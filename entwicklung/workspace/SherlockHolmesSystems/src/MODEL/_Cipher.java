@@ -49,13 +49,13 @@ public abstract class _Cipher {
 	 * @param type = master | simple symmetric
 	 * @return byte[]
 	 */
-	public abstract byte[] getkey(String type);
+	public abstract byte[] getkey();
 	
 	/**
 	 * Gibt das asym. Schlüsselpaar in deren Byte-form zurück
 	 * @return HashMap<String, byte[]>
 	 */
-	public abstract HashMap<String, byte[]> getkey();
+	public abstract HashMap<String, byte[]> getkeys();
 	
 	/**
 	 * Erzeugt einen sym. Schlüssel
@@ -108,12 +108,6 @@ public abstract class _Cipher {
 	 */
 	public abstract byte[] readfile(byte[] pseudokey,String fileId);
 	
-	/**
-	 * Diese Methode lädt nachträglich die Schlüssel des Users auf
-	 * Das Laden wird nur dann ausführt, wenn es die Schlüsselattribute noch leer sind.
-	 * @param keys: 0--> secret key, 1--> public key, 2--> private key
-	 * @return
-	 */
-	public abstract boolean load(HashMap<Integer,byte[]> keys);
+
 	
 }

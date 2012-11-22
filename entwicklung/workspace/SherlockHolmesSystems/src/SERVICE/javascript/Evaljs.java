@@ -1,6 +1,6 @@
 package SERVICE.javascript;
 
-import MODEL._Config;
+import MODEL.SERVICE._Config;
 
 public class Evaljs extends _Config {
 

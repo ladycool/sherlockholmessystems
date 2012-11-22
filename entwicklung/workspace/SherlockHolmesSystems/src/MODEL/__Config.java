@@ -1,4 +1,4 @@
-package MODEL.SERVICE;
+package MODEL;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import javax.crypto.Cipher;
 import MODEL.enums.Direction;
 import MODEL.enums.Logintype;
 
-public class __Config {
+public class __Config{
 	//About jsp - servlets
 	//http://ww2.cis.temple.edu/cis308/Lectures/Unit%202/Servlets_ImplicitObjects/jsp_objects.htm	
 	
@@ -101,9 +101,6 @@ public class __Config {
 	uploadtypeA = "todb",
 	uploadtypeB = "fromdb",
 	uploadtypeC = "external",
-	savesym = "savesym",
-	saveprik = "saveprik",
-	savemaster = "savemaster",
 	
 	popupId = "popup",
 	title = "Sherlock Holmes Systems"
@@ -182,7 +179,14 @@ public class __Config {
 	public String
 	symInstance = "AES",
 	asymInstance = "RSA",
-	masterInstance = "master"
+	masterInstance = "master",
+	keypath = "keys"+sep,
+	secretkeypath = keypath+"%%"+sep+"secret.ppk",
+	publickeypath = keypath+"%%"+sep+"public.ppk",
+	privatekeypath = keypath+"%%"+sep+"private.ppk",
+	savesym = "####",
+	saveprik = "++++",
+	savemaster = "===="
 	;
 	
 	//ENUM

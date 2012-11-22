@@ -8,6 +8,7 @@
 	absPath = request.getContextPath() 
 	;
 	
+	Controller.shsconfig.keypath = absPath + Controller.shsconfig.keypath;
 %>
 
 <%!

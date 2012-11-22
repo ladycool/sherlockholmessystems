@@ -23,27 +23,32 @@ public class Launch {
 	 */
 	public static void main(String[] args) throws Base64DecodingException, SQLException{
 		//Dieser Test ist gultig und erfolgreich
-		  
+		
+		String username = "patrick",password="patrick";
 		HashMap<String, String> attributes = new HashMap<String, String>();
-		attributes.put(Controller.shsconfig.username, "test7");
-		attributes.put(Controller.shsconfig.password, "test3");
-		attributes.put(Controller.shsconfig.language, "eng");
+		int i = 1;
+		
+		if(i == 0){
+		
+			attributes.put(Controller.shsconfig.username, username);
+			attributes.put(Controller.shsconfig.password, password);
+			attributes.put(Controller.shsconfig.language, "eng");
 		
 		Controller.shsuser = Controller.shsconfig.loginSHS("signup",attributes);
+		}else if(i == 1){
+		
+			attributes.put(Controller.shsconfig.username, username);
+			attributes.put(Controller.shsconfig.password, password);
+			Controller.shsuser = Controller.shsconfig.loginSHS("signin",attributes);
+		
+		}else{
+			System.out.println('~'-'"');
+			
+		}
+		
 		System.out.println(Controller.shsuser == null);
-		 /*
 
-		
-		HashMap<String, String> attributes = new HashMap<String, String>();
-		attributes.put(Controller.shsconfig.username, "test3");
-		attributes.put(Controller.shsconfig.password, "test3");
-		Controller.shsuser = Controller.shsconfig.loginSHS("signin",attributes);
-		System.out.println(Controller.shsuser == null);
-		
-		
-		*/
-		byte a = 'g';
-		System.out.println(a);
+
 		
 		
 	}

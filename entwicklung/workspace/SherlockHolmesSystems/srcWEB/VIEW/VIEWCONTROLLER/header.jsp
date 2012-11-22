@@ -1,6 +1,7 @@
 <%@ page import="CONTROLLER.Controller" %>
 <%
-	String name = Controller.shsuser.getattr("fullname") +" ["+Controller.shsuser.getattr("username")+"]";
+	String name ="";
+	//String name = (String)Controller.shsuser.getattr("fullname") +" ["+(String)Controller.shsuser.getattr("username")+"]";
 	String tile = "";
 %>
 <table><tr>

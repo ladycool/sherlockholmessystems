@@ -4,7 +4,7 @@ package CONTROLLER;
 import MODEL.Database;
 import MODEL.GUI;
 import MODEL._Cipher;
-import MODEL._Config;
+import MODEL.SERVICE._Config;
 import SERVICE.Config;
 import SERVICE.HTML;
 import SERVICE.Myadmin;
