@@ -2,7 +2,7 @@
 <%
 	String name ="";
 	//String name = (String)Controller.shsuser.getattr("fullname") +" ["+(String)Controller.shsuser.getattr("username")+"]";
-	String tile = "";
+	String tile = "test";
 %>
 <table><tr>
 	<td  class="left">
