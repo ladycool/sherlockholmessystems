@@ -31,6 +31,13 @@ public abstract class _Config extends __Config{
 		return (int) (Math.random()*margin);
 	}
 	
+	protected void buildkeyspath(String userId){
+		this.secretkeypath = this.keypath+this.sep+userId+this.sep+"secret.ppk";
+		this.publickeypath = this.keypath+this.sep+userId+this.sep+"public.ppk";
+		this.privatekeypath = this.keypath+this.sep+userId+this.sep+"private.ppk";
+	}
+	
+	
 	/**
 	 * Falls der searchtxt im fulltext vorhanden ist, so sollte er rausgeschnitten werden, ansonsten bleibt fulltxt ungeändert
 	 * @author Shazem
@@ -74,20 +81,21 @@ public abstract class _Config extends __Config{
 		return towrap.replace("\\'", "'"); //sieh wrap();
 	}
 	
-	public void setloadingisdone(){
-		this.loadingisdone = true;
-	}
 	
 	protected boolean loadingstatus(){//System.nanoTime();
+		boolean toreturn = false;
 		long curtime, lapsedtime = 0,trialnr=0;
-		while(!this.loadingisdone && trialnr < 40){
+		while((!this.intloadingisdone || !this.extloadingisdone) && trialnr < 40){
 			curtime = System.currentTimeMillis();
 			while(lapsedtime <= 500){//jede halbe Sekunde
 				lapsedtime = System.currentTimeMillis() - curtime;
 			}
 			trialnr++;
 		}
-		return this.loadingisdone;
+		if(this.intloadingisdone && this.extloadingisdone){
+			toreturn = true;
+		}
+		return toreturn;
 	}
 	
 	public HashMap<String, ArrayList<String>> getinternalviewdata(){

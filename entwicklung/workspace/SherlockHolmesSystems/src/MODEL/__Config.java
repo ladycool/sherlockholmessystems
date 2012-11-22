@@ -33,7 +33,8 @@ public class __Config{
 	//paths
 	public final String 
 	jsp = ".jsp",
-	sep = "/"
+	sep = "/",
+	_sep = "\\";
 	;
 	
 	public final String	
@@ -181,6 +182,7 @@ public class __Config{
 	asymInstance = "RSA",
 	masterInstance = "master",
 	keypath = "keys"+sep,
+	webkeypath = "scrWEB"+sep+"VIEW"+sep,
 	secretkeypath = keypath+"%%"+sep+"secret.ppk",
 	publickeypath = keypath+"%%"+sep+"public.ppk",
 	privatekeypath = keypath+"%%"+sep+"private.ppk",
@@ -213,6 +215,7 @@ public class __Config{
 	;
 	protected HashMap<String, ArrayList<String>> externalviewdata = new HashMap<String, ArrayList<String>>();
 	protected HashMap<String, ArrayList<String>> internalviewdata = new HashMap<String, ArrayList<String>>();
-	protected boolean loadingisdone = false;
+	protected boolean intloadingisdone = false;
+	protected boolean extloadingisdone = false;
 	
 }

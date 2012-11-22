@@ -5,10 +5,10 @@
 
 <%
 	String
-	absPath = request.getContextPath() 
+	absPath = request.getContextPath()
 	;
 	
-	Controller.shsconfig.keypath = absPath + Controller.shsconfig.keypath;
+	//Controller.shsconfig.keypath = absPath + Controller.shsconfig.keypath;
 %>
 
 <%!

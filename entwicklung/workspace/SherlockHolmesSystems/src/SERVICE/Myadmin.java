@@ -273,7 +273,7 @@ public class Myadmin implements Database {
 		try {
 			String field = Controller.shsconfig.getlang();
 			if(Controller.shsuser != null){
-				if(!((String) Controller.shsuser.getattr(Controller.shsconfig.userlang)).isEmpty()){
+				if(Controller.shsuser.getattr(Controller.shsconfig.userlang) != null){
 					field = (String) Controller.shsuser.getattr(Controller.shsconfig.userlang);
 				}
 			}

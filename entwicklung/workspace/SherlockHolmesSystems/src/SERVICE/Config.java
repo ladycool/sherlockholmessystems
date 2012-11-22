@@ -138,11 +138,13 @@ public class Config extends _Config {
 				FileOutputStream fos;
 				String tosave;
 				File file;
-				file = new File(this.keypath+userId);
+				file = new File(this.keypath+this._sep+userId);
 				file.mkdirs();
+				buildkeyspath(userId);//legt die Pfade für secret-,public- und private key fest
+				
 				
 				towrite = Controller.shscipher.getkey();
-				file = new File(this.secretkeypath.replace("%%",userId));
+				file = new File(this.secretkeypath);
 				file.createNewFile();
 				fos = new FileOutputStream(file);
 				fos.write(towrite);
@@ -151,14 +153,14 @@ public class Config extends _Config {
 				HashMap<String, byte[]>towritepair = Controller.shscipher.getkeys();
 				
 				towrite = towritepair.get(this.prik);
-				file = new File(this.privatekeypath.replace("%%",userId));
+				file = new File(this.privatekeypath);
 				file.createNewFile();
 				fos = new FileOutputStream(file);
 				fos.write(towrite);
 				fos.close();
 				
 				towrite = towritepair.get(this.pubk);
-				file = new File(this.publickeypath.replace("%%",userId));
+				file = new File(this.publickeypath);
 				file.createNewFile();
 				fos = new FileOutputStream(file);
 				fos.write(towrite);
@@ -228,6 +230,9 @@ public class Config extends _Config {
 					File keyfile;
 					FileInputStream fis;
 					byte[] encodedkey;
+					
+					buildkeyspath(userId);
+					
 					String _keys[] = new String[]{this.secretkeypath.replace("%%", userId),
 												this.publickeypath.replace("%%", userId),
 												this.privatekeypath.replace("%%", userId)};
@@ -335,11 +340,13 @@ public class Config extends _Config {
 		} catch (SQLException | Base64DecodingException e) {
 			Controller.shsgui.triggernotice(e);
 		}
-		this.internalviewdata = toreturn;		
+		this.internalviewdata = toreturn;	
+		this.intloadingisdone = true;
 	}
 	
 	public void loadexternalview(){
 		this.externalviewdata = gettickets();
+		this.extloadingisdone = true;
 	}
 	
 	///////////////////LOADUSERVIEW-END/////////////////////////

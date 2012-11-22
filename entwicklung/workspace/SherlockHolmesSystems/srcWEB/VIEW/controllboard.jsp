@@ -36,11 +36,13 @@
 			}
 		}
 		
+		Controller.shsconfig.keypath = request.getRealPath("/keys");		
+		
 		//EINLOGGEN_________________________________________________
 		Controller.shsuser = Controller.shsconfig.loginSHS(type,attributes);	
 		
 		
-		out.print(Controller.shsuser == null);
+		//out.println(request.getRealPath("/keys"));
 		
 		
 		

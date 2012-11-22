@@ -17,6 +17,8 @@ status = request.getParameter(Controller.shsconfig.ajstatus),//owner || reader
 id = request.getParameter(Controller.shsconfig.ajId),//ticketid oder fileid
 userlist[] = request.getParameterValues(Controller.shsconfig.ajuserlist)
 ;
+int fileId = Integer.parseInt(id);
+
 
 switch(request.getParameter("case")){
 	case"setting": //--> NICE TO HAVE
@@ -48,14 +50,13 @@ switch(request.getParameter("case")){
 	
 		break;
 	case"share"://muss
-		int fileId = Integer.parseInt(id);
 		Controller.shsconfig.createticket(fileId, userlist);
 		break;
 	case"unshare"://muss
 		String
 		ticketIdlist[] = request.getParameterValues(Controller.shsconfig.ajuserlist)
 		;
-		Controller.shsconfig.deleteticket(fileId, userlist, ticketIdlist)
+		Controller.shsconfig.deleteticket(fileId, userlist, ticketIdlist);
 		break;
 	case"rename"://file & folder --> NICE TO HAVE
 		break;
