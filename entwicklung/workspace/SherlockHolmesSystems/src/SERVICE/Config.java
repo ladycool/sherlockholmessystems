@@ -138,8 +138,9 @@ public class Config extends _Config {
 				FileOutputStream fos;
 				String tosave;
 				File file;
-				file = new File(this.keypath+this._sep+userId);
+				file = new File(this.keypath+userId);
 				file.mkdirs();
+				
 				buildkeyspath(userId);//legt die Pfade für secret-,public- und private key fest
 				
 				
@@ -148,6 +149,7 @@ public class Config extends _Config {
 				file.createNewFile();
 				fos = new FileOutputStream(file);
 				fos.write(towrite);
+				
 				fos.close();
 				
 				HashMap<String, byte[]>towritepair = Controller.shscipher.getkeys();
@@ -172,6 +174,8 @@ public class Config extends _Config {
 				
 				//Finally neu USER
 				HashMap<String,Object> userattr = new HashMap<String,Object>();
+				
+				System.out.println(userId);
 				
 				userattr.put(this.fullnameId, fullname);
 				userattr.put(this.username,username);
@@ -281,14 +285,12 @@ public class Config extends _Config {
 	public void loadUserView(){
 		//der user sollte aus der Session kommen
 		//public wegen einem möglichen Reload-button
-		Thread threadinternal = new Shsthread();
-		threadinternal.setName(this.threadinternal);
-		Thread threadexternal = new Shsthread();
-		threadexternal.setName(this.threadinternal);
-		
-		threadinternal.start();
-		threadexternal.start();
-		
+		Controller.shsthread = new Shsthread();
+		Controller.shsthread.setName(this.threadinternal);
+		Controller.shsthread.start();
+		Controller.shsthread = new Shsthread();
+		Controller.shsthread.setName(this.threadexternal);
+		Controller.shsthread.start();		
 		this.loadingstatus();
 	}
 	

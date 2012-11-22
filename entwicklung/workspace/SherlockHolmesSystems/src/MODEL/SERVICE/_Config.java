@@ -32,9 +32,9 @@ public abstract class _Config extends __Config{
 	}
 	
 	protected void buildkeyspath(String userId){
-		this.secretkeypath = this.keypath+this.sep+userId+this.sep+"secret.ppk";
-		this.publickeypath = this.keypath+this.sep+userId+this.sep+"public.ppk";
-		this.privatekeypath = this.keypath+this.sep+userId+this.sep+"private.ppk";
+		this.secretkeypath = this.keypath+userId+this.sep+"secret.ppk";
+		this.publickeypath = this.keypath+userId+this.sep+"public.ppk";
+		this.privatekeypath = this.keypath+userId+this.sep+"private.ppk";
 	}
 	
 	

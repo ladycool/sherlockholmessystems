@@ -9,6 +9,7 @@ import SERVICE.Config;
 import SERVICE.HTML;
 import SERVICE.Myadmin;
 import SERVICE.Shscipher;
+import SERVICE.Shsthread;
 import SERVICE.User;
 
 public class Controller{	
@@ -20,4 +21,5 @@ public class Controller{
 	public static Database shsdb = Myadmin.getInstance();
 	public static _Cipher shscipher;
 	public static User shsuser;
+	public static Thread shsthread;
 }

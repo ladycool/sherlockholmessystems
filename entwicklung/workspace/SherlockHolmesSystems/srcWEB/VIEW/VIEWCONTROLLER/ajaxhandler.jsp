@@ -17,30 +17,31 @@ status = request.getParameter(Controller.shsconfig.ajstatus),//owner || reader
 id = request.getParameter(Controller.shsconfig.ajId),//ticketid oder fileid
 userlist[] = request.getParameterValues(Controller.shsconfig.ajuserlist)
 ;
-int fileId = Integer.parseInt(id);
+int 
+fileId = Integer.parseInt(id),
+casenr = Integer.parseInt(request.getParameter("case"));
 
-
-switch(request.getParameter("case")){
-	case"setting": //--> NICE TO HAVE
+switch(casenr){
+	case 1: //"setting"--> NICE TO HAVE
 		//language & layout & passwort & username &...
 		break;
-	case"help":
+	case 2://"help"
 		
 		break;
-	case"userinfo"://NICE TO HAVE
+	case 3://"userinfo" -->NICE TO HAVE
 		break;
-	case"signout"://Siehe shsindex.jsp
+	case 4://"signout" --> Siehe shsindex.jsp
 		break;
-	case"viewfile"://muss		 				
+	case 5://"viewfile" --> muss		 				
 		HashMap<String,String> filedata = Controller.shsconfig.previewfile(id,status);
 		
 		//output ergebnis
 		break;
-	case"clickonfile"://muss
+	case 6://"clickonfile" --> muss
 		//no break
-	case"clickonfolder"://muss
+	case 7://"clickonfolder" --> muss
 		break;
-	case"upload"://muss
+	case 8://"upload" --> muss
 		String
 		localpath = request.getParameter(Controller.shsconfig.ajlocalpath),
 		newpath = request.getParameter(Controller.shsconfig.ajnewpath);
@@ -49,18 +50,18 @@ switch(request.getParameter("case")){
 		//--> reload javascript
 	
 		break;
-	case"share"://muss
+	case 9://"share" --> muss
 		Controller.shsconfig.createticket(fileId, userlist);
 		break;
-	case"unshare"://muss
+	case 10://"unshare" --> muss
 		String
 		ticketIdlist[] = request.getParameterValues(Controller.shsconfig.ajuserlist)
 		;
 		Controller.shsconfig.deleteticket(fileId, userlist, ticketIdlist);
 		break;
-	case"rename"://file & folder --> NICE TO HAVE
+	case 11://"rename" file & folder --> NICE TO HAVE
 		break;
-	case"delete"://file & folder
+	case 12://"delete" --> file & folder
 		String
 		datatype = request.getParameter(Controller.shsconfig.ajdatatyp),//folder || (intern)file || ticket
 		data = request.getParameter(Controller.shsconfig.ajdata)//folder -> path || (intern) file -> fileId || externe file/ticket -> ticketId
@@ -68,19 +69,19 @@ switch(request.getParameter("case")){
 		
 		Controller.shsconfig.delete(status,data,datatype);
 		break;
-	case"openfolder"://nice to have
+	case 13://"openfolder" --> nice to have
 		break;
-	case"closefolder"://nice to have--> toggle
+	case 14://"closefolder" --> nice to have--> toggle
 		break;
-	case"createfolder"://muss
+	case 15://"createfolder" --> muss
 		String foldername = request.getParameter(Controller.shsconfig.ajnewpath);
 		Controller.shsconfig.createfolder(foldername);
 		
 		//--> reload mainnorth
 		break;
-	case"refresh"://muss
+	case 16://"refresh" --> muss
 		break;
-	case"showlist":
+	case 17://"showlist" --> 
 		//first to created ticket --> getallusers
 		//second to delete ticket --> getcurrentreaders
 		break;

@@ -7,8 +7,8 @@
 	String
 	absPath = request.getContextPath()
 	;
-	
 	//Controller.shsconfig.keypath = absPath + Controller.shsconfig.keypath;
+	out.print(Controller.shsconfig.keypath);
 %>
 
 <%!
