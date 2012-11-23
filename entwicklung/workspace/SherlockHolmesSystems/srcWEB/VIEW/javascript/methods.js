@@ -96,6 +96,30 @@ function shsresize(bodyId,mainwesttdId,percentage){
 	*/
 }
 
+
+/**
+ * @author Shazem
+ * @param ajaxcase: Dynamischer Pfad zum "ajaxhandler,jsp"-Skript=
+ * @param ajaxdata: Json-Objekt das aus den zu übermittelnden Parametern besteht
+ * 					Bsp: {name:"john",location:"mannheim"}
+ */
+function requestToJavahandler(ajaxcase,ajaxdata){
+	var id = '#'+ajaxdata.id;
+	alert($(id).val());
+	$.ajax({
+		type: "POST",
+		cache: true,
+		dataType: "html",
+		data: ajaxdata,
+		url: "VIEW/VIEWCONTROLLER/ajaxhandler.jsp",
+		success:function(text){
+			text = text.replace(toreplace,closetag);
+			$(containerId).html(text);
+		}
+	});
+}
+
+
 /**
  * @author Shazem
  * @param event: Das onclick-Even
@@ -106,9 +130,75 @@ function shsresize(bodyId,mainwesttdId,percentage){
  * 					Bsp: {name:"john",location:"mannheim"}
  */
 function popup(event,popupdim,ajaxdata){
-	additional = 10;
-	body = "#shsbody";
 	popupid = "#popup";
+	
+	dim = preparepopup(event,popupdim);
+	popupleft = dim.left;
+	popuptop = dim.top;
+	popupwidth = dim.w;
+	popupheight = dim.h;
+	
+	updatecontainer(popupid,ajaxdata);
+	
+	$(popupid).css({
+			left: popupleft,
+			top: popuptop,
+			width: popupwidth,
+			height: popupheight
+	      }).show('50');
+	//hide() -> to shut it down	
+	//http://www.joelpeterson.com/blog/2010/12/quick-and-easy-windowless-popup-overlay-in-jquery/
+	//show(), hide(), popup(), fadein(), fadeout()
+}
+
+
+function simplepopup(event,popupdim,text){
+	popupid = "#popup";
+	var toreplace = "CLOSETAG";
+	var closetag = "<a onclick=\"$('"+popupid+"').hide('50')\">SCHLIESSEN</a>";
+	
+	
+	dim = preparepopup(event,popupdim);
+	popupleft = dim.left;
+	popuptop = dim.top;
+	popupwidth = dim.w;
+	popupheight = dim.h;
+	
+	text = text.replace(toreplace,closetag);
+	$(popupid).html(text);
+	
+	$(popupid).css({
+		left: popupleft,
+		top: popuptop,
+		width: popupwidth,
+		height: popupheight
+      }).show('50');
+}
+
+
+function updatecontainer(containerId,ajaxdata){
+	if(containerId.charAt(0) != "#"){containerId = "#"+containerId;}
+	var toreplace = "CLOSETAG";
+	var closetag = "";
+	
+	$.ajax({
+		type: "POST",
+		cache: true,
+		dataType: "html",
+		data: ajaxdata,
+		url: "VIEW/VIEWCONTROLLER/ajaxhandler.jsp",
+		success:function(text){
+			text = text.replace(toreplace,closetag);
+			$(containerId).html(text);
+		}
+	});
+}
+
+
+function preparepopup(event,popupdim){
+	body = "#shsbody";
+	additional = 10;
+	
 	popupwidth = popupdim.width;
 	popupheight = popupdim.height;
 	var popupleft = 0;
@@ -135,39 +225,9 @@ function popup(event,popupdim,ajaxdata){
 		popuptop -= popupheight;
 	}
 	
-	updatecontainer(popupid,ajaxdata);
-	
 	popupleft +=px;
 	popuptop +=px;
 	popupwidth +=px;
 	popupheight +=px;
-	$(popupid).css({
-			left: popupleft,
-			top: popuptop,
-			width: popupwidth,
-			height: popupheight
-	      }).show('50');
-	//hide() -> to shut it down	
-	//http://www.joelpeterson.com/blog/2010/12/quick-and-easy-windowless-popup-overlay-in-jquery/
-	//show(), hide(), popup(), fadein(), fadeout()
+	return {left:popupleft,top:popuptop,h:popupheight,w:popupwidth};
 }
-
-
-function updatecontainer(containerId,ajaxdata){
-	if(containerId.charAt(0) != "#"){containerId = "#"+containerId;}
-	var toreplace = "CLOSETAG";
-	var closetag = "";
-	
-	$.ajax({
-		type: "POST",
-		cache: true,
-		dataType: "html",
-		data: ajaxdata,
-		url: "VIEW/VIEWCONTROLLER/ajaxhandler.jsp",
-		success:function(text){
-			text = text.replace(toreplace,closetag);
-			$(containerId).html(text);
-		}
-	});
-}
-

@@ -1,5 +1,6 @@
 package SERVICE;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -172,6 +173,7 @@ public class Config extends _Config {
 				tosave = super.wrap(Base64.encode(towrite));
 				Controller.shsdb.insert(this.pubkeytb,_username+","+tosave+",NULL");//DATABASE:public_keys
 				
+				
 				//Finally neu USER
 				HashMap<String,Object> userattr = new HashMap<String,Object>();
 				
@@ -183,6 +185,7 @@ public class Config extends _Config {
 				userattr.put(this.keys,Controller.shscipher);
 				userattr.put(this.userlang,attributes.get(this.languageId));
 				user = User.getInstance(userattr);
+				
 			}else{
 				String totrigger = Controller.shsdb.text(12).replace("%%",username);
 				Controller.shsgui.triggernotice(totrigger);
@@ -359,7 +362,7 @@ public class Config extends _Config {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void uploadfile(String localpath,String newpath){
+	public void uploadfile(DataInputStream in,String _newpath){
 		try {
 			HashMap<String,byte[]> _toinsert = new HashMap<String,byte[]>();
 			HashMap<String,String> toinsert = new HashMap<String,String>();
@@ -371,12 +374,15 @@ public class Config extends _Config {
 			_toinsert.put("pseudouserId", pseudouserId);		
 			
 			byte[] pseudokey = super.random(this.keysize);
-			byte[] content = Controller.shscipher.encryptfile(localpath, pseudokey);
+			byte[] content = Controller.shscipher.encryptfile(in, pseudokey);
 			
 			pseudokey = Controller.shscipher.crypt(pseudokey, this.symInstance, this.encryptmode);
 			
 			_toinsert.put("key",pseudokey);
 			_toinsert.put("content",content);
+			
+			String[]temp = _newpath.split("/");
+			String newpath = temp[0];
 			
 			ResultSet result=null;
 			try{
@@ -391,7 +397,7 @@ public class Config extends _Config {
 				root = this.createfolder(newpath);
 			}
 
-			String[]temp = localpath.split("/");
+			
 			byte[] pathdef = (root+"/"+temp[temp.length-1]).getBytes();
 			pathdef = Controller.shscipher.crypt(pathdef, this.symInstance, this.encryptmode);
 			
@@ -508,9 +514,9 @@ public class Config extends _Config {
 	
 	@Override
 	public String createfolder(String foldername){
-		ResultSet result = null;
+		ResultSet result = null;//System.out.println("---->"+(String)Controller.shsuser.getattr(this.username));
 		String 
-		username = (String)Controller.shsuser.getattr("username"),
+		username = (String)Controller.shsuser.getattr(this.username),
 		_foldername = "'%"+foldername+"%'",			
 		_username = "'%"+username+"%'",
 		toreturn="";	
@@ -847,4 +853,6 @@ public class Config extends _Config {
 		return toreturn;
 	}
 	//////////////////////////////TICKETS-ENDE/////////////////////////////////
+
+
 }

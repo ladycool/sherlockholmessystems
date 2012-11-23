@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import MODEL.__Config;
+import java.io.DataInputStream;
 import SERVICE.User;
 
 public abstract class _Config extends __Config{
@@ -122,7 +123,7 @@ public abstract class _Config extends __Config{
 	 * loadUserView
 	 */
 	
-	public abstract void uploadfile(String localpath,String newpath);
+	public abstract void uploadfile(DataInputStream in,String newpath);
 	
 	/**
 	 * Selbsterklärend

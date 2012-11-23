@@ -8,7 +8,6 @@
 	absPath = request.getContextPath()
 	;
 	//Controller.shsconfig.keypath = absPath + Controller.shsconfig.keypath;
-	out.print(Controller.shsconfig.keypath);
 %>
 
 <%!
@@ -31,6 +30,7 @@
 	//destroy
 	public void jspdestroy(){
 		Controller.shsdb.close();
+		
 	}
 %>
 
@@ -47,9 +47,10 @@
 	</head>
 	
 	<body>
-		<%if(session.getAttribute("user") == null && request.getParameter(Controller.shsconfig.signactionId) == null){%>
+		<%if(session.getAttribute(Controller.shsconfig.shsuser) == null && 
+			request.getParameter(Controller.shsconfig.signactionId) == null){%>
 			<%@ include file="VIEW/login.jsp" %>
-		<%}else{%><%=session.getAttribute("user") %>
+		<%}else{%>
 			<%@ include file="VIEW/controllboard.jsp" %>	
 		<%}%>
 	</body>
