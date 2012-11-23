@@ -343,35 +343,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		
 		return toreturn;
 	}
-	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public byte[] readfile(byte[] pseudokey,String fileId){
-		byte[] content = null;
-		try {
-			ResultSet result=null;
-			try{
-				//Datei aus der Db holen
-				result = Controller.shsdb.select("files","content","id="+fileId,"");
-			} catch (Exception e) {}
-			
-			if(result.first()){
-				content = result.getBytes("content");				
-				//Entschlüsselung des Inhaltes
-				content = this.crypt(content,pseudokey,this.symInstance,Cipher.DECRYPT_MODE);
-			}else{
-				Controller.shsgui.triggernotice(Controller.shsdb.text(41));
-			}
-		} catch (Exception e) {
-			Controller.shsgui.triggernotice(Controller.shsdb.text(41));
-			Controller.shsgui.triggernotice(e);
-		}
-			
-		return content;
-	}
+
 	
 	
 	private byte[] arraylisttobytearray(ArrayList<byte[]> toconvert){

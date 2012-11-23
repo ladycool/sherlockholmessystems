@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.crypto.Cipher;
+
 import CONTROLLER.Controller;
 import MODEL.SERVICE._Config;
 
@@ -441,21 +443,20 @@ public class Config extends _Config {
 	private HashMap<String,String> preloadInternalfile(String fileId){
 		HashMap<String, String> toreturn = new HashMap<String, String>();		
 		try {
-			ResultSet result = Controller.shsdb.select(this.filestb,"`key`,pathdef","id="+fileId);
+			ResultSet result = Controller.shsdb.select(this.filestb,"`key`,content,pathdef","id="+fileId);
 			result.next();
 			byte[]
 			_content = Base64.decode(result.getString("content")),
 			_pathdef = Base64.decode(result.getString("pathdef")),
-			pseudokey = Controller.shscipher.crypt(Base64.decode(result.getString("key")), this.symInstance, this.decryptmode);
 			
-			_content = Controller.shscipher.readfile(pseudokey, fileId);
+			pseudokey = Controller.shscipher.crypt(Base64.decode(result.getString("key")), this.symInstance, this.decryptmode);
 			_pathdef = Controller.shscipher.crypt(_pathdef, this.symInstance, this.decryptmode);
 			
-			String pathdef = new String(_pathdef);
-			String content = new String(_content);
+			//Entschlüsselung des Inhaltes
+			_content = Controller.shscipher.crypt(_content,pseudokey,this.symInstance,this.decryptmode);		
 
-			toreturn.put("filepath",pathdef);
-			toreturn.put("content",content);
+			toreturn.put("filepath",new String(_pathdef));
+			toreturn.put("content",new String(_content));
 		} catch (SQLException | Base64DecodingException e) {
 			Controller.shsgui.triggernotice(e);
 		}
@@ -471,15 +472,25 @@ public class Config extends _Config {
 		HashMap<String, String> toreturn = new HashMap<String, String>();
 		HashMap<String, Object> temp = this.readticket(ticketId);//fileid + key + path
 		
-		
-		byte[] pseudokey = (byte[])temp.get("pseudokey");
-		String fileId = (String)temp.get("fileId");
-		byte[] content = Controller.shscipher.readfile(pseudokey, fileId);
-		
-		toreturn.put("filepath", (String)temp.get("filepath"));
-		toreturn.put("content", new String(content));
+		try {
+			byte[] pseudokey = (byte[])temp.get("pseudokey");
+			String fileId = (String)temp.get("fileId");
+			ResultSet result = Controller.shsdb.select(this.filestb,"content","id="+fileId);
+			result.next();
+			
+			//Entschlüsselung des Inhaltes
+			byte[]
+			_content = Base64.decode(result.getString("content"));
+			_content = Controller.shscipher.crypt(_content,pseudokey,this.symInstance,this.decryptmode);
+			
+			toreturn.put("filepath", (String)temp.get("filepath"));
+			toreturn.put("content", new String(_content));
+		} catch (SQLException | Base64DecodingException e) {
+			Controller.shsgui.triggernotice(e);
+		}
 		return toreturn;
 	}
+	
 	
 	/*
 	@Override
