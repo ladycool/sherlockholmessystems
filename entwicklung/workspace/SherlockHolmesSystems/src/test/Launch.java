@@ -1,5 +1,6 @@
 package test;
 
+import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -24,34 +25,41 @@ public class Launch {
 	public static void main(String[] args) throws Base64DecodingException, SQLException{
 		//Dieser Test ist gultig und erfolgreich
 		
-		String username = "patrick1",password="patrick";
-		HashMap<String, String> attributes = new HashMap<String, String>();
-		/*
+		String username = "patrick37",password="patrick";
+		HashMap<String, String> attribute = new HashMap<String, String>();
 		int i = 0;
 		
 		if(i == 0){
 		
-			attributes.put(Controller.shsconfig.username, username);
-			attributes.put(Controller.shsconfig.password, password);
-			attributes.put(Controller.shsconfig.language, "eng");
+			attribute.put(Controller.shsconfig.username, username);
+			attribute.put(Controller.shsconfig.password, password);
+			attribute.put(Controller.shsconfig.language, "eng");
 		
-		Controller.shsuser = Controller.shsconfig.loginSHS("signup",attributes);
+		Controller.shsuser = Controller.shsconfig.loginSHS("signup",attribute);
+		//Controller.shsconfig.createfolder("test1");
 		}else if(i == 1){
 		
-			attributes.put(Controller.shsconfig.username, username);
-			attributes.put(Controller.shsconfig.password, password);
-			Controller.shsuser = Controller.shsconfig.loginSHS("signin",attributes);
+			attribute.put(Controller.shsconfig.username, username);
+			attribute.put(Controller.shsconfig.password, password);
+			Controller.shsuser = Controller.shsconfig.loginSHS("signin",attribute);
 		
 		}else{
 			System.out.println('~'-'"');
 			
 		}
 		
-		Controller.shsconfig.createfolder("test1");
-
-*/	System.out.println(attributes.isEmpty());
+		System.out.println(Controller.shsuser == null);
+		System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
+		System.out.println(Controller.shsuser.getattr(Controller.shsconfig.userId));
+		File file = new File("C:/Users/Shazem/Desktop/sss.txt");
 		
+		Controller.shsconfig.uploadfile(file);
 		
+		String id = "6";
+		HashMap<String,String> dbfile = Controller.shsconfig.previewfile(id,Controller.shsconfig.owner);
+		
+		System.out.println(dbfile.get("filepath"));
+		System.out.println(dbfile.get("content"));
 	}
 
 }
