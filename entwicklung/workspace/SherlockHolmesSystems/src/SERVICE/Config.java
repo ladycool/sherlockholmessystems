@@ -1,5 +1,6 @@
 package SERVICE;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -361,7 +362,7 @@ public class Config extends _Config {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void uploadfile(String localpath,String newpath){
+	public void uploadfile(DataInputStream in,String _newpath){
 		try {
 			HashMap<String,byte[]> _toinsert = new HashMap<String,byte[]>();
 			HashMap<String,String> toinsert = new HashMap<String,String>();
@@ -373,12 +374,15 @@ public class Config extends _Config {
 			_toinsert.put("pseudouserId", pseudouserId);		
 			
 			byte[] pseudokey = super.random(this.keysize);
-			byte[] content = Controller.shscipher.encryptfile(localpath, pseudokey);
+			byte[] content = Controller.shscipher.encryptfile(in, pseudokey);
 			
 			pseudokey = Controller.shscipher.crypt(pseudokey, this.symInstance, this.encryptmode);
 			
 			_toinsert.put("key",pseudokey);
 			_toinsert.put("content",content);
+			
+			String[]temp = _newpath.split("/");
+			String newpath = temp[0];
 			
 			ResultSet result=null;
 			try{
@@ -393,7 +397,7 @@ public class Config extends _Config {
 				root = this.createfolder(newpath);
 			}
 
-			String[]temp = localpath.split("/");
+			
 			byte[] pathdef = (root+"/"+temp[temp.length-1]).getBytes();
 			pathdef = Controller.shscipher.crypt(pathdef, this.symInstance, this.encryptmode);
 			
@@ -510,7 +514,7 @@ public class Config extends _Config {
 	
 	@Override
 	public String createfolder(String foldername){
-		ResultSet result = null;System.out.println("---->"+(String)Controller.shsuser.getattr(this.username));
+		ResultSet result = null;//System.out.println("---->"+(String)Controller.shsuser.getattr(this.username));
 		String 
 		username = (String)Controller.shsuser.getattr(this.username),
 		_foldername = "'%"+foldername+"%'",			
@@ -849,4 +853,6 @@ public class Config extends _Config {
 		return toreturn;
 	}
 	//////////////////////////////TICKETS-ENDE/////////////////////////////////
+
+
 }

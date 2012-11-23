@@ -314,6 +314,38 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		return toreturn;
 	}
 	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public byte[] encryptfile(DataInputStream file,byte[] pseudokey){
+		byte[] toreturn = null,tocrypt;
+		ArrayList<byte[]>temp = new ArrayList<byte[]>();
+		
+		try {
+			//Lesen der Datei
+			byte[] cbuf = new byte[1024];
+			//DataInputStream file = new DataInputStream(new FileInputStream(new File(filepath)));
+			while(file.read(cbuf) != -1){
+				temp.add(cbuf);
+			}
+			file.close();
+			
+			//Convertierung von Arraylist<byte[]> to byte[]
+			tocrypt = this.arraylisttobytearray(temp);
+			
+			//Verschlüsselung des Inhaltes
+			toreturn = this.crypt(tocrypt,pseudokey,this.symInstance,Cipher.ENCRYPT_MODE);
+			
+		} catch (IOException e) {
+			Controller.shsgui.triggernotice(e);
+		}	
+		
+		return toreturn;
+	}
+	
+	
 	/**
 	 * {@inheritDoc}
 	 */

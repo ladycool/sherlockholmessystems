@@ -102,7 +102,7 @@ public class __Config{
 	uploadtypeA = "todb",
 	uploadtypeB = "fromdb",
 	uploadtypeC = "external",
-	
+	shsuser = "shsuser",
 	popupId = "popup",
 	title = "Sherlock Holmes Systems"
 	;

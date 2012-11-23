@@ -1,3 +1,4 @@
+<%@page import="java.io.DataInputStream"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.HashMap"%>
 <%@ page import="CONTROLLER.Controller" %>
@@ -23,58 +24,70 @@
 %>
 	
 <%	
-	if(!(request.getParameter(Controller.shsconfig.usernameId).isEmpty() || 
-			request.getParameter(Controller.shsconfig.passwordId).isEmpty())){
-		
-		HashMap<String,String>attributes = new HashMap<String,String>();
-		Map<String,String[]>temp = request.getParameterMap();
-		String type = temp.get(Controller.shsconfig.signactionId)[0];
-		
-		for(String key : temp.keySet()){
-			if(!key.equals(Controller.shsconfig.signactionId) && !temp.get(key)[0].isEmpty()){
-			attributes.put(key, temp.get(key)[0]);
-			}
-		}
-		
-		//Controller.shsconfig.keypath = request.getRealPath("/keys");		
-	
-		//EINLOGGEN_________________________________________________
-		
-		if(session.getAttribute("shsuser") == null){
-			Controller.shsuser = Controller.shsconfig.loginSHS(type,attributes);
+	String type = "";
+
+	if(!(request.getParameter(Controller.shsconfig.usernameId) == null || 
+		request.getParameter(Controller.shsconfig.passwordId) == null)){
+		if(!(request.getParameter(Controller.shsconfig.usernameId).isEmpty() || 
+				request.getParameter(Controller.shsconfig.passwordId).isEmpty())){
 			
-			//out.print(Controller.shsuser.getattr("username"));
+			HashMap<String,String>attributes = new HashMap<String,String>();
+			Map<String,String[]>temp = request.getParameterMap();
+			type = temp.get(Controller.shsconfig.signactionId)[0];
 			
-			if(type.equals("signup")){
-				//Erstellen des Defaultordners
-				Controller.shsconfig.createfolder(Controller.shsconfig.defaultordner);
+			for(String key : temp.keySet()){
+				if(!key.equals(Controller.shsconfig.signactionId) && !temp.get(key)[0].isEmpty()){
+				attributes.put(key, temp.get(key)[0]);
+				}
 			}
 			
+			//Controller.shsconfig.keypath = request.getRealPath("/keys");		
+		
+			//EINLOGGEN_________________________________________________
 			
-			session.setAttribute("shsuser", Controller.shsuser);
-		}
-		//out.println(request.getRealPath("/keys"));
-		
-		
-		
-		if(session.getAttribute("shsuser") != null){
-			if(type.equals(Controller.shsconfig.signactionA)){//sign
-				//show a gimp loading animation
-				Controller.shsconfig.loadUserView();			
+			if(session.getAttribute(Controller.shsconfig.shsuser) == null){
+				Controller.shsuser = Controller.shsconfig.loginSHS(type,attributes);
+				
+				out.print(Controller.shsconfig.signactionB);
+				
+				if(type.equals(Controller.shsconfig.signactionB) && Controller.shsuser != null){
+					//Erstellen des Defaultordners
+					Controller.shsconfig.createfolder(Controller.shsconfig.defaultordner);
+				}
+				
+				if(Controller.shsuser != null){
+					session.setAttribute(Controller.shsconfig.shsuser, Controller.shsuser);
+				}
+			}
+
+
+			//SO IST ES RICHTIG
+			
+			
+			if(session.getAttribute(Controller.shsconfig.shsuser) != null){
+					if(request.getParameter("uploadfile").equals("uploadfile")){
+						out.print("----------------->");
+						DataInputStream in = new DataInputStream(request.getInputStream());
+						String newname = request.getParameter("root")+"/"+request.getParameter("filename");
+						Controller.shsconfig.uploadfile(in, newname);
+					
+					}
+					
+					//show a gimp loading animation
+					Controller.shsconfig.loadUserView();	
+			}else{
+				if(type.equals(Controller.shsconfig.signactionA)){
+					session.setAttribute(Controller.shsconfig.notice,Controller.shsdb.text(51));
+				}else if(type.equals(Controller.shsconfig.signactionB)){
+					session.setAttribute(Controller.shsconfig.notice,Controller.shsdb.text(52));
+				}		
+				response.sendRedirect(absPath);//Alles ist in Ordnung
 			}
 		}else{
-			if(type.equals(Controller.shsconfig.signactionA)){
-				session.setAttribute(Controller.shsconfig.notice,Controller.shsdb.text(51));
-			}else if(type.equals(Controller.shsconfig.signactionB)){
-				session.setAttribute(Controller.shsconfig.notice,Controller.shsdb.text(52));
-			}		
-			response.sendRedirect(absPath);//Alles ist in Ordnung
+			session.setAttribute(Controller.shsconfig.notice,Controller.shsdb.text(14));
+			response.sendRedirect(absPath);
 		}
-	}else{
-		session.setAttribute(Controller.shsconfig.notice,Controller.shsdb.text(14));
-		response.sendRedirect(absPath);
-	}
-	
+}
 %>
 
 

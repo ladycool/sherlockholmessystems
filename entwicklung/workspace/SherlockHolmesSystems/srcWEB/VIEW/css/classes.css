@@ -179,6 +179,10 @@ body{
 	margin: 0 55px 0 0;
 }
 
+.folder {
+	list-style-image:url(../images/folderIcon.png);
+}
+
 
 
 

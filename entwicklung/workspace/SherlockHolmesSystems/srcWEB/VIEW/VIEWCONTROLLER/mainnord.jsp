@@ -11,17 +11,21 @@
 	%>
 	<script type="text/javascript">
 				var folderpopup=
-					"<fieldset>"+
-						"<legend>Fileupload</legend>"+
-						"<input type='file' name='file' id='file' size='40px'/>"+
-						"<input type='button' name='upload' value='Hochladen'"+
-							"onclick='requestToJavahandler(8,{id:\"file\"})'/>"+
-					"</fieldset>";
+					
+						"<form action='' METHOD='POST'><fieldset>"+
+							"<legend>Fileupload</legend>"+
+							"<input type='file' name='file' id='file' size='40px'/>"+
+							"<input type='hidden' name='uploadfile' value='uploadfile'/></br>"+
+							"<input type='text' name='filename' value=''/><br/>"+
+							"<input type='hidden' name='root' value='home'/>"+
+							"<input type='submit' name='upload' value='Hochladen'/>"+
+						"</fieldset></form>";
 				</script>
 	<table><tr>
 		<%for(String path : Controller.shsconfig.getinternalviewdata().keySet()){%>
 			<td><div>
 				<script type="text/javascript">
+				//folderpopup = folderpopup.replace('%%',\'<%=path%>\');
 				<%if(!path.equals(Controller.shsconfig.defaultordner)){%>					
 					folderpopup +=
 						"<fieldset>"+
