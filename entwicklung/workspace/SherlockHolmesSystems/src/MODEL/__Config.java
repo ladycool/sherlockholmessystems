@@ -174,7 +174,8 @@ public class __Config{
 	
 	//Cipher
 	public int 
-	keysize = 512,
+	symkeysize = 128,//256 -> pseudokey = new String().length() = 16;
+	asymkeysize = 512,
 	encryptmode = Cipher.ENCRYPT_MODE,
 	decryptmode = Cipher.DECRYPT_MODE
 	;
@@ -214,9 +215,13 @@ public class __Config{
 	notice = "notice",
 	inputdata = "inputdata"
 	;
-	protected HashMap<String, ArrayList<String>> externalviewdata = new HashMap<String, ArrayList<String>>();
-	protected HashMap<String, ArrayList<String>> internalviewdata = new HashMap<String, ArrayList<String>>();
+	protected HashMap<String,String> externalviewdata = new HashMap<String,String>();
+	protected HashMap<String,String> internalviewdata = new HashMap<String,String>();
 	protected boolean intloadingisdone = false;
 	protected boolean extloadingisdone = false;
 	
+	
+	
+	//Object-ATTRIBUTES
+
 }

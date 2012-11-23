@@ -56,7 +56,7 @@ switch(casenr){
 		localpath = request.getParameter(Controller.shsconfig.ajlocalpath),
 		newpath = request.getParameter(Controller.shsconfig.ajnewpath);
 		
-		Controller.shsconfig.uploadfile(localpath, newpath);
+		Controller.shsconfig.uploadfile(localpath);
 		//--> reload javascript
 	
 		break;

@@ -1,18 +1,14 @@
 package SERVICE;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.KeyRep;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -28,6 +24,7 @@ import java.util.HashMap;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.SecretKeySpec;
 
 import CONTROLLER.Controller;
@@ -48,9 +45,9 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 * PRIVATE
 	 */
 	private static Shscipher _cipher = null;
-	private Shscipher(int keysize, String symInstance, String asymInstance) {
+	private Shscipher(int symkeysize,int asymkeysize,String symInstance, String asymInstance) {
 		//settings
-		super(keysize, symInstance, asymInstance);
+		super(symkeysize,asymkeysize,symInstance,asymInstance);
 		
 		//create
 		this.shssymkey = this.createsymmetricKey();
@@ -85,10 +82,10 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 * Erzeugt einen Singelton
 	 * @return
 	 */
-	public static Shscipher getInstance(int keysize, String symInstance, String asymInstance){
+	public static Shscipher getInstance(int symkeysize,int asymkeysize, String symInstance, String asymInstance){
 		//SETTER-START
 		if(_cipher == null){
-			_cipher = new Shscipher(keysize, symInstance, asymInstance);
+			_cipher = new Shscipher(symkeysize,asymkeysize, symInstance, asymInstance);
 		}
 		//SETTER-END
 		return _cipher;
@@ -171,6 +168,8 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		        key = keygen.generateKey();
 			}else{
 				//SecretKeySpec skeySpec = new SecretKeySpec(getCryptoKeyByteArray(length=16));
+				//SecretKeyFactory factory = SecretKeyFactory.getInstance(this.symInstance);
+				
 				key = new SecretKeySpec(pseudokey.getBytes(),this.symInstance);//AES pseudo.length() = 16
 			}
 		} catch (GeneralSecurityException e) {
@@ -202,7 +201,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		try {
 			KeyPairGenerator pairgen = KeyPairGenerator.getInstance(this.asymInstance);//RSA
             SecureRandom random = new SecureRandom();
-            pairgen.initialize(this.getkeysize(), random);
+            pairgen.initialize(this.getasymkeysize(), random);
             keypair = pairgen.generateKeyPair();
 			
 		} catch (GeneralSecurityException e){
@@ -357,19 +356,12 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 			try{
 				//Datei aus der Db holen
 				result = Controller.shsdb.select("files","content","id="+fileId,"");
-			} catch (Exception e) {
-				//In java erzeugt ein leeres SELECT-Ergebnis eine Exception (So dumm ist java)
-			}
+			} catch (Exception e) {}
 			
 			if(result.first()){
-				content = result.getBytes("content");
-				
+				content = result.getBytes("content");				
 				//Entschlüsselung des Inhaltes
 				content = this.crypt(content,pseudokey,this.symInstance,Cipher.DECRYPT_MODE);
-							
-				//Entpuffern: Entfernung von <shsbr/>
-				//toreturn = content.split(Controller.shsconfig.txtlinebreak);
-				//Jede weitere Methode wird sich ums Entpuffern kümmern
 			}else{
 				Controller.shsgui.triggernotice(Controller.shsdb.text(41));
 			}

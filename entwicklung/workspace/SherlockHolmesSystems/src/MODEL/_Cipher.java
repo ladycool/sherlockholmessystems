@@ -9,41 +9,42 @@ import java.util.HashMap;
  */
 public abstract class _Cipher {
 	
-	private int keysize = 0;
+	private int symkeysize = 0, asymkeysize = 0;
 	protected String asymInstance = "", symInstance = "", master="master";
 	
-	protected _Cipher(int keysize,String symInstance, String asymInstance){
-		_init(keysize, symInstance, asymInstance);
+	protected _Cipher(int symkeysize,int asymkeysize,String symInstance, String asymInstance){
+		_init(symkeysize,asymkeysize, symInstance, asymInstance);
 	}
 
 	protected _Cipher(HashMap<String,Object> settings){
-		_init((int)settings.get("keysize"),(String)settings.get("symInstance"),(String)settings.get("asymInstance"));
+		_init((int)settings.get("symkeysize"),(int)settings.get("asymkeysize"),(String)settings.get("symInstance"),(String)settings.get("asymInstance"));
 	}
 	
-	private void _init(int keysize,String symInstance, String asymInstance){
-		if(this.keysize == 0 && this.symInstance.isEmpty() && this.asymInstance.isEmpty()){
-			this.keysize = keysize;
+	private void _init(int symkeysize,int asymkeysize, String symInstance, String asymInstance){
+		if(this.symkeysize == 0 && this.asymkeysize == 0 && this.symInstance.isEmpty() && this.asymInstance.isEmpty()){
+			this.symkeysize = symkeysize;
+			this.asymkeysize = asymkeysize;
 			this.symInstance = symInstance;
 			this.asymInstance = asymInstance;
 		}
 	}
 	
 	
-	protected int getkeysize(){
-		return this.keysize;
+	protected int getasymkeysize(){
+		return this.asymkeysize;
 	}
 	
-	
+	/*
 	private String getkeyInstance(String name){
 		String toreturn = "";
 		if(name.equals("asym")){
 			toreturn = this.asymInstance;//Bsp: RSA
-		}else if(name.equals("sym") || name.equals("master")){
+		}else if(name.equals("sym")){
 			toreturn = this.symInstance; // Bsp: AES
 		}
 		return toreturn;
 	}
-
+	*/
 	
 	//Abstract methods
 	/**Gibt einen der sym. Schlüssel in seiner Byte-form zurück 

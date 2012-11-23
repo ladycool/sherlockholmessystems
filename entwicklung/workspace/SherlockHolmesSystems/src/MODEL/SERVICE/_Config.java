@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import MODEL.__Config;
 import java.io.DataInputStream;
+import java.io.File;
+
 import SERVICE.User;
 
 public abstract class _Config extends __Config{
@@ -99,11 +101,11 @@ public abstract class _Config extends __Config{
 		return toreturn;
 	}
 	
-	public HashMap<String, ArrayList<String>> getinternalviewdata(){
+	public HashMap<String,String> getinternalviewdata(){
 		return this.internalviewdata;
 	}
 	
-	public HashMap<String, ArrayList<String>> getexternalviewdata(){
+	public HashMap<String,String> getexternalviewdata(){
 		return this.externalviewdata;
 	}
 	//METHODS ABSTRACT
@@ -123,7 +125,7 @@ public abstract class _Config extends __Config{
 	 * loadUserView
 	 */
 	
-	public abstract void uploadfile(DataInputStream in,String newpath);
+	public abstract void uploadfile(File file);
 	
 	/**
 	 * Selbsterklärend
@@ -150,7 +152,7 @@ public abstract class _Config extends __Config{
 	 * Diese wird bsp. beim Laden der Hauptseite aufgerufen 
 	 * @return {@link HashMap} HashMap<Integer, String[]>: Integer = Zähler, String[]={0->ticketId,1->sent_by,2->filename}
 	 */
-	public abstract HashMap<String, ArrayList<String>> gettickets();
+	public abstract HashMap<String, String> gettickets();
 	
 	/**
 	 * Geschiet während dem Versuch sich eine Fremddatei anzusehen
@@ -172,9 +174,4 @@ public abstract class _Config extends __Config{
 	 */
 	public abstract void delete(String status,String datatype,String data);
 	
-	/**
-	 * selbsterklärend
-	 * @param foldername
-	 */
-	public abstract String createfolder(String foldername);
 }
