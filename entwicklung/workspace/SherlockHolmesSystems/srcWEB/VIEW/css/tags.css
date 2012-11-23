@@ -81,12 +81,17 @@ table{
 }
 
 ul{
-	background-image: url("../images/folder");
-	background-repeat: no-repeat;
-    background-position: 50% 10px;
+	color: black;
+    font:normal 11px Verdana, Tahomma, Geneva;
+   	text-shadow: 1px 1px 1px #999;
+    margin:0 0 0 0;
+	overflow:hidden;
 }
 
 li{
 	background-image: url('../images/file');
-	
+	color: black;
+    font:normal 14px Verdana, Tahomma, Geneva;
+   	
+    	
 }
