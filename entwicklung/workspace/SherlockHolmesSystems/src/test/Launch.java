@@ -25,7 +25,7 @@ public class Launch {
 	public static void main(String[] args) throws Base64DecodingException, SQLException{
 		//Dieser Test ist gultig und erfolgreich
 		
-		String username = "cedrick",password="shs";
+		String username = "patrick1",password="shs";
 		HashMap<String, String> attribute = new HashMap<String, String>();
 		int i = 1;
 		
@@ -36,31 +36,33 @@ public class Launch {
 			attribute.put(Controller.shsconfig.language, "eng");
 		
 		Controller.shsuser = Controller.shsconfig.loginSHS("signup",attribute);
+		System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
 		//Controller.shsconfig.createfolder("test1");
 		}else if(i == 1){
 		
 			attribute.put(Controller.shsconfig.username, username);
 			attribute.put(Controller.shsconfig.password, password);
 			Controller.shsuser = Controller.shsconfig.loginSHS("signin",attribute);
-		
+			System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
+			
+			/*			
+			File file = new File("C:/Users/Shazem/Desktop/sss.txt");
+			Controller.shsconfig.uploadfile(file);
+			*/
+			
+			
+			String fileId = "2";
+			/*
+			String[]userlist = new String[]{"patrick1"};
+			Controller.shsconfig.createticket(fileId, userlist);
+			*/
+			
+			Controller.shsconfig.previewfile(fileId, Controller.shsconfig.reader);
 		}else{
 			System.out.println('~'-'"');
 			
 		}
-		
-		System.out.println(Controller.shsuser == null);
-		System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
-		
-		
-		String fileId = "1";
-		
-		String[]userlist = new String[]{"patrick3"};
-		Controller.shsconfig.createticket(fileId, userlist);
-		
-		/*
-		File file = new File("C:/Users/Shazem/Desktop/sss.txt");
-		Controller.shsconfig.uploadfile(file);
-		*/
+			
 	}
 
 }

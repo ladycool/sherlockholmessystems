@@ -127,6 +127,8 @@ public abstract class _Config extends __Config{
 	
 	public abstract void uploadfile(File file);
 	
+	public abstract void uploadfile(String path);
+	
 	/**
 	 * Selbsterklärend
 	 */
