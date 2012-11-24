@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -142,8 +144,10 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 			cipher = Cipher.getInstance(instance);//AES || RSA
 			if(instance.equals(this.asymInstance)){
 				if(cipherMODE == Cipher.ENCRYPT_MODE){
+					cipherMODE = Cipher.WRAP_MODE;
 					cipher.init(cipherMODE, this.shsasymkeypair.getPublic());
 				}else if(cipherMODE == Cipher.DECRYPT_MODE){
+					cipherMODE = Cipher.UNWRAP_MODE;
 					cipher.init(cipherMODE, this.shsasymkeypair.getPrivate());
 				}
 			}else if(instance.equals(this.symInstance)){
@@ -172,21 +176,19 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 				KeyFactory keyFactory;
 				
 				if(cipherMODE == Cipher.ENCRYPT_MODE){//encrypt with publickey
-					
+					cipherMODE = Cipher.WRAP_MODE;
 					spec = new X509EncodedKeySpec(key);
 					keyFactory = KeyFactory.getInstance(instance);
 					_key = keyFactory.generatePublic(spec);
 					cipher = Cipher.getInstance(instance);
-					cipher.init(cipherMODE, _key);
-					
+					cipher.init(cipherMODE,_key);					
 				}else if(cipherMODE == Cipher.DECRYPT_MODE){//decrypt with privatkey
-					
+					cipherMODE = Cipher.UNWRAP_MODE;
 					spec = new PKCS8EncodedKeySpec(key);
 					keyFactory = KeyFactory.getInstance(instance);
 					_key = keyFactory.generatePrivate(spec);
 					cipher = Cipher.getInstance(instance);
-					cipher.init(cipherMODE, _key);
-					cipher.init(cipherMODE, this.shsasymkeypair.getPrivate());
+					cipher.init(cipherMODE,_key);					
 				}
 			}else if(instance.equals(this.symInstance)){
 				_key = new SecretKeySpec(key, instance);
@@ -281,45 +283,57 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	
 	
 	private byte[] crypt(Cipher cipher,byte[] tocrypt){
-		//byte[] toreturn;
-		ArrayList<byte[]> _toreturn =  new ArrayList<byte[]>();
-		
-		int blocksize = cipher.getBlockSize();
-		byte[] tocryptbytes;
-		//byte[] crypted = new byte[cipher.getOutputSize(blocksize)];
-		//System.out.println("Start" + blocksize+"---"+crypted.length);
-		int 
-		maxlength = tocrypt.length,
-		start = -blocksize,
-		end = start+blocksize; //=0
-		try{	
-			while(true){
-				start += blocksize;
-				end += blocksize;		
-			
-				if(end < maxlength){
-					tocryptbytes = new byte[blocksize];
-					for (int i=start,j=0; i < end; i++,j++) {
-						tocryptbytes[j] = tocrypt[i];
-					}
-					_toreturn.add(cipher.update(tocryptbytes));
-					//cipher.update(inBytes, 0, blockSize, outBytes);
-				}else{
-					//end = maxlength;
-					tocryptbytes = new byte[maxlength - start];
-					for (int i=start,j=0; i < maxlength; i++,j++) {
-						tocryptbytes[j] = tocrypt[i];
-					}
-					_toreturn.add(cipher.doFinal(tocryptbytes));
-					break;
-				}
+		byte[] toreturn = null;	
+		try{
+			if(cipher.getAlgorithm().equals(this.symInstance)){	
+				ArrayList<byte[]> _toreturn =  new ArrayList<byte[]>();
 				
+				int blocksize = cipher.getBlockSize();
+				byte[] tocryptbytes;
+				//byte[] crypted = new byte[cipher.getOutputSize(blocksize)];
+				//System.out.println("Start" + blocksize+"---"+crypted.length);
+				int 
+				maxlength = tocrypt.length,
+				start = -blocksize,
+				end = start+blocksize; //=0
+					
+					while(true){
+						start += blocksize;
+						end += blocksize;		
+					
+						if(end < maxlength){
+							tocryptbytes = new byte[blocksize];
+							for (int i=start,j=0; i < end; i++,j++) {
+								tocryptbytes[j] = tocrypt[i];
+							}	
+							
+							_toreturn.add(cipher.update(tocryptbytes));
+							//cipher.update(inBytes, 0, blockSize, outBytes);
+						}else{
+							//end = maxlength;
+							tocryptbytes = new byte[maxlength - start];
+							for (int i=start,j=0; i < maxlength; i++,j++) {
+								tocryptbytes[j] = tocrypt[i];
+							}
+							_toreturn.add(cipher.doFinal(tocryptbytes));
+							break;
+						}
+						
+					}
+					
+					toreturn = this.arraylisttobytearray(_toreturn);
+					
+			}else if(cipher.getAlgorithm().equals(this.asymInstance)){
+				Key key = new SecretKeySpec(tocrypt, cipher.getAlgorithm());
+				toreturn =  cipher.wrap(key);
 			}
 		} catch (GeneralSecurityException e) {
 			Controller.shsgui.triggernotice(e);
 		}
-		return this.arraylisttobytearray(_toreturn);
+		
+		return toreturn;
 	}
+
 	
 	
 	/**
