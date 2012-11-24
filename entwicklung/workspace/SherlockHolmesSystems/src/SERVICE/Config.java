@@ -816,9 +816,9 @@ public class Config extends _Config {
 		HashMap<String,String> toreturn = new HashMap<String,String>();
 		byte[] _ticketsId=null,_readers=null;
 		String ticketsId="",readers="";		
-		ResultSet result = Controller.shsdb.select(this.filestb,"k_ticketsId,readers","id="+fileId);
+		ResultSet result = Controller.shsdb.select(this.filestb,"k_ticketsId,readers","id="+fileId+" AND k_ticketsId != NULL AND readers != NULL");
 			
-		if(result.first() && result.getString("k_ticketsId") != null && result.getString("readers") != null){
+		if(result.first()){
 		
 				_ticketsId = Base64.decode(result.getString("k_ticketsId"));
 				_readers = Base64.decode(result.getString("readers"));
