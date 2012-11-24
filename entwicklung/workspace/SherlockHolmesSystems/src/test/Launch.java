@@ -1,16 +1,9 @@
 package test;
 
 import java.io.File;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PublicKey;
-import java.security.spec.X509EncodedKeySpec;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-
-import javax.crypto.Cipher;
 
 import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
@@ -32,7 +25,7 @@ public class Launch {
 	public static void main(String[] args) throws Base64DecodingException, SQLException{
 		//Dieser Test ist gultig und erfolgreich
 		
-		String username = "luis11",password="luis";
+		String username = "cedrick",password="shs";
 		HashMap<String, String> attribute = new HashMap<String, String>();
 		int i = 1;
 		
@@ -58,20 +51,24 @@ public class Launch {
 		/*
 		System.out.println(Controller.shsuser == null);
 		System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
-		System.out.println(Controller.shsuser.getattr(Controller.shsconfig.userId));
-
-		File file = new File("C:/Users/x3ro/Desktop/hallo.txt");
 		
-		Controller.shsconfig.uploadfile(file);
 		
-		String fileId = "15";
-		String[] userlist = {"patrick3","patrick4"};
+		String fileId = "1";
 		
+		String[]userlist = new String[]{"patrick3"};
 		Controller.shsconfig.createticket(fileId, userlist);
+<<<<<<< HEAD
 		*/
 		Controller.shsconfig.delete(Controller.shsconfig.reader, "", "1");
 		
 	
+=======
+		
+		/*
+		File file = new File("C:/Users/Shazem/Desktop/sss.txt");
+		Controller.shsconfig.uploadfile(file);
+		*/
+>>>>>>> 1547c510c98a1ad588a4bfea0c573cff0806aaa0
 	}
 
 }
