@@ -662,25 +662,31 @@ public class Config extends _Config {
 					
 					result = Controller.shsdb.select(this.pubkeytb, "username,`key`","username LIKE '"+user+"'");//QUERY username kommt aus public_key_tb
 					result.next();
+					
+					//der Empfänger wird nicht verschlüsselt
 					his_publickey = Base64.decode(result.getString("key"));
-					
 					sent_to = result.getString("username").getBytes();
-					sent_to = Controller.shscipher.crypt(sent_to,his_publickey,this.asymInstance,this.encryptmode);
 					
-					sent_by = Controller.shscipher.crypt(sent_by,his_publickey,this.asymInstance,this.encryptmode);
-					
+					//Vorbereitung = der Pseudokey wird aufgeladen.
 					result = Controller.shsdb.select(this.filestb,"`key`,pathdef","id = "+fileId);//QUERY
 					result.next();
 					pseudokey = Controller.shscipher.crypt(Base64.decode(result.getString("key")),this.symInstance, this.decryptmode);
-					pseudokey = Controller.shscipher.crypt(pseudokey,his_publickey,this.asymInstance,this.encryptmode);
 					
+					//Step1 = der Sender wird verschlüsselt
+					sent_by = Controller.shscipher.crypt(sent_by,pseudokey,this.symInstance,this.encryptmode);
+					
+					//Step2 = der Dateiname wird verschlüsselt
 					temp = Controller.shscipher.crypt(Base64.decode(result.getString("pathdef")),this.symInstance,this.decryptmode); 
 					_temp = new String(temp).split(this.sep);
-					filename = Controller.shscipher.crypt(_temp[_temp.length-1].getBytes(),his_publickey,this.asymInstance,this.encryptmode);
+					filename = Controller.shscipher.crypt(_temp[_temp.length-1].getBytes(),pseudokey,this.symInstance,this.encryptmode);
 					
-					_fileId = Controller.shscipher.crypt(fileId.getBytes(),his_publickey,this.asymInstance,this.encryptmode);
+					//Step3 = die fileId wird verschlüsselt
+					_fileId = Controller.shscipher.crypt(fileId.getBytes(),pseudokey,this.symInstance,this.encryptmode);
 					
+					//Step4 = der pseudokey wird mit dem publickey des Empfängers verschlüsselt
+					pseudokey = Controller.shscipher.crypt(pseudokey,his_publickey,this.asymInstance,this.encryptmode);
 					
+
 					HashMap<String,byte[]> _toinsert = new HashMap<String, byte[]>();
 					_toinsert.put("sent_by",sent_by);
 					_toinsert.put("sent_to",sent_to);
