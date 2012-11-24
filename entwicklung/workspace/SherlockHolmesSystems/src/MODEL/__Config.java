@@ -132,7 +132,7 @@ public class __Config{
 	keys="keys",
 	keytb="`keys`",
 	pubkeytb="public_keys",
-	filestb ="files",
+	filestb ="`files`",
 	pathtb = "path_definition",
 	tickettb = "tickets",
 	username="username",

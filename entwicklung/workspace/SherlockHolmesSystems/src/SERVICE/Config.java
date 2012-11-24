@@ -684,17 +684,19 @@ public class Config extends _Config {
 					newticket = true;
 					
 					result = Controller.shsdb.select(this.pubkeytb, "username,`key`","username LIKE '"+user+"'");//QUERY username kommt aus public_key_tb
+					result.next();
 					his_publickey = Base64.decode(result.getString("key"));
-					
+					System.out.println("h1");
 					sent_to = result.getString("username").getBytes();
 					sent_to = Controller.shscipher.crypt(sent_to,his_publickey,this.asymInstance,this.encryptmode);
 					
 					sent_by = Controller.shscipher.crypt(sent_by,his_publickey,this.asymInstance,this.encryptmode);
 					
-					result = Controller.shsdb.select(this.filestb,"`key`,pathdef","id = "+fileId);//QUERY			
+					result = Controller.shsdb.select(this.filestb,"`key`,pathdef","id = "+fileId);//QUERY
+					result.next();
 					pseudokey = Controller.shscipher.crypt(Base64.decode(result.getString("key")),this.symInstance, this.decryptmode);
 					pseudokey = Controller.shscipher.crypt(pseudokey,his_publickey,this.asymInstance,this.encryptmode);
-					
+					System.out.println("h2");
 					temp = Controller.shscipher.crypt(Base64.decode(result.getString("pathdef")),this.symInstance,this.decryptmode); 
 					_temp = new String(temp).split(this.sep);
 					filename = Controller.shscipher.crypt(_temp[_temp.length-1].getBytes(),his_publickey,this.asymInstance,this.encryptmode);
@@ -800,8 +802,11 @@ public class Config extends _Config {
 		String ticketsId="",readers="";
 		
 		try {
-			result = Controller.shsdb.select(this.filestb,"k_ticketsId,readers","id="+fileId);
-		} catch (Exception e) {}
+			String condition = "id="+fileId+" AND k_ticketsId != NULL AND readers != NULL";
+			result = Controller.shsdb.select(this.filestb,"k_ticketsId,readers",condition);
+		} catch (Exception e) {
+			Controller.shsgui.triggernotice(e);
+		}
 		if(result.next()){
 			
 			_ticketsId = Base64.decode(result.getString("k_ticketsId"));
@@ -814,6 +819,8 @@ public class Config extends _Config {
 			readers = new String(_readers);
 			//holt alle user die bereits eine Erlaubnis haben.
 		}
+
+
 		toreturn.put("ticketsId",ticketsId);
 		toreturn.put("readers",readers);
 		//toreturn.put("pseudokey",pseudokey);
