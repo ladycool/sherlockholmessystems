@@ -535,64 +535,28 @@ public class Config extends _Config {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(String status,String datatype,String data){
+	public void delete(String status,String datatype, String dataId){
 		if(status.equals(this.owner)){
-			deletedata(datatype,data);
+			deletedata(datatype,dataId);
 		}else if(status.equals(this.reader)){
-			hidedata(datatype,data);//ticketId
+			hidedata(dataId);//ticketId
 		}
 	}
 	
-	private void deletedata(String datatype,String data){
-			/*
-			if(datatype.equals(this.foldertype)){
-				String todelete = this.internalviewdata.get(data);//data = id
-				String filedata[],ticketstodel[],fileId = "",ticketsalad;
-				byte[]pseudokey,tickets;
-				ResultSet result;
-				
-				for (String val : todelete) {
-					filedata = val.split(this.sep+this.sep);
-					fileId = filedata[0];			
-				
-					result = Controller.shsdb.select(this.filestb,"key,k_ticketsId","id ="+fileId);
-					result.first();
-					
-					pseudokey = result.getBytes("key");
-					pseudokey = Controller.shscipher.crypt(pseudokey,this.symInstance,this.decryptmode);
-					
-					if((tickets = result.getBytes("k_ticketsId")) != null){
-						tickets = Controller.shscipher.crypt(tickets,pseudokey,this.symInstance,this.decryptmode);
-						ticketsalad = new String(tickets);
-						ticketstodel = ticketsalad.split(this.dbsep);
-						for (String id : ticketstodel) {
-							Controller.shsdb.delete(this.tickettb,"id="+id,"");
-						}
-					}
-					
-					Controller.shsdb.delete(this.filestb,"id="+fileId,"");
-				}
-				
-				//Vereinfachte reload-Methode
-				this.internalviewdata.remove(data);
-				
-			}else*/
-			if(datatype.equals(this.filetype)){
-				
-			}else if(datatype.equals(this.tickettype)){
-				//getrennt implementiert: deletetickets
-			}			
+	private void deletedata(String datatype,String dataId){
+		if(datatype.equals(this.filetype)){
+			
+			
+		}
+		
+		//this.deleteticket(fileId, userlist, ticketIdlist);
 	}
 	
 	////////////////////LOAD-FILE-END////////////////////////
 	
 	//////////////////////////////TICKETS-START/////////////////////////////////
-	private void hidedata(String dataId,String datatype){
-		if(datatype.equals(this.foldertype)){
-			
-		}else if(datatype.equals(this.filetype)){
-			
-		}
+	private void hidedata(String ticketId){
+		//inaktivieren
 	}
 	
 	/**
@@ -769,13 +733,13 @@ public class Config extends _Config {
 			;	
 			byte[] _readers,_ticketsId;
 			
+			
+			//Vorbereitung aufs Update
 			for (int i=0;i < ticketIdlist.length;i++) {
 				Controller.shsdb.delete(this.tickettb,"id="+ticketIdlist[i],Controller.shsdb.text(17)); 
 				ticketsId = ticketsId.replace(ticketIdlist[i],"");
 				readers = readers.replace(userlist[i],"");
-			}
-			
-			//Vorbereitung aufs Update
+			}			
 			ticketsId = ticketsId.replace(this.dbsep+this.dbsep,this.dbsep);//++ -> +
 			readers = readers.replace(this.dbsep+this.dbsep,this.dbsep);			
 			if(ticketsId.startsWith(this.dbsep)){
@@ -816,9 +780,9 @@ public class Config extends _Config {
 		HashMap<String,String> toreturn = new HashMap<String,String>();
 		byte[] _ticketsId=null,_readers=null;
 		String ticketsId="",readers="";		
-		ResultSet result = Controller.shsdb.select(this.filestb,"k_ticketsId,readers","id="+fileId);
+		ResultSet result = Controller.shsdb.select(this.filestb,"k_ticketsId,readers","id="+fileId+" AND k_ticketsId IS NOT NULL AND readers IS NOT NULL");
 			
-		if(result.first() && result.getString("k_ticketsId") != null && result.getString("readers") != null){
+		if(result.first()){// && result.getString("k_ticketsId") != null && result.getString("readers") != null
 		
 				_ticketsId = Base64.decode(result.getString("k_ticketsId"));
 				_readers = Base64.decode(result.getString("readers"));

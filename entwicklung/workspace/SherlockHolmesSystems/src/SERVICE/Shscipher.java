@@ -303,6 +303,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 						tocryptbytes[j] = tocrypt[i];
 					}
 					_toreturn.add(cipher.update(tocryptbytes));
+					//cipher.update(inBytes, 0, blockSize, outBytes);
 				}else{
 					//end = maxlength;
 					tocryptbytes = new byte[maxlength - start];
@@ -311,7 +312,8 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 					}
 					_toreturn.add(cipher.doFinal(tocryptbytes));
 					break;
-				}			
+				}
+				
 			}
 		} catch (GeneralSecurityException e) {
 			Controller.shsgui.triggernotice(e);
