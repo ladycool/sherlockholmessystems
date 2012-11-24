@@ -55,6 +55,7 @@ public class Launch {
 			
 		}
 		
+		/*
 		System.out.println(Controller.shsuser == null);
 		System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
 		System.out.println(Controller.shsuser.getattr(Controller.shsconfig.userId));
@@ -67,7 +68,8 @@ public class Launch {
 		String[] userlist = {"patrick3","patrick4"};
 		
 		Controller.shsconfig.createticket(fileId, userlist);
-		
+		*/
+		Controller.shsconfig.delete(Controller.shsconfig.reader, "", "1");
 		
 	
 	}

@@ -541,6 +541,7 @@ public class Config extends _Config {
 		}else if(status.equals(this.reader)){
 			hidedata(dataId);//ticketId
 		}
+		
 	}
 	
 	private void deletedata(String datatype,String dataId){
@@ -557,6 +558,10 @@ public class Config extends _Config {
 	//////////////////////////////TICKETS-START/////////////////////////////////
 	private void hidedata(String ticketId){
 		//inaktivieren
+		HashMap<String, String> fields = new HashMap<String, String>();
+		fields.put("active", "0");
+		Controller.shsdb.update(this.tickettb, fields, "id LIKE "+ticketId);
+		this.loadexternalview();
 	}
 	
 	/**
@@ -569,7 +574,7 @@ public class Config extends _Config {
 			String _my_username = (String) Controller.shsuser.getattr("username");
 			byte[] my_username = Controller.shscipher.crypt(_my_username.getBytes(),this.asymInstance,this.encryptmode);
 			_my_username = super.wrap(Base64.encode(my_username));
-			ResultSet result = Controller.shsdb.select("tickets","id,sent_by,filename","sent_to LIKE "+_my_username);
+			ResultSet result = Controller.shsdb.select(this.tickettb,"id,sent_by,filename","sent_to LIKE "+_my_username+" AND active != 0");
 			String ticketId,_sent_by;
 			byte[] sent_by,filename;
 			while(result.next()){
