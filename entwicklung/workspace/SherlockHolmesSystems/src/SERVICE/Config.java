@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.crypto.Cipher;
+
 import CONTROLLER.Controller;
 import MODEL.SERVICE._Config;
 
@@ -159,7 +161,8 @@ public class Config extends _Config {
 				file.createNewFile();
 				fos = new FileOutputStream(file);
 				fos.write(towrite);
-				fos.close();				
+				fos.close();	
+				
 				towrite = towritepair.get(this.pubk);
 				file = new File(this.publickeypath);
 				file.createNewFile();
@@ -214,8 +217,6 @@ public class Config extends _Config {
 				Controller.shsgui.triggernotice(text);
 			}else{
 				//Tabelle user
-				String fullname = result.getString(this.fullnameId);
-				
 				String pseudouserId = result.getString("userId");
 				pseudouserId = new String(Base64.decode(pseudouserId));				
 				String userId = this.remove(pseudouserId, username);
@@ -234,11 +235,9 @@ public class Config extends _Config {
 					FileInputStream fis;
 					byte[] encodedkey;
 					
-					buildkeyspath(userId);
+					buildkeyspath(username);
 					
-					String _keys[] = new String[]{this.secretkeypath.replace("%%", userId),
-												this.publickeypath.replace("%%", userId),
-												this.privatekeypath.replace("%%", userId)};
+					String _keys[] = new String[]{this.secretkeypath,this.publickeypath,this.privatekeypath};
 					
 					for (int i = 0; i < _keys.length; i++) {
 						keyfile = new File(_keys[i]);
@@ -441,21 +440,20 @@ public class Config extends _Config {
 	private HashMap<String,String> preloadInternalfile(String fileId){
 		HashMap<String, String> toreturn = new HashMap<String, String>();		
 		try {
-			ResultSet result = Controller.shsdb.select(this.filestb,"`key`,pathdef","id="+fileId);
+			ResultSet result = Controller.shsdb.select(this.filestb,"`key`,content,pathdef","id="+fileId);
 			result.next();
 			byte[]
 			_content = Base64.decode(result.getString("content")),
 			_pathdef = Base64.decode(result.getString("pathdef")),
-			pseudokey = Controller.shscipher.crypt(Base64.decode(result.getString("key")), this.symInstance, this.decryptmode);
 			
-			_content = Controller.shscipher.readfile(pseudokey, fileId);
+			pseudokey = Controller.shscipher.crypt(Base64.decode(result.getString("key")), this.symInstance, this.decryptmode);
 			_pathdef = Controller.shscipher.crypt(_pathdef, this.symInstance, this.decryptmode);
 			
-			String pathdef = new String(_pathdef);
-			String content = new String(_content);
+			//Entschlüsselung des Inhaltes
+			_content = Controller.shscipher.crypt(_content,pseudokey,this.symInstance,this.decryptmode);		
 
-			toreturn.put("filepath",pathdef);
-			toreturn.put("content",content);
+			toreturn.put("filepath",new String(_pathdef));
+			toreturn.put("content",new String(_content));
 		} catch (SQLException | Base64DecodingException e) {
 			Controller.shsgui.triggernotice(e);
 		}
@@ -471,15 +469,25 @@ public class Config extends _Config {
 		HashMap<String, String> toreturn = new HashMap<String, String>();
 		HashMap<String, Object> temp = this.readticket(ticketId);//fileid + key + path
 		
-		
-		byte[] pseudokey = (byte[])temp.get("pseudokey");
-		String fileId = (String)temp.get("fileId");
-		byte[] content = Controller.shscipher.readfile(pseudokey, fileId);
-		
-		toreturn.put("filepath", (String)temp.get("filepath"));
-		toreturn.put("content", new String(content));
+		try {
+			byte[] pseudokey = (byte[])temp.get("pseudokey");
+			String fileId = (String)temp.get("fileId");
+			ResultSet result = Controller.shsdb.select(this.filestb,"content","id="+fileId);
+			result.next();
+			
+			//Entschlüsselung des Inhaltes
+			byte[]
+			_content = Base64.decode(result.getString("content"));
+			_content = Controller.shscipher.crypt(_content,pseudokey,this.symInstance,this.decryptmode);
+			
+			toreturn.put("filepath", (String)temp.get("filepath"));
+			toreturn.put("content", new String(_content));
+		} catch (SQLException | Base64DecodingException e) {
+			Controller.shsgui.triggernotice(e);
+		}
 		return toreturn;
 	}
+	
 	
 	/*
 	@Override
@@ -665,7 +673,7 @@ public class Config extends _Config {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void createticket(int fileId,String[] userlist){
+	public void createticket(String fileId,String[] userlist){
 		try {
 			ResultSet result = null;
 			String
@@ -677,7 +685,7 @@ public class Config extends _Config {
 			
 			HashMap<String,String> currentreaderinfo = this.getcurrentreader(fileId);
 			ticketsId = currentreaderinfo.get("ticketsId");
-			readers = currentreaderinfo.get("readers");	
+			readers = currentreaderinfo.get("readers");
 			
 			for (String user : userlist){
 				if(!readers.contains(user)){//überprüft ob der user bereits eine Erlaubnis hat
@@ -686,7 +694,7 @@ public class Config extends _Config {
 					result = Controller.shsdb.select(this.pubkeytb, "username,`key`","username LIKE '"+user+"'");//QUERY username kommt aus public_key_tb
 					result.next();
 					his_publickey = Base64.decode(result.getString("key"));
-					System.out.println("h1");
+					
 					sent_to = result.getString("username").getBytes();
 					sent_to = Controller.shscipher.crypt(sent_to,his_publickey,this.asymInstance,this.encryptmode);
 					
@@ -696,12 +704,12 @@ public class Config extends _Config {
 					result.next();
 					pseudokey = Controller.shscipher.crypt(Base64.decode(result.getString("key")),this.symInstance, this.decryptmode);
 					pseudokey = Controller.shscipher.crypt(pseudokey,his_publickey,this.asymInstance,this.encryptmode);
-					System.out.println("h2");
+					
 					temp = Controller.shscipher.crypt(Base64.decode(result.getString("pathdef")),this.symInstance,this.decryptmode); 
 					_temp = new String(temp).split(this.sep);
 					filename = Controller.shscipher.crypt(_temp[_temp.length-1].getBytes(),his_publickey,this.asymInstance,this.encryptmode);
 					
-					_fileId = Controller.shscipher.crypt((""+fileId).getBytes(),his_publickey,this.asymInstance,this.encryptmode);
+					_fileId = Controller.shscipher.crypt(fileId.getBytes(),his_publickey,this.asymInstance,this.encryptmode);
 					
 					
 					HashMap<String,byte[]> _toinsert = new HashMap<String, byte[]>();
@@ -715,6 +723,8 @@ public class Config extends _Config {
 					for (String key : _toinsert.keySet()) {
 						toinsert.put(key,super.wrap(Base64.encode(_toinsert.get(key))));
 					}
+					
+					toinsert.put("date",this.stamp);
 					
 					Controller.shsdb.insert(this.tickettb, toinsert,Controller.shsdb.text(30));	
 					int maxid = Controller.shsdb.max(this.tickettb);
@@ -750,7 +760,7 @@ public class Config extends _Config {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deleteticket(int fileId,String[]userlist,String[] ticketIdlist){	
+	public void deleteticket(String fileId,String[]userlist,String[] ticketIdlist){	
 		try {
 			HashMap<String, String> currentreaderinfo = this.getcurrentreader(fileId);
 			String 
@@ -795,35 +805,34 @@ public class Config extends _Config {
 	}
 	
 	
-	private HashMap<String,String> getcurrentreader(Object fileId) throws SQLException, Base64DecodingException{
+	/**
+	 * GETESTET (Patrick)
+	 * @param fileId
+	 * @return
+	 * @throws SQLException
+	 * @throws Base64DecodingException
+	 */
+	private HashMap<String,String> getcurrentreader(String fileId) throws SQLException, Base64DecodingException{
 		HashMap<String,String> toreturn = new HashMap<String,String>();
-		ResultSet result = null;
 		byte[] _ticketsId=null,_readers=null;
-		String ticketsId="",readers="";
+		String ticketsId="",readers="";		
+		ResultSet result = Controller.shsdb.select(this.filestb,"k_ticketsId,readers","id="+fileId);
+			
+		if(result.first() && result.getString("k_ticketsId") != null && result.getString("readers") != null){
 		
-		try {
-			String condition = "id="+fileId+" AND k_ticketsId != NULL AND readers != NULL";
-			result = Controller.shsdb.select(this.filestb,"k_ticketsId,readers",condition);
-		} catch (Exception e) {
-			Controller.shsgui.triggernotice(e);
+				_ticketsId = Base64.decode(result.getString("k_ticketsId"));
+				_readers = Base64.decode(result.getString("readers"));
+				
+				_ticketsId = Controller.shscipher.crypt(_ticketsId,this.symInstance,this.decryptmode); 
+				_readers = Controller.shscipher.crypt(_readers,this.symInstance,this.decryptmode); 
+				
+				ticketsId = new String(_ticketsId);
+				readers = new String(_readers);
+				//holt alle user die bereits eine Erlaubnis haben.
+			
 		}
-		if(result.next()){
-			
-			_ticketsId = Base64.decode(result.getString("k_ticketsId"));
-			_readers = Base64.decode(result.getString("readers"));
-			
-			_ticketsId = Controller.shscipher.crypt(_ticketsId,this.symInstance,this.decryptmode); 
-			_readers = Controller.shscipher.crypt(_readers,this.symInstance,this.decryptmode); 
-			
-			ticketsId = new String(_ticketsId);
-			readers = new String(_readers);
-			//holt alle user die bereits eine Erlaubnis haben.
-		}
-
-
 		toreturn.put("ticketsId",ticketsId);
 		toreturn.put("readers",readers);
-		//toreturn.put("pseudokey",pseudokey);
 		return toreturn;
 	}
 	//////////////////////////////TICKETS-ENDE/////////////////////////////////

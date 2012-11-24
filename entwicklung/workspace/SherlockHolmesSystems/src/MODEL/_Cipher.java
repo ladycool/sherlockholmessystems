@@ -110,13 +110,6 @@ public abstract class _Cipher {
 	 */
 	public abstract byte[] encryptfile(DataInputStream file,byte[] pseudokey);
 	
-	/**
-	 * Diese Methode liest Dateien aus der Tabelle "files".
-	 * @param pseudokey
-	 * @param fileId: Id der Datei.
-	 * @return String.
-	 */
-	public abstract byte[] readfile(byte[] pseudokey,String fileId);
 	
 
 	

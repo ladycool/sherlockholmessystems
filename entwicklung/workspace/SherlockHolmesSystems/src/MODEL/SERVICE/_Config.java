@@ -161,9 +161,9 @@ public abstract class _Config extends __Config{
 	 */
 	public abstract HashMap<String, Object> readticket(String fileId);
 	
-	public abstract void createticket(int fileId,String[] userlist);
+	public abstract void createticket(String fileId,String[] userlist);
 
-	public abstract void deleteticket(int fileId,String[]userlist,String[] ticketIdlist);
+	public abstract void deleteticket(String fileId,String[]userlist,String[] ticketIdlist);
 	
 	/**
 	 * Diese Methode löscht sowohl Ordner, als auch Dateien und Tickets
