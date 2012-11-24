@@ -1,4 +1,6 @@
 package javaGui.views;
+
+
 import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -17,12 +19,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
 
 public class Main extends JFrame {
-
-	private JPanel contentPane;
-	private JTextField benutzername;
-	private JTextField passwort;
-	private JTextField pfad;
-
 	/**
 	 * Launch the application.
 	 */
@@ -43,9 +39,15 @@ public class Main extends JFrame {
 			}
 		});
 	}
-
+	
+	private JPanel contentPane;
+	private JTextField benutzername;
+	private JTextField passwort;
+	private JTextField pfad;
+	
 	/**
 	 * Create the frame.
+	 * @return 
 	 */
 	public Main() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -206,4 +208,6 @@ public class Main extends JFrame {
 		loginPanel.setLayout(gl_loginPanel);
 		contentPane.setLayout(gl_contentPane);
 	}
-}
+
+
+	}
