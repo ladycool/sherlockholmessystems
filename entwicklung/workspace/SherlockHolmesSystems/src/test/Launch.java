@@ -25,9 +25,9 @@ public class Launch {
 	public static void main(String[] args) throws Base64DecodingException, SQLException{
 		//Dieser Test ist gultig und erfolgreich
 		
-		String username = "patrick38",password="patrick";
+		String username = "patrick",password="patrick";
 		HashMap<String, String> attribute = new HashMap<String, String>();
-		int i = 0;
+		int i = 1;
 		
 		if(i == 0){
 		
@@ -50,16 +50,17 @@ public class Launch {
 		
 		System.out.println(Controller.shsuser == null);
 		System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
-		System.out.println(Controller.shsuser.getattr(Controller.shsconfig.userId));
+		
+		
+		String fileId = "1";
+		
+		String[]userlist = new String[]{"patrick3"};
+		Controller.shsconfig.createticket(fileId, userlist);
+		
+		/*
 		File file = new File("C:/Users/Shazem/Desktop/sss.txt");
-		
 		Controller.shsconfig.uploadfile(file);
-		
-		String id = "12";
-		HashMap<String,String> dbfile = Controller.shsconfig.previewfile(id,Controller.shsconfig.owner);
-		
-		System.out.println(dbfile.get("filepath"));
-		System.out.println(dbfile.get("content"));
+		*/
 	}
 
 }

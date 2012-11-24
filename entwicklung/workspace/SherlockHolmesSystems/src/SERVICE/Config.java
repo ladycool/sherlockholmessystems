@@ -161,7 +161,8 @@ public class Config extends _Config {
 				file.createNewFile();
 				fos = new FileOutputStream(file);
 				fos.write(towrite);
-				fos.close();				
+				fos.close();	
+				
 				towrite = towritepair.get(this.pubk);
 				file = new File(this.publickeypath);
 				file.createNewFile();
@@ -216,8 +217,6 @@ public class Config extends _Config {
 				Controller.shsgui.triggernotice(text);
 			}else{
 				//Tabelle user
-				String fullname = result.getString(this.fullnameId);
-				
 				String pseudouserId = result.getString("userId");
 				pseudouserId = new String(Base64.decode(pseudouserId));				
 				String userId = this.remove(pseudouserId, username);
@@ -236,11 +235,9 @@ public class Config extends _Config {
 					FileInputStream fis;
 					byte[] encodedkey;
 					
-					buildkeyspath(userId);
+					buildkeyspath(username);
 					
-					String _keys[] = new String[]{this.secretkeypath.replace("%%", userId),
-												this.publickeypath.replace("%%", userId),
-												this.privatekeypath.replace("%%", userId)};
+					String _keys[] = new String[]{this.secretkeypath,this.publickeypath,this.privatekeypath};
 					
 					for (int i = 0; i < _keys.length; i++) {
 						keyfile = new File(_keys[i]);
@@ -676,7 +673,7 @@ public class Config extends _Config {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void createticket(int fileId,String[] userlist){
+	public void createticket(String fileId,String[] userlist){
 		try {
 			ResultSet result = null;
 			String
@@ -688,13 +685,14 @@ public class Config extends _Config {
 			
 			HashMap<String,String> currentreaderinfo = this.getcurrentreader(fileId);
 			ticketsId = currentreaderinfo.get("ticketsId");
-			readers = currentreaderinfo.get("readers");	
+			readers = currentreaderinfo.get("readers");
 			
 			for (String user : userlist){
 				if(!readers.contains(user)){//überprüft ob der user bereits eine Erlaubnis hat
 					newticket = true;
 					
 					result = Controller.shsdb.select(this.pubkeytb, "username,`key`","username LIKE '"+user+"'");//QUERY username kommt aus public_key_tb
+					result.next();
 					his_publickey = Base64.decode(result.getString("key"));
 					
 					sent_to = result.getString("username").getBytes();
@@ -702,7 +700,8 @@ public class Config extends _Config {
 					
 					sent_by = Controller.shscipher.crypt(sent_by,his_publickey,this.asymInstance,this.encryptmode);
 					
-					result = Controller.shsdb.select(this.filestb,"`key`,pathdef","id = "+fileId);//QUERY			
+					result = Controller.shsdb.select(this.filestb,"`key`,pathdef","id = "+fileId);//QUERY
+					result.next();
 					pseudokey = Controller.shscipher.crypt(Base64.decode(result.getString("key")),this.symInstance, this.decryptmode);
 					pseudokey = Controller.shscipher.crypt(pseudokey,his_publickey,this.asymInstance,this.encryptmode);
 					
@@ -710,7 +709,7 @@ public class Config extends _Config {
 					_temp = new String(temp).split(this.sep);
 					filename = Controller.shscipher.crypt(_temp[_temp.length-1].getBytes(),his_publickey,this.asymInstance,this.encryptmode);
 					
-					_fileId = Controller.shscipher.crypt((""+fileId).getBytes(),his_publickey,this.asymInstance,this.encryptmode);
+					_fileId = Controller.shscipher.crypt(fileId.getBytes(),his_publickey,this.asymInstance,this.encryptmode);
 					
 					
 					HashMap<String,byte[]> _toinsert = new HashMap<String, byte[]>();
@@ -724,6 +723,8 @@ public class Config extends _Config {
 					for (String key : _toinsert.keySet()) {
 						toinsert.put(key,super.wrap(Base64.encode(_toinsert.get(key))));
 					}
+					
+					toinsert.put("date",this.stamp);
 					
 					Controller.shsdb.insert(this.tickettb, toinsert,Controller.shsdb.text(30));	
 					int maxid = Controller.shsdb.max(this.tickettb);
@@ -759,7 +760,7 @@ public class Config extends _Config {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deleteticket(int fileId,String[]userlist,String[] ticketIdlist){	
+	public void deleteticket(String fileId,String[]userlist,String[] ticketIdlist){	
 		try {
 			HashMap<String, String> currentreaderinfo = this.getcurrentreader(fileId);
 			String 
@@ -804,30 +805,34 @@ public class Config extends _Config {
 	}
 	
 	
-	private HashMap<String,String> getcurrentreader(Object fileId) throws SQLException, Base64DecodingException{
+	/**
+	 * GETESTET (Patrick)
+	 * @param fileId
+	 * @return
+	 * @throws SQLException
+	 * @throws Base64DecodingException
+	 */
+	private HashMap<String,String> getcurrentreader(String fileId) throws SQLException, Base64DecodingException{
 		HashMap<String,String> toreturn = new HashMap<String,String>();
-		ResultSet result = null;
 		byte[] _ticketsId=null,_readers=null;
-		String ticketsId="",readers="";
+		String ticketsId="",readers="";		
+		ResultSet result = Controller.shsdb.select(this.filestb,"k_ticketsId,readers","id="+fileId);
+			
+		if(result.first() && result.getString("k_ticketsId") != null && result.getString("readers") != null){
 		
-		try {
-			result = Controller.shsdb.select(this.filestb,"k_ticketsId,readers","id="+fileId);
-		} catch (Exception e) {}
-		if(result.next()){
+				_ticketsId = Base64.decode(result.getString("k_ticketsId"));
+				_readers = Base64.decode(result.getString("readers"));
+				
+				_ticketsId = Controller.shscipher.crypt(_ticketsId,this.symInstance,this.decryptmode); 
+				_readers = Controller.shscipher.crypt(_readers,this.symInstance,this.decryptmode); 
+				
+				ticketsId = new String(_ticketsId);
+				readers = new String(_readers);
+				//holt alle user die bereits eine Erlaubnis haben.
 			
-			_ticketsId = Base64.decode(result.getString("k_ticketsId"));
-			_readers = Base64.decode(result.getString("readers"));
-			
-			_ticketsId = Controller.shscipher.crypt(_ticketsId,this.symInstance,this.decryptmode); 
-			_readers = Controller.shscipher.crypt(_readers,this.symInstance,this.decryptmode); 
-			
-			ticketsId = new String(_ticketsId);
-			readers = new String(_readers);
-			//holt alle user die bereits eine Erlaubnis haben.
 		}
 		toreturn.put("ticketsId",ticketsId);
 		toreturn.put("readers",readers);
-		//toreturn.put("pseudokey",pseudokey);
 		return toreturn;
 	}
 	//////////////////////////////TICKETS-ENDE/////////////////////////////////

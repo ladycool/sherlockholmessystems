@@ -157,6 +157,51 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	}
 	
 	
+	/**
+	 * Anhand des bytes-Arrays (key) erzeugt ein Objekt vom Typ Chipher, das zum chiffrieren benötigt wird.
+	 * @param type: asymmetric || symmetric || master
+	 * @param cipherMODE: Cipher.ENCRYPT_MODE || Cipher.DECRYPT_MODE
+	 * @return
+	 */
+	private Cipher getCipher(String instance,int cipherMODE, byte[]key){
+		Cipher cipher = null;
+		Key _key;
+		try{
+			if(instance.equals(this.asymInstance)){
+				EncodedKeySpec spec;
+				KeyFactory keyFactory;
+				
+				if(cipherMODE == Cipher.ENCRYPT_MODE){//encrypt with publickey
+					
+					spec = new X509EncodedKeySpec(key);
+					keyFactory = KeyFactory.getInstance(instance);
+					_key = keyFactory.generatePublic(spec);
+					cipher = Cipher.getInstance(instance);
+					cipher.init(cipherMODE, _key);
+					
+				}else if(cipherMODE == Cipher.DECRYPT_MODE){//decrypt with privatkey
+					
+					spec = new PKCS8EncodedKeySpec(key);
+					keyFactory = KeyFactory.getInstance(instance);
+					_key = keyFactory.generatePrivate(spec);
+					cipher = Cipher.getInstance(instance);
+					cipher.init(cipherMODE, _key);
+					cipher.init(cipherMODE, this.shsasymkeypair.getPrivate());
+				}
+			}else if(instance.equals(this.symInstance)){
+				_key = new SecretKeySpec(key, instance);
+				cipher = Cipher.getInstance(instance);
+	            cipher.init(cipherMODE,_key);				
+			}
+		}catch (GeneralSecurityException e){
+			//e.printStackTrace();
+			Controller.shsgui.triggernotice(e);
+		}
+		
+		return cipher;
+	}
+	
+	
 	@Override
 	protected SecretKey createsymmetricKey(String pseudokey) {
 		SecretKey key = null;
@@ -229,16 +274,8 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	@Override
 	public byte[] crypt(byte[] tocrypt,byte[] key,String instance,int cipherMODE){
 		byte[] toreturn = null;
-		try {
-			Key _key = new SecretKeySpec(key,instance);
-			Cipher cipher = Cipher.getInstance(instance);
-			cipher.init(cipherMODE, _key);			
-			
-			toreturn = this.crypt(cipher,tocrypt);
-			
-		} catch (GeneralSecurityException e) {
-			Controller.shsgui.triggernotice(e);
-		}
+		Cipher cipher = getCipher(instance,cipherMODE,key);			
+		toreturn = this.crypt(cipher,tocrypt);
 		return toreturn;
 	}
 	
@@ -366,6 +403,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		}
 		return toreturn;
 	}
+
 	
 	
 
