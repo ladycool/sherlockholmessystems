@@ -73,6 +73,10 @@ public class Config extends _Config {
 		return _user;
 	}
 	
+	public void logoutSHS(){
+		Controller.shsdb.close();
+	}
+	
 	/**
 	 * @author Shazem (Patrick): ERLEDIGT
 	 * @param attributes
