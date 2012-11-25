@@ -1,5 +1,6 @@
 package MODEL;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.util.HashMap;
 
@@ -104,6 +105,8 @@ public abstract class _Cipher {
 	public abstract byte[] encryptfile(File file,byte[] pseudokey);
 	
 	
+	///////////TOMCAT-GUI
+	public abstract byte[] encryptfile(DataInputStream input, byte[] pseudokey);
 
 	
 }

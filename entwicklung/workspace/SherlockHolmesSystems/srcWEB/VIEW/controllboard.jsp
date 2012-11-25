@@ -19,17 +19,14 @@
 	%>
 <%
 	session.setAttribute(Controller.shsconfig.notice,"");
-	session.setAttribute(Controller.shsconfig.usernameId,request.getParameter(Controller.shsconfig.usernameId));
-	
+	session.setAttribute(Controller.shsconfig.usernameId,request.getParameter(Controller.shsconfig.usernameId));	
 %>
 	
 <%	
 	String type = "";
 
-	if(!(request.getParameter(Controller.shsconfig.usernameId) == null || 
-		request.getParameter(Controller.shsconfig.passwordId) == null)){
-		if(!(request.getParameter(Controller.shsconfig.usernameId).isEmpty() || 
-				request.getParameter(Controller.shsconfig.passwordId).isEmpty())){
+	if(!(request.getParameter(Controller.shsconfig.usernameId) == null || request.getParameter(Controller.shsconfig.passwordId) == null)){
+		if(!(request.getParameter(Controller.shsconfig.usernameId).isEmpty() || request.getParameter(Controller.shsconfig.passwordId).isEmpty())){
 			
 			HashMap<String,String>attributes = new HashMap<String,String>();
 			Map<String,String[]>temp = request.getParameterMap();
@@ -40,54 +37,38 @@
 				attributes.put(key, temp.get(key)[0]);
 				}
 			}
-			
-			//Controller.shsconfig.keypath = request.getRealPath("/keys");		
-		
+			//Controller.shsconfig.keypath = request.getRealPath("/keys");				
 			//EINLOGGEN_________________________________________________
 			
 			if(session.getAttribute(Controller.shsconfig.shsuser) == null){
 				Controller.shsuser = Controller.shsconfig.loginSHS(type,attributes);
 				
-				out.print(Controller.shsconfig.signactionB);
-				
-				if(type.equals(Controller.shsconfig.signactionB) && Controller.shsuser != null){
-					//Erstellen des Defaultordners
-					Controller.shsconfig.createfolder(Controller.shsconfig.defaultordner);
-				}
-				
 				if(Controller.shsuser != null){
 					session.setAttribute(Controller.shsconfig.shsuser, Controller.shsuser);
+					//show a gimp loading animation
+					Controller.shsconfig.loadUserView();
 				}
 			}
 
-
-			//SO IST ES RICHTIG
-			
-			
-			if(session.getAttribute(Controller.shsconfig.shsuser) != null){
-					if(request.getParameter("uploadfile").equals("uploadfile")){
-						out.print("----------------->");
-						DataInputStream in = new DataInputStream(request.getInputStream());
-						String newname = request.getParameter("root")+"/"+request.getParameter("filename");
-						Controller.shsconfig.uploadfile(in, newname);
-					
-					}
-					
-					//show a gimp loading animation
-					Controller.shsconfig.loadUserView();	
-			}else{
-				if(type.equals(Controller.shsconfig.signactionA)){
-					session.setAttribute(Controller.shsconfig.notice,Controller.shsdb.text(51));
-				}else if(type.equals(Controller.shsconfig.signactionB)){
-					session.setAttribute(Controller.shsconfig.notice,Controller.shsdb.text(52));
-				}		
-				response.sendRedirect(absPath);//Alles ist in Ordnung
-			}
 		}else{
-			session.setAttribute(Controller.shsconfig.notice,Controller.shsdb.text(14));
-			response.sendRedirect(absPath);
+			if(type.equals(Controller.shsconfig.signactionA)){
+				session.setAttribute(Controller.shsconfig.notice,Controller.shsdb.text(51));
+			}else if(type.equals(Controller.shsconfig.signactionB)){
+				session.setAttribute(Controller.shsconfig.notice,Controller.shsdb.text(52));
+			}		
+			response.sendRedirect(absPath);//Alles ist in Ordnung
 		}
-}
+	}else if(session.getAttribute(Controller.shsconfig.shsuser) != null){
+				if(request.getParameter("uploadfile") != null){	
+					if(request.getParameter("uploadfile").equals("uploadfile")){
+						DataInputStream input = new DataInputStream(request.getInputStream());
+						Controller.shsconfig.uploadfile(input,request.getParameter("file"));						
+						}
+					}					
+	}else{
+		session.setAttribute(Controller.shsconfig.notice,Controller.shsdb.text(14));
+		response.sendRedirect(absPath);
+	}
 %>
 
 
@@ -107,6 +88,7 @@
 				<table>
 					<tr>
 						<td><%=Controller.shsdb.text(37) %></td>
+						
 						<td class="right"><%=Controller.shsgui.createImg(Controller.shsconfig.mainnordarrowId, Controller.shsconfig.mainnordId, 
 															Controller.shsconfig.arrowup, Controller.shsconfig.arrowdown,"verti") %></td>
 					</tr>
