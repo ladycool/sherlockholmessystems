@@ -25,8 +25,9 @@ public class Launch {
 	public static void main(String[] args) throws Base64DecodingException, SQLException{
 		//Dieser Test ist gultig und erfolgreich
 		
-		String username = "cedrick",password="shs";
+		String username = "patrick2",password="shs";
 		HashMap<String, String> attribute = new HashMap<String, String>();
+		HashMap<String,String> temp = new HashMap<String,String>();
 		int i = 1;
 		
 		if(i == 0){
@@ -36,39 +37,34 @@ public class Launch {
 			attribute.put(Controller.shsconfig.language, "eng");
 		
 		Controller.shsuser = Controller.shsconfig.loginSHS("signup",attribute);
+		System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
 		//Controller.shsconfig.createfolder("test1");
 		}else if(i == 1){
 		
 			attribute.put(Controller.shsconfig.username, username);
 			attribute.put(Controller.shsconfig.password, password);
 			Controller.shsuser = Controller.shsconfig.loginSHS("signin",attribute);
-		
+			System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
+			
+			/*			
+			File file = new File("C:/Users/Shazem/Desktop/sss.txt");
+			Controller.shsconfig.uploadfile(file);
+			*/
+						
+			String id = "1";
+			/*
+			String[]userlist = new String[]{"patrick2"};
+			Controller.shsconfig.createticket(id, userlist);
+			*/
+			
+			temp = Controller.shsconfig.previewfile(id, Controller.shsconfig.reader);
+			System.out.println(temp.get("filepath"));
+			System.out.println(temp.get("content"));
 		}else{
 			System.out.println('~'-'"');
 			
 		}
-		
-		/*
-		System.out.println(Controller.shsuser == null);
-		System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
-		
-		
-		String fileId = "1";
-		
-		String[]userlist = new String[]{"patrick3"};
-		Controller.shsconfig.createticket(fileId, userlist);
-<<<<<<< HEAD
-		*/
-		Controller.shsconfig.delete(Controller.shsconfig.reader, "", "1");
-		
-	
-=======
-		
-		/*
-		File file = new File("C:/Users/Shazem/Desktop/sss.txt");
-		Controller.shsconfig.uploadfile(file);
-		*/
->>>>>>> 1547c510c98a1ad588a4bfea0c573cff0806aaa0
+			
 	}
 
 }

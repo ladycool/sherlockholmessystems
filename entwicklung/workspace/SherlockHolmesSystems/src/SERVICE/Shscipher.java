@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -18,15 +17,12 @@ import java.security.spec.EncodedKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.SecretKeySpec;
 
 import CONTROLLER.Controller;
@@ -47,6 +43,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 * PRIVATE
 	 */
 	private static Shscipher _cipher = null;
+	
 	private Shscipher(int symkeysize,int asymkeysize,String symInstance, String asymInstance) {
 		//settings
 		super(symkeysize,asymkeysize,symInstance,asymInstance);
@@ -267,7 +264,7 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	public byte[] crypt(byte[] tocrypt,String instance,int cipherMODE) {
 		//cipherMODE = Cipher.ENCRYPT_MODE || Cipher.DECRYPT_MODE		
 		Cipher cipher = this.getCipher(instance, cipherMODE);
-		return this.crypt(cipher,tocrypt);
+		return this.crypt(cipher,tocrypt,cipherMODE);
 	}
 	
 	/**
@@ -277,12 +274,66 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	public byte[] crypt(byte[] tocrypt,byte[] key,String instance,int cipherMODE){
 		byte[] toreturn = null;
 		Cipher cipher = getCipher(instance,cipherMODE,key);			
-		toreturn = this.crypt(cipher,tocrypt);
+		toreturn = this.crypt(cipher,tocrypt,cipherMODE);
 		return toreturn;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public byte[] encryptfile(File file,byte[] pseudokey){
+		byte[] toreturn = null,tocrypt;
+		ArrayList<byte[]>temp = new ArrayList<byte[]>();
+		
+		try {
+			//Lesen der Datei
+			DataInputStream input = new DataInputStream(new FileInputStream(file));
+			byte[] cbuf = new byte[1024];
+			//DataInputStream file = new DataInputStream(new FileInputStream(new File(filepath)));
+			while(input.read(cbuf) != -1){
+				temp.add(cbuf);
+			}
+			input.close();
+			
+			//Convertierung von Arraylist<byte[]> to byte[]
+			tocrypt = this.arraylisttobytearray(temp);
+			
+			//Verschlüsselung des Inhaltes
+			toreturn = this.crypt(tocrypt,pseudokey,this.symInstance,Cipher.ENCRYPT_MODE);
+			
+		} catch (IOException e) {
+			Controller.shsgui.triggernotice(e);
+		}	
+		
+		return toreturn;
+	}
+
 	
-	private byte[] crypt(Cipher cipher,byte[] tocrypt){
+	//// PRIVATE METHODS ////
+	private byte[] arraylisttobytearray(ArrayList<byte[]> toconvert){
+		byte[] toreturn = null;
+		int newlength=0,continueindex=0;
+		byte[] temp;
+		for (byte[] b : toconvert) {
+			newlength += b.length;
+			temp = toreturn;
+			toreturn = new byte[newlength];
+			if(temp != null){				
+				for (int i = 0; i < temp.length; i++) {
+					toreturn[i] = temp[i];
+				}
+				continueindex = temp.length;
+			}
+			for (int i = 0; i < b.length; i++) {
+				toreturn[continueindex+i] = b[i];
+			}
+		}
+		return toreturn;
+	}
+
+	
+	private byte[] crypt(Cipher cipher,byte[] tocrypt,int cipherMODE){
 		byte[] toreturn = null;	
 		try{
 			if(cipher.getAlgorithm().equals(this.symInstance)){	
@@ -323,9 +374,14 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 					
 					toreturn = this.arraylisttobytearray(_toreturn);
 					
-			}else if(cipher.getAlgorithm().equals(this.asymInstance)){
+					//Es werden lediglich symmetriche Keys asymmetrisch Verschlüsselt.	
+			}else if(cipher.getAlgorithm().equals(this.asymInstance) && cipherMODE == Cipher.ENCRYPT_MODE){
 				Key key = new SecretKeySpec(tocrypt, cipher.getAlgorithm());
 				toreturn =  cipher.wrap(key);
+			}else if(cipher.getAlgorithm().equals(this.asymInstance) && cipherMODE == Cipher.DECRYPT_MODE){
+				//Key key = new SecretKeySpec(tocrypt, cipher.getAlgorithm());
+				Key key =  cipher.unwrap(tocrypt, cipher.getAlgorithm(),Cipher.SECRET_KEY);
+				toreturn = key.getEncoded();
 			}
 		} catch (GeneralSecurityException e) {
 			Controller.shsgui.triggernotice(e);
@@ -333,93 +389,6 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		
 		return toreturn;
 	}
-
-	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public byte[] encryptfile(String filepath,byte[] pseudokey){
-		byte[] toreturn = null,tocrypt;
-		ArrayList<byte[]>temp = new ArrayList<byte[]>();
-		
-		try {
-			//Lesen der Datei
-			byte[] cbuf = new byte[1024];
-			DataInputStream file = new DataInputStream(new FileInputStream(new File(filepath)));
-			while(file.read(cbuf) != -1){
-				temp.add(cbuf);
-			}
-			file.close();
-			
-			//Convertierung von Arraylist<byte[]> to byte[]
-			tocrypt = this.arraylisttobytearray(temp);
-			
-			//Verschlüsselung des Inhaltes
-			toreturn = this.crypt(tocrypt,pseudokey,this.symInstance,Cipher.ENCRYPT_MODE);
-			
-		} catch (IOException e) {
-			Controller.shsgui.triggernotice(e);
-		}	
-		
-		return toreturn;
-	}
-	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public byte[] encryptfile(DataInputStream file,byte[] pseudokey){
-		byte[] toreturn = null,tocrypt;
-		ArrayList<byte[]>temp = new ArrayList<byte[]>();
-		
-		try {
-			//Lesen der Datei
-			byte[] cbuf = new byte[1024];
-			//DataInputStream file = new DataInputStream(new FileInputStream(new File(filepath)));
-			while(file.read(cbuf) != -1){
-				temp.add(cbuf);
-			}
-			file.close();
-			
-			//Convertierung von Arraylist<byte[]> to byte[]
-			tocrypt = this.arraylisttobytearray(temp);
-			
-			//Verschlüsselung des Inhaltes
-			toreturn = this.crypt(tocrypt,pseudokey,this.symInstance,Cipher.ENCRYPT_MODE);
-			
-		} catch (IOException e) {
-			Controller.shsgui.triggernotice(e);
-		}	
-		
-		return toreturn;
-	}
-
-	
-	
-	private byte[] arraylisttobytearray(ArrayList<byte[]> toconvert){
-		byte[] toreturn = null;
-		int newlength=0,continueindex=0;
-		byte[] temp;
-		for (byte[] b : toconvert) {
-			newlength += b.length;
-			temp = toreturn;
-			toreturn = new byte[newlength];
-			if(temp != null){				
-				for (int i = 0; i < temp.length; i++) {
-					toreturn[i] = temp[i];
-				}
-				continueindex = temp.length;
-			}
-			for (int i = 0; i < b.length; i++) {
-				toreturn[continueindex+i] = b[i];
-			}
-		}
-		return toreturn;
-	}
-
 	
 	
 

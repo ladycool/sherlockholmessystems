@@ -1,6 +1,5 @@
 package MODEL;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.crypto.Cipher;
@@ -167,7 +166,10 @@ public class __Config{
 	reader = "reader",
 	foldertype = "folder",
 	filetype = "file",
-	tickettype = "ticket"
+	tickettype = "ticket",
+	ticketIdlist = "ticketIdlist",
+	readerlist = "userlist",
+	fileId = "fileId"
 	;
 	public final String[]retrictedsigns = {"'","/","\\"};
 	
