@@ -4,7 +4,10 @@ import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -16,6 +19,7 @@ import javax.swing.JTextField;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 import CONTROLLER.Controller;
 
@@ -30,13 +34,40 @@ public class GUI extends JFrame {
 	private JTextField pfad;
 	private JTextField benutzername;
 	private File file;
-	private JTable table;
+	private JTable internalTable;
+	private HashMap<String, String> externalViewData = new HashMap<String, String>();
+	private HashMap<String, String> internalViewData = new HashMap<String, String>();
+	private String[][] internalRowData;
+	private String[][] externalRowData;
+	private DefaultTableModel internalTableModel;
+	
+	private void updateView(){
+		Controller.shsconfig.loadexternalview();
+		Controller.shsconfig.loadinternalview();
+		internalViewData = Controller.shsconfig.getinternalviewdata();
+		externalViewData = Controller.shsconfig.getexternalviewdata();
+		
+		internalRowData = new String[internalViewData.entrySet().size()][];
+		int i = 0;
+		String key, val;
+		Iterator it = internalViewData.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry pairs = (Map.Entry)it.next();
+	        key = pairs.getKey().toString();
+	        val = pairs.getValue().toString();
+	        String[] row = {key, val};
+	        internalRowData[i] = row;
+	        i++;
+	        it.remove(); // avoids a ConcurrentModificationException
+	    }
+	}
 	
 	/**
 	 * Create the frame.
 	 * @return 
 	 */
 	public GUI() {
+	
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 604, 396);
 		contentPane = new JPanel();
@@ -80,8 +111,14 @@ public class GUI extends JFrame {
 					.addComponent(konsole, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
 		);
 		
-		table = new JTable();
-		internalFiles.add(table);
+		
+
+		String[] columnNames = {"File"};
+		internalTableModel = new DefaultTableModel(internalRowData, columnNames);
+		internalTable = new JTable();
+		internalTable.setModel(internalTableModel);
+		internalFiles.add(internalTable);
+			
 		
 		JButton btnErteilen = new JButton("Freigabe");
 		
@@ -97,6 +134,8 @@ public class GUI extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				Controller.shsconfig.uploadfile(file);
+				updateView();
+				internalTableModel.fireTableDataChanged();
 			}
 		});
 		
@@ -191,7 +230,9 @@ public class GUI extends JFrame {
 				attributes.put(Controller.shsconfig.username, benutzername.getText());
 				attributes.put(Controller.shsconfig.password, passwort.getText());
 				Controller.shsuser = Controller.shsconfig.loginSHS(Controller.shsconfig.signactionA, attributes);
-				System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
+				//System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
+				updateView();
+				
 			}
 		});
 		
@@ -220,7 +261,8 @@ public class GUI extends JFrame {
 				attributes.put(Controller.shsconfig.username, benutzername.getText());
 				attributes.put(Controller.shsconfig.password, passwort.getText());
 				Controller.shsuser = Controller.shsconfig.loginSHS(Controller.shsconfig.signactionB, attributes);
-				System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
+				//System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
+				updateView();
 			}
 		});
 		GroupLayout gl_loginPanel = new GroupLayout(loginPanel);
