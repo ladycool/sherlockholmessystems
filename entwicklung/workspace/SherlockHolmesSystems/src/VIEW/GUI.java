@@ -1,5 +1,6 @@
 package VIEW;
 
+import java.awt.Color;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -29,6 +30,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.JInternalFrame;
+import javax.swing.JTextPane;
+import javax.swing.JTextArea;
 
 public class GUI extends JFrame {
 	
@@ -94,7 +97,7 @@ public class GUI extends JFrame {
 	public GUI() {
 	
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 604, 396);
+		setBounds(100, 100, 604, 433);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -103,8 +106,6 @@ public class GUI extends JFrame {
 		
 		JPanel menuPanel = new JPanel();
 		
-		JPanel konsole = new JPanel();
-		
 		JScrollPane internalFilesscrollPane = new JScrollPane();
 		
 		JLabel lblEigeneDateien = new JLabel("Eigene Dateien");
@@ -112,29 +113,37 @@ public class GUI extends JFrame {
 		JScrollPane externalFilesscrollPane = new JScrollPane();
 		
 		JLabel lblFremdeDateien = new JLabel("Fremde Dateien");
+
+		
+		JLabel lblKonsole = new JLabel("Konsole");
+		
+		JScrollPane scrollPane = new JScrollPane();
+
 		
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addComponent(loginPanel, GroupLayout.DEFAULT_SIZE, 586, Short.MAX_VALUE)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addComponent(menuPanel, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-					.addComponent(lblEigeneDateien)
-					.addContainerGap())
-				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+				.addGroup(gl_contentPane.createSequentialGroup()
 					.addComponent(internalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
 					.addContainerGap())
-				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-					.addComponent(konsole, GroupLayout.DEFAULT_SIZE, 566, Short.MAX_VALUE)
-					.addContainerGap())
-				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+				.addGroup(gl_contentPane.createSequentialGroup()
 					.addComponent(lblFremdeDateien)
 					.addContainerGap())
-				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-					.addComponent(externalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addComponent(lblEigeneDateien)
+					.addContainerGap())
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addComponent(lblKonsole)
+					.addContainerGap())
+				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
+						.addComponent(externalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
@@ -147,13 +156,24 @@ public class GUI extends JFrame {
 					.addComponent(lblEigeneDateien)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(internalFilesscrollPane, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(lblFremdeDateien)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(externalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-					.addGap(18)
-					.addComponent(konsole, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
+					.addComponent(lblFremdeDateien)
+					.addGap(11)
+					.addComponent(externalFilesscrollPane, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblKonsole)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE))
 		);
+		
+		JTextArea textArea = new JTextArea();
+		MessageConsole mc = new MessageConsole(textArea);
+		mc.redirectOut();
+		mc.redirectErr(Color.RED, null);
+		internalFilesscrollPane.setViewportView(textArea);
+		scrollPane.setViewportView(textArea);
+		
+		
 		
 		externalTable = new JTable();
 		externalFilesscrollPane.setRowHeaderView(externalTable);
