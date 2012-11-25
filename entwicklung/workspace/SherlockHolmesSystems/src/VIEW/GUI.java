@@ -15,6 +15,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -40,6 +41,9 @@ public class GUI extends JFrame {
 	private String[][] internalRowData;
 	private String[][] externalRowData;
 	private DefaultTableModel internalTableModel;
+	private JTable table;
+	private ArrayList<String> internalKeys = new ArrayList<String>();
+	private JTable table_1;
 	
 	private void updateView(){
 		Controller.shsconfig.loadexternalview();
@@ -47,7 +51,6 @@ public class GUI extends JFrame {
 		internalViewData = Controller.shsconfig.getinternalviewdata();
 		externalViewData = Controller.shsconfig.getexternalviewdata();
 		
-		internalRowData = new String[internalViewData.entrySet().size()][];
 		int i = 0;
 		String key, val;
 		Iterator it = internalViewData.entrySet().iterator();
@@ -55,11 +58,15 @@ public class GUI extends JFrame {
 	        Map.Entry pairs = (Map.Entry)it.next();
 	        key = pairs.getKey().toString();
 	        val = pairs.getValue().toString();
-	        String[] row = {key, val};
-	        internalRowData[i] = row;
+	        System.out.println(key);
+	        System.out.println(val);
+	        internalKeys.add(key);
+	        String[] row = {val};
+	        internalTableModel.insertRow(i, row);
 	        i++;
 	        it.remove(); // avoids a ConcurrentModificationException
 	    }
+	    internalTableModel.fireTableDataChanged();
 	}
 	
 	/**
@@ -78,23 +85,38 @@ public class GUI extends JFrame {
 		
 		JPanel menuPanel = new JPanel();
 		
-		JPanel externalFiles = new JPanel();
-		
 		JPanel konsole = new JPanel();
 		
-		JPanel internalFiles = new JPanel();
+		JScrollPane internalFilesscrollPane = new JScrollPane();
+		
+		JLabel lblEigeneDateien = new JLabel("Eigene Dateien");
+		
+		JScrollPane externalFilesscrollPane = new JScrollPane();
+		
+		JLabel lblFremdeDateien = new JLabel("Fremde Dateien");
+		
+		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addComponent(loginPanel, GroupLayout.DEFAULT_SIZE, 586, Short.MAX_VALUE)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addComponent(menuPanel, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(konsole, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
-						.addComponent(externalFiles, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
-						.addComponent(internalFiles, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE))
+				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+					.addComponent(lblEigeneDateien)
+					.addContainerGap())
+				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+					.addComponent(internalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
+					.addContainerGap())
+				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+					.addComponent(konsole, GroupLayout.DEFAULT_SIZE, 566, Short.MAX_VALUE)
+					.addContainerGap())
+				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+					.addComponent(lblFremdeDateien)
+					.addContainerGap())
+				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+					.addComponent(externalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
@@ -103,21 +125,28 @@ public class GUI extends JFrame {
 					.addComponent(loginPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(menuPanel, GroupLayout.PREFERRED_SIZE, 57, GroupLayout.PREFERRED_SIZE)
+					.addGap(4)
+					.addComponent(lblEigeneDateien)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(internalFiles, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)
+					.addComponent(internalFilesscrollPane, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addComponent(lblFremdeDateien)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(externalFiles, GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(externalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+					.addGap(18)
 					.addComponent(konsole, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
 		);
 		
+		table_1 = new JTable();
+		externalFilesscrollPane.setRowHeaderView(table_1);
 		
-
 		String[] columnNames = {"File"};
 		internalTableModel = new DefaultTableModel(internalRowData, columnNames);
 		internalTable = new JTable();
 		internalTable.setModel(internalTableModel);
-		internalFiles.add(internalTable);
+		//add(new JScrollPane(internalTable));
+		internalFilesscrollPane.setViewportView(internalTable);
+
 			
 		
 		JButton btnErteilen = new JButton("Freigabe");
@@ -147,7 +176,16 @@ public class GUI extends JFrame {
 		btnLsche.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//Controller.shsconfig.delete(status, datatype, data)
+				int selectedRow = internalTable.getSelectedRow();
+				if (selectedRow!=-1){
+					ArrayList<String> fileIds = new ArrayList<String>();
+					fileIds.add(internalKeys.get(selectedRow));
+					HashMap<String,ArrayList<String>> metadata = new HashMap<String,ArrayList<String>>();
+					metadata.put(Controller.shsconfig.fileId, fileIds);
+					Controller.shsconfig.delete(Controller.shsconfig.owner, Controller.shsconfig.filetype, metadata);				
+				} else {
+					System.out.println("Bitte eine Datei auswählen!");
+				}
 			}
 		});
 		
