@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import javax.crypto.Cipher;
+
 import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 
@@ -15,7 +17,32 @@ import SERVICE.Myadmin;
 
 
 public class Launch {
-
+	
+	
+	static HashMap<String,String> getcurrentreader(String fileId) throws SQLException, Base64DecodingException{
+		HashMap<String,String> toreturn = new HashMap<String,String>();
+		byte[] _ticketsId=null,_readers=null;
+		String ticketsId="",readers="";		
+		ResultSet result = Controller.shsdb.select("files_test","k_ticketsId,readers","id="+fileId+" AND k_ticketsId IS NOT NULL AND readers IS NOT NULL");
+			
+		if(result.first()){// && result.getString("k_ticketsId") != null && result.getString("readers") != null
+		
+				_ticketsId = Base64.decode(result.getString("k_ticketsId"));
+				_readers = Base64.decode(result.getString("readers"));
+				
+				_ticketsId = Controller.shscipher.crypt(_ticketsId,"AES",Cipher.DECRYPT_MODE); 
+				_readers = Controller.shscipher.crypt(_readers,"AES",Cipher.DECRYPT_MODE); 
+				
+				ticketsId = new String(_ticketsId);
+				readers = new String(_readers);
+				//holt alle user die bereits eine Erlaubnis haben.
+			
+		}
+		toreturn.put("ticketIdlist",ticketsId);
+		toreturn.put("readerlist",readers);
+		return toreturn;
+	}
+	
 	/**
 	 * @param args
 	 * @throws Base64DecodingException 
@@ -28,7 +55,7 @@ public class Launch {
 		String username = "patrick",password="shs";//id=2
 		HashMap<String, String> attribute = new HashMap<String, String>();
 		HashMap<String,String> temp = new HashMap<String,String>();
-		int i = 1;
+		int i = 2;
 		
 		if(i == 0){
 		
@@ -61,10 +88,15 @@ public class Launch {
 			System.out.println(temp.get("filepath"));
 			System.out.println(temp.get("content"));
 			*/
-			
+			/*
 			Controller.shsconfig.loadinternalview();
+			*/
+			getcurrentreader(id);
+			
+			
 		}else{
-			System.out.println('~'-'"');
+			String temp1[] = "8&2&3&4".split("&");
+			System.out.println(temp1[3]);
 			
 		}
 			

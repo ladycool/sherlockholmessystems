@@ -141,7 +141,7 @@ public class __Config{
 	txtlinebreak="<shsbr/>",
 	stamp = "CURRENT_TIMESTAMP",
 	defaultordner="home", 
-	dbsep = "+"
+	dbsep = "&"
 	;	
 	
 	//AJAXHANDLER
