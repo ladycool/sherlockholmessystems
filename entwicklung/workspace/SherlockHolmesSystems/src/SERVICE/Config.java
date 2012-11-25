@@ -302,24 +302,21 @@ public class Config extends _Config {
 			_pseudouserId = super.wrap(Base64.encode(pseudouserId));
 			ResultSet result=null;
 			try{
-				result = Controller.shsdb.select(this.filestb,"id,`key`,pathdef","pseudouserId LIKE "+_pseudouserId);
+				result = Controller.shsdb.select(this.filestb,"id,pathdef","pseudouserId LIKE "+_pseudouserId);
 			}catch(Exception e){}
 			
 			String fileId;
-			byte[] filepath,pseudokey;
+			byte[] filepath;
 			
 			while(result.next()){
-				pseudokey = Base64.decode(result.getString("key"));
-				pseudokey = Controller.shscipher.crypt(pseudokey,this.symInstance,this.decryptmode);
 				
 				filepath = Base64.decode(result.getString("pathdef"));
-				filepath = Controller.shscipher.crypt(filepath, pseudokey, this.symInstance,this.decryptmode);
+				filepath = Controller.shscipher.crypt(filepath,this.symInstance,this.decryptmode);
 				
-				pseudokey = this.random(16);//-->Paranoia
-					
-				fileId = result.getString("id");
+				fileId = result.getString("id");System.out.println(new String(filepath));
 				
-				toreturn.put(fileId,new String(filepath));				
+				toreturn.put(fileId,new String(filepath));	
+				filepath = this.random(20); //--> Paranoia :)
 			}
 			Controller.shsdb.text(33);
 		} catch (SQLException | Base64DecodingException e) {
