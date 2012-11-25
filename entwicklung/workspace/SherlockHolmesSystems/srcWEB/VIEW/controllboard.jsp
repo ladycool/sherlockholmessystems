@@ -61,8 +61,12 @@
 	}else if(session.getAttribute(Controller.shsconfig.shsuser) != null){
 				if(request.getParameter("uploadfile") != null){	
 					if(request.getParameter("uploadfile").equals("uploadfile")){
-						DataInputStream input = new DataInputStream(request.getInputStream());
-						Controller.shsconfig.uploadfile(input,request.getParameter("file"));						
+						String contentType = request.getContentType();
+						 out.println("<br>Content type is :: " +contentType);  
+						 if ((contentType != null) && (contentType.indexOf("multipart/form-data") >= 0)){ 
+							DataInputStream input = new DataInputStream(request.getInputStream());
+							Controller.shsconfig.uploadfile(input,request.getParameter("file"));	
+						 }
 						}
 					}					
 	}else{
