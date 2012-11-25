@@ -229,7 +229,10 @@ public class Myadmin implements Database {
 		}
 	}
 
-	
+	@Override
+	public void delete(String table,String condition){
+		this.delete(table, condition,"");
+	}
 	
 	@Override
 	public ResultSet select(String table, String fields, String condition,String others) {

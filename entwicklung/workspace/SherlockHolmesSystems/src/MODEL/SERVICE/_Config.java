@@ -1,12 +1,10 @@
 package MODEL.SERVICE;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import MODEL.__Config;
-import java.io.DataInputStream;
-import java.io.File;
-
 import SERVICE.User;
 
 public abstract class _Config extends __Config{
@@ -101,6 +99,23 @@ public abstract class _Config extends __Config{
 		return toreturn;
 	}
 	
+	
+	public void setintloadingstatus(){
+		if(this.intloadingisdone){
+			this.intloadingisdone = false;
+		}else{
+			this.intloadingisdone = true;
+		}
+	}
+	
+	public void setextloadingstatus(){
+		if(this.extloadingisdone){
+			this.extloadingisdone = false;
+		}else{
+			this.extloadingisdone = true;
+		}
+	}
+	
 	public HashMap<String,String> getinternalviewdata(){
 		return this.internalviewdata;
 	}
@@ -108,6 +123,8 @@ public abstract class _Config extends __Config{
 	public HashMap<String,String> getexternalviewdata(){
 		return this.externalviewdata;
 	}
+	
+	
 	//METHODS ABSTRACT
 	/**
 	 * @doc In progress
@@ -172,9 +189,9 @@ public abstract class _Config extends __Config{
 	 * Diese Methode löscht sowohl Ordner, als auch Dateien und Tickets
 	 * und aktualisiert das jeweilige Viewobjekt
 	 * @param status //owner || reader
-	 * @param datatype //folder || (intern)file || ticket
-	 * @param data //folder -> path || (intern) file -> fileId || externe file/ticket -> ticketId
+	 * @param datatype //(intern)file || (intern)ticket || (extern)hide
+	 * @param metadata intern -> (fileId(s) || ticketIds) || extern --> ticketId(s)
 	 */
-	public abstract void delete(String status,String datatype,String data);
+	public abstract void delete(String status,String datatype, HashMap<String,ArrayList<String>> metadata);
 	
 }

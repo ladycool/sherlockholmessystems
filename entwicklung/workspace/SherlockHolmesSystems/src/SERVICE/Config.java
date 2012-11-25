@@ -1,13 +1,12 @@
 package SERVICE;
 
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import CONTROLLER.Controller;
@@ -537,27 +536,45 @@ public class Config extends _Config {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void delete(String status,String datatype, String dataId){
+	public void delete(String status,String datatype, HashMap<String,ArrayList<String>> metadata){
 		if(status.equals(this.owner)){
-			deletedata(datatype,dataId);
+			deletedata(datatype,metadata);
 		}else if(status.equals(this.reader)){
-			hidedata(dataId);//ticketId
+			ArrayList<String> ticketIds = metadata.get("ticketIds");
+			hidedata(ticketIds);//ticketId
 		}
 	}
 	
-	private void deletedata(String datatype,String dataId){
-		//this.deleteticket(fileId, userlist, ticketIdlist);
-		
-		if(datatype.equals(this.filetype)){
-			
-		}
+	private void deletedata(String datatype,HashMap<String,ArrayList<String>> metadata){//dataid = fileId
+		try {
+			if(metadata.get(this.readerlist).size() == metadata.get(this.ticketIdlist).size()){
+				String fileId = metadata.get(this.fileId).get(0),
+						userlist[],ticketIdlist[];
+				
+				if(datatype.equals(this.filetype)){							
+					HashMap<String, String> currentreaderinfo = this.getcurrentreader(fileId);
+					userlist = currentreaderinfo.get(this.ticketIdlist).split(this.dbsep);
+					ticketIdlist = currentreaderinfo.get(this.readerlist).split(this.dbsep);
+					
+					Controller.shsdb.delete(this.filestb, "id="+fileId);
+				}else{
+					userlist = metadata.get(this.readerlist).toArray(new String[metadata.get(this.readerlist).size()]);
+					ticketIdlist = metadata.get(this.ticketIdlist).toArray(new String[metadata.get(this.ticketIdlist).size()]);
+				}
+				
+				this.deleteticket(fileId, userlist, ticketIdlist);
+				
+			}else{Controller.shsgui.triggernotice(Controller.shsdb.text(40));}
+		} catch (Base64DecodingException | SQLException e) {Controller.shsgui.triggernotice(e);}
 	}
 	
 	////////////////////LOAD-FILE-END////////////////////////
 	
 	//////////////////////////////TICKETS-START/////////////////////////////////
-	private void hidedata(String ticketId){
-		//inaktivieren
+	private void hidedata(ArrayList<String> ticketIds){//In der Arrayliste befinden sich die Ids aller Tickets die gelöscht werden sollten.
+		for (String id : ticketIds) {
+			Controller.shsdb.update(this.tickettb, new String[]{"active"}, new String[]{"0"},"id="+id);
+		}
 	}
 	
 	/**
@@ -662,8 +679,8 @@ public class Config extends _Config {
 			boolean newticket=false;
 			
 			HashMap<String,String> currentreaderinfo = this.getcurrentreader(fileId);
-			ticketsId = currentreaderinfo.get("ticketsId");
-			readers = currentreaderinfo.get("readers");
+			ticketsId = currentreaderinfo.get(this.ticketIdlist);
+			readers = currentreaderinfo.get(this.readerlist);
 			
 			for (String user : userlist){
 				if(!readers.contains(user)){//überprüft ob der user bereits eine Erlaubnis hat
@@ -748,20 +765,24 @@ public class Config extends _Config {
 		try {
 			HashMap<String, String> currentreaderinfo = this.getcurrentreader(fileId);
 			String 
-			ticketsId = currentreaderinfo.get("ticketsId"),
-			readers = currentreaderinfo.get("readers")
+			ticketsId = currentreaderinfo.get(this.ticketIdlist),
+			readers = currentreaderinfo.get(this.readerlist)
 			;	
 			byte[] _readers,_ticketsId;
 			
 			
 			//detele & Vorbereitung aufs Update
 			for (int i=0;i < ticketIdlist.length;i++) {
+				
 				Controller.shsdb.delete(this.tickettb,"id="+ticketIdlist[i],Controller.shsdb.text(17)); 
+				
 				ticketsId = ticketsId.replace(ticketIdlist[i],"");
+				ticketsId = ticketsId.replace(this.dbsep+this.dbsep,this.dbsep);//++ -> +
+				
 				readers = readers.replace(userlist[i],"");
-			}			
-			ticketsId = ticketsId.replace(this.dbsep+this.dbsep,this.dbsep);//++ -> +
-			readers = readers.replace(this.dbsep+this.dbsep,this.dbsep);			
+				readers = readers.replace(this.dbsep+this.dbsep,this.dbsep);
+			}					
+						
 			if(ticketsId.startsWith(this.dbsep)){
 				ticketsId = ticketsId.substring(1);
 				readers = readers.substring(1);
@@ -815,8 +836,8 @@ public class Config extends _Config {
 				//holt alle user die bereits eine Erlaubnis haben.
 			
 		}
-		toreturn.put("ticketsId",ticketsId);
-		toreturn.put("readers",readers);
+		toreturn.put(this.ticketIdlist,ticketsId);
+		toreturn.put(this.readerlist,readers);
 		return toreturn;
 	}
 	//////////////////////////////TICKETS-ENDE/////////////////////////////////

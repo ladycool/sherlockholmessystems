@@ -107,6 +107,10 @@ public interface Database {
 	 */
 	public void delete(String table,String condition, String info);
 	
+	/**
+	 * @see public void delete(String table,String condition, String info)
+	 */
+	public void delete(String table,String condition);
 	
 	/**
 	 * 
