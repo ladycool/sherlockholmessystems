@@ -300,36 +300,26 @@ public class Config extends _Config {
 			byte[] pseudouserId = _pseudouserId.getBytes();
 			pseudouserId = Controller.shscipher.crypt(pseudouserId,this.symInstance,this.encryptmode);
 			_pseudouserId = super.wrap(Base64.encode(pseudouserId));
-			ResultSet result=null,result1;
+			ResultSet result=null;
 			try{
 				result = Controller.shsdb.select(this.filestb,"id,`key`,pathdef","pseudouserId LIKE "+_pseudouserId);
 			}catch(Exception e){}
 			
-			String path,sep,fileId,filename="";
-			byte[] pseudopath,pseudokey;
-			String[] temp;
+			String fileId;
+			byte[] filepath,pseudokey;
 			
 			while(result.next()){
-				path = ""; sep="";
 				pseudokey = Base64.decode(result.getString("key"));
 				pseudokey = Controller.shscipher.crypt(pseudokey,this.symInstance,this.decryptmode);
-				pseudopath = Base64.decode(result.getString("pathdef"));
-				pseudopath = Controller.shscipher.crypt(pseudopath, pseudokey, this.symInstance,this.decryptmode);
 				
-				temp = new String(pseudopath).split(this.sep);			
-				for (String t : temp) {
-					result1 = Controller.shsdb.select(this.pathtb,"pathname","def LIKE "+wrap(t));
-					result1.next();
-					path += sep+result1.getString("pathname");
+				filepath = Base64.decode(result.getString("pathdef"));
+				filepath = Controller.shscipher.crypt(filepath, pseudokey, this.symInstance,this.decryptmode);
+				
+				pseudokey = this.random(16);//-->Paranoia
 					
-					filename = result1.getString("pathname");
-					sep = this.sep;
-				}
-				path = this.remove(path, this.sep+filename);
-				
 				fileId = result.getString("id");
 				
-				toreturn.put(fileId,filename);				
+				toreturn.put(fileId,new String(filepath));				
 			}
 			Controller.shsdb.text(33);
 		} catch (SQLException | Base64DecodingException e) {
