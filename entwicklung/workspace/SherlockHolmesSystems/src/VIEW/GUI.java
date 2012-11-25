@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,6 +28,7 @@ import CONTROLLER.Controller;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
+import javax.swing.JInternalFrame;
 
 public class GUI extends JFrame {
 	
@@ -41,9 +43,9 @@ public class GUI extends JFrame {
 	private String[][] internalRowData;
 	private String[][] externalRowData;
 	private DefaultTableModel internalTableModel;
-	private JTable table;
 	private ArrayList<String> internalKeys = new ArrayList<String>();
 	private JTable table_1;
+	private JDialog verwalteZugriff;
 	
 	private void updateView(){
 		Controller.shsconfig.loadexternalview();
@@ -148,8 +150,15 @@ public class GUI extends JFrame {
 		internalFilesscrollPane.setViewportView(internalTable);
 
 			
+		verwalteZugriff = new JDialog();
+		verwalteZugriff.setVisible(false);
 		
 		JButton btnErteilen = new JButton("Freigabe");
+		btnErteilen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				verwalteZugriff.setVisible(true);
+			}
+		});
 		
 		pfad = new JTextField();
 		pfad.setColumns(10);
