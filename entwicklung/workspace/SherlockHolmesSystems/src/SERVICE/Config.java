@@ -136,7 +136,7 @@ public class Config extends _Config {
 				Controller.shscipher = Shscipher.getInstance(this.symkeysize,this.asymkeysize,this.symInstance,this.asymInstance);
 				byte[] towrite;
 				FileOutputStream fos;
-				String tosave;
+				String pubkey,tosave;
 				File file;
 				file = new File(this.keypath+username);
 				file.mkdirs();
@@ -168,8 +168,9 @@ public class Config extends _Config {
 				
 				
 				//NICHT Verschlüsselung und Speicherung des public Key in die Datenbank
-				tosave = super.wrap(Base64.encode(towrite));
-				Controller.shsdb.insert(this.pubkeytb,_username+","+tosave+",NULL");//DATABASE:public_keys
+				pubkey = super.wrap(Base64.encode(towrite));
+				tosave = _username+","+pubkey+","+this.stamp+",NULL";
+				Controller.shsdb.insert(this.pubkeytb,tosave);//DATABASE:public_keys
 				
 				
 				//Finally neu USER
@@ -272,6 +273,10 @@ public class Config extends _Config {
 	
 	@Override
 	public void logoutSHS() {
+		this.externalviewdata = new HashMap<String,String>();
+		this.internalviewdata = new HashMap<String,String>();
+		//reload
+		
 		Controller.shsdb.close();
 	}
     ////////////////////LOGIN-END/////////////////////////////
