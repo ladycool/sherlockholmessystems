@@ -47,6 +47,8 @@
 	</head>
 	
 	<body>
+		<%@ include file="VIEW/javascript/attributes.jsp" %>
+	
 		<%if(session.getAttribute(Controller.shsconfig.shsuser) == null && 
 			request.getParameter(Controller.shsconfig.signactionId) == null){%>
 			<%@ include file="VIEW/login.jsp" %>

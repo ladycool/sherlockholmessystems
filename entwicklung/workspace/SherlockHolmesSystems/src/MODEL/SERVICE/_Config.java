@@ -1,5 +1,6 @@
 package MODEL.SERVICE;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -194,4 +195,7 @@ public abstract class _Config extends __Config{
 	 */
 	public abstract void delete(String status,String datatype, HashMap<String,ArrayList<String>> metadata);
 	
+	
+	//TOMCAT-GUI
+	public abstract void uploadfile(DataInputStream in,String filename);
 }

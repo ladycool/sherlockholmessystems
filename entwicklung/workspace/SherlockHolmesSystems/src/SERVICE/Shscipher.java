@@ -3,6 +3,7 @@ package SERVICE;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Key;
@@ -283,12 +284,31 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 	 */
 	@Override
 	public byte[] encryptfile(File file,byte[] pseudokey){
+		DataInputStream input = null;
+		try {
+			input = new DataInputStream(new FileInputStream(file));
+		} catch (FileNotFoundException e) {
+			Controller.shsgui.triggernotice(e);
+		}
+		
+		return this.encryptfile(input, pseudokey);
+	}
+
+	
+	/**
+	 * Erweiter wegen der TOMCAT-GUI
+	 * @param input
+	 * @param pseudokey
+	 * @return
+	 */
+	@Override
+	public byte[] encryptfile(DataInputStream input, byte[] pseudokey){
 		byte[] toreturn = null,tocrypt;
 		ArrayList<byte[]>temp = new ArrayList<byte[]>();
 		
 		try {
 			//Lesen der Datei
-			DataInputStream input = new DataInputStream(new FileInputStream(file));
+			//DataInputStream input = new DataInputStream(new FileInputStream(file));
 			byte[] cbuf = new byte[1024];
 			//DataInputStream file = new DataInputStream(new FileInputStream(new File(filepath)));
 			while(input.read(cbuf) != -1){
@@ -308,7 +328,6 @@ public class Shscipher extends _Cipher { //http://openbook.galileocomputing.de/j
 		
 		return toreturn;
 	}
-
 	
 	//// PRIVATE METHODS ////
 	private byte[] arraylisttobytearray(ArrayList<byte[]> toconvert){

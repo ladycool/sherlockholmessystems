@@ -1,5 +1,6 @@
 package SERVICE;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -313,7 +314,7 @@ public class Config extends _Config {
 				filepath = Base64.decode(result.getString("pathdef"));
 				filepath = Controller.shscipher.crypt(filepath,this.symInstance,this.decryptmode);
 				
-				fileId = result.getString("id");System.out.println(new String(filepath));
+				fileId = result.getString("id");
 				
 				toreturn.put(fileId,new String(filepath));	
 				filepath = this.random(20); //--> Paranoia :)
@@ -335,6 +336,7 @@ public class Config extends _Config {
 	
 	
 	////////////////////LOAD-FILE-START////////////////////////
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -342,9 +344,7 @@ public class Config extends _Config {
 	public void uploadfile(File file){//JFileChooser --> void getSelectedFile (Return a file object)
 		HashMap<String,byte[]> _toinsert = new HashMap<String,byte[]>();
 		HashMap<String,String> toinsert = new HashMap<String,String>();
-		String 
-		filepath = file.getPath(),_temp[] = filepath.split(this.sep),
-		filename = _temp[_temp.length-1];
+		String filepath = file.getPath();
 		
 		//pseudo user
 		String _pseudouserId = (String)Controller.shsuser.getattr(this.userId) + (String)Controller.shsuser.getattr(this.username);
@@ -377,16 +377,9 @@ public class Config extends _Config {
 		Controller.shsgui.triggernotice(Controller.shsdb.text(32));
 		
 		//Eine Vereinfachung von this.loadinternalview();
-		int fileId = Controller.shsdb.max(this.filestb);//Controller.shsdb.select(this.filestb, "MAX(id) AS id");
-		/* --> createfolder
-		if(this.internalviewdata.get(newpath) == null){
-			this.internalviewdata.put(newpath, new ArrayList<String>());
-		}
-		*/
-		
-		this.internalviewdata.put(""+fileId,filename);
-		
-		
+		String fileId = ""+Controller.shsdb.max(this.filestb);//Controller.shsdb.select(this.filestb, "MAX(id) AS id");		
+		this.internalviewdata.put(fileId,filepath);
+				
 	}
 	
 	/**
@@ -534,7 +527,9 @@ public class Config extends _Config {
 	
 	private void deletedata(String datatype,HashMap<String,ArrayList<String>> metadata){//dataid = fileId
 		try {
-			if(metadata.get(this.readerlist).size() == metadata.get(this.ticketIdlist).size()){
+			if((metadata.get(this.readerlist) == null && metadata.get(this.ticketIdlist) == null) ||
+					(metadata.get(this.readerlist) != null && metadata.get(this.ticketIdlist) != null 
+					&& metadata.get(this.readerlist).size() == metadata.get(this.ticketIdlist).size()) ){
 				String fileId = metadata.get(this.fileId).get(0),
 						userlist[],ticketIdlist[];
 				
@@ -828,6 +823,48 @@ public class Config extends _Config {
 		return toreturn;
 	}
 	//////////////////////////////TICKETS-ENDE/////////////////////////////////
+	
+	
+	/////////////////TOMCAT-GUI/////////////////////
+	@Override
+	public void uploadfile(DataInputStream input,String filename){
+		HashMap<String,byte[]> _toinsert = new HashMap<String,byte[]>();
+		HashMap<String,String> toinsert = new HashMap<String,String>();
+		//String filepath = file.getPath();
+		
+		//pseudo user
+		String _pseudouserId = (String)Controller.shsuser.getattr(this.userId) + (String)Controller.shsuser.getattr(this.username);
+		//Ich habe mich an der Stelle gegen Base64 um für den Fall dass die userId geknackt wird die Zuordnung nicht direkt zu erkennen
+		//pseudouserId = Base64.encode(pseudouserId.getBytes());
+		byte[] pseudouserId = Controller.shscipher.crypt(_pseudouserId.getBytes(), this.symInstance, this.encryptmode);
+		_toinsert.put("pseudouserId", pseudouserId);		
+		
+		byte[] pseudokey = super.random(this.symkeysize/8);
+		byte[] content = Controller.shscipher.encryptfile(input, pseudokey);
+		
+		pseudokey = Controller.shscipher.crypt(pseudokey, this.symInstance, this.encryptmode);
+		
+		_toinsert.put("`key`",pseudokey);
+		_toinsert.put("content",content);
 
+		
+		byte[] pathdef = filename.getBytes();
+		pathdef = Controller.shscipher.crypt(pathdef, this.symInstance, this.encryptmode);
+		
+		_toinsert.put("pathdef", pathdef);
+		
+		for (String key : _toinsert.keySet()) {
+			toinsert.put(key, super.wrap(Base64.encode(_toinsert.get(key))));
+		}
+		toinsert.put("date",this.stamp);
+		
+		Controller.shsdb.insert(this.filestb, toinsert, Controller.shsdb.text(44));//INSERT
+
+		Controller.shsgui.triggernotice(Controller.shsdb.text(32));
+		
+		//Eine Vereinfachung von this.loadinternalview();
+		String fileId = ""+Controller.shsdb.max(this.filestb);//Controller.shsdb.select(this.filestb, "MAX(id) AS id");		
+		this.internalviewdata.put(fileId,filename);
+	}
 
 }
