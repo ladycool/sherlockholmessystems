@@ -6,20 +6,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-
-import javax.crypto.Cipher;
 
 import CONTROLLER.Controller;
 import MODEL.SERVICE._Config;
 
 import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
-import com.sun.org.apache.xpath.internal.compiler.PsuedoNames;
 
 /**
  * 
@@ -275,6 +270,10 @@ public class Config extends _Config {
 		return user;	
 	}
 	
+	@Override
+	public void logoutSHS() {
+		Controller.shsdb.close();
+	}
     ////////////////////LOGIN-END/////////////////////////////
 	
 	///////////////////LOADUSERVIEW-START/////////////////////////
@@ -355,57 +354,51 @@ public class Config extends _Config {
 	 */
 	@Override
 	public void uploadfile(File file){//JFileChooser --> void getSelectedFile (Return a file object)
-		try {
-			HashMap<String,byte[]> _toinsert = new HashMap<String,byte[]>();
-			HashMap<String,String> toinsert = new HashMap<String,String>();
-			String 
-			filepath = file.getPath(),_temp[] = filepath.split(this.sep),
-			filename = _temp[_temp.length-1];
-			
-			//pseudo user
-			String _pseudouserId = (String)Controller.shsuser.getattr(this.userId) + (String)Controller.shsuser.getattr(this.username);
-			//Ich habe mich an der Stelle gegen Base64 um für den Fall dass die userId geknackt wird die Zuordnung nicht direkt zu erkennen
-			//pseudouserId = Base64.encode(pseudouserId.getBytes());
-			byte[] pseudouserId = Controller.shscipher.crypt(_pseudouserId.getBytes(), this.symInstance, this.encryptmode);
-			_toinsert.put("pseudouserId", pseudouserId);		
-			
-			DataInputStream in = new DataInputStream(new FileInputStream(file));
-			byte[] pseudokey = super.random(this.symkeysize/8);
-			byte[] content = Controller.shscipher.encryptfile(in, pseudokey);
-			
-			pseudokey = Controller.shscipher.crypt(pseudokey, this.symInstance, this.encryptmode);
-			
-			_toinsert.put("`key`",pseudokey);
-			_toinsert.put("content",content);
+		HashMap<String,byte[]> _toinsert = new HashMap<String,byte[]>();
+		HashMap<String,String> toinsert = new HashMap<String,String>();
+		String 
+		filepath = file.getPath(),_temp[] = filepath.split(this.sep),
+		filename = _temp[_temp.length-1];
+		
+		//pseudo user
+		String _pseudouserId = (String)Controller.shsuser.getattr(this.userId) + (String)Controller.shsuser.getattr(this.username);
+		//Ich habe mich an der Stelle gegen Base64 um für den Fall dass die userId geknackt wird die Zuordnung nicht direkt zu erkennen
+		//pseudouserId = Base64.encode(pseudouserId.getBytes());
+		byte[] pseudouserId = Controller.shscipher.crypt(_pseudouserId.getBytes(), this.symInstance, this.encryptmode);
+		_toinsert.put("pseudouserId", pseudouserId);		
+		
+		byte[] pseudokey = super.random(this.symkeysize/8);
+		byte[] content = Controller.shscipher.encryptfile(file, pseudokey);
+		
+		pseudokey = Controller.shscipher.crypt(pseudokey, this.symInstance, this.encryptmode);
+		
+		_toinsert.put("`key`",pseudokey);
+		_toinsert.put("content",content);
 
-			
-			byte[] pathdef = filepath.getBytes();
-			pathdef = Controller.shscipher.crypt(pathdef, this.symInstance, this.encryptmode);
-			
-			_toinsert.put("pathdef", pathdef);
-			
-			for (String key : _toinsert.keySet()) {
-				toinsert.put(key, super.wrap(Base64.encode(_toinsert.get(key))));
-			}
-			toinsert.put("date",this.stamp);
-			
-			Controller.shsdb.insert(this.filestb, toinsert, Controller.shsdb.text(44));//INSERT
-
-			Controller.shsgui.triggernotice(Controller.shsdb.text(32));
-			
-			//Eine Vereinfachung von this.loadinternalview();
-			int fileId = Controller.shsdb.max(this.filestb);//Controller.shsdb.select(this.filestb, "MAX(id) AS id");
-			/* --> createfolder
-			if(this.internalviewdata.get(newpath) == null){
-				this.internalviewdata.put(newpath, new ArrayList<String>());
-			}
-			*/
-			
-			this.internalviewdata.put(""+fileId,filename);			
-			
-		} catch (FileNotFoundException e) {
-			Controller.shsgui.triggernotice(e);
+		
+		byte[] pathdef = filepath.getBytes();
+		pathdef = Controller.shscipher.crypt(pathdef, this.symInstance, this.encryptmode);
+		
+		_toinsert.put("pathdef", pathdef);
+		
+		for (String key : _toinsert.keySet()) {
+			toinsert.put(key, super.wrap(Base64.encode(_toinsert.get(key))));
 		}
+		toinsert.put("date",this.stamp);
+		
+		Controller.shsdb.insert(this.filestb, toinsert, Controller.shsdb.text(44));//INSERT
+
+		Controller.shsgui.triggernotice(Controller.shsdb.text(32));
+		
+		//Eine Vereinfachung von this.loadinternalview();
+		int fileId = Controller.shsdb.max(this.filestb);//Controller.shsdb.select(this.filestb, "MAX(id) AS id");
+		/* --> createfolder
+		if(this.internalviewdata.get(newpath) == null){
+			this.internalviewdata.put(newpath, new ArrayList<String>());
+		}
+		*/
+		
+		this.internalviewdata.put(""+fileId,filename);
 		
 		
 	}
@@ -622,7 +615,7 @@ public class Config extends _Config {
 			byte[] _my_username = my_username.getBytes();
 			my_username = super.wrap(Base64.encode(_my_username));
 			
-			ResultSet result = Controller.shsdb.select("tickets","sent_by,fileId,filename,`key`","id="+ticketId+" AND sent_to LIKE "+my_username);
+			ResultSet result = Controller.shsdb.select(this.tickettb,"sent_by,fileId,filename,`key`","id="+ticketId+" AND sent_to LIKE "+my_username);
 			result.first();
 			
 			//Step1: asym Entschlüsselung des pseudoKeys
@@ -827,7 +820,6 @@ public class Config extends _Config {
 		return toreturn;
 	}
 	//////////////////////////////TICKETS-ENDE/////////////////////////////////
-
 
 
 }

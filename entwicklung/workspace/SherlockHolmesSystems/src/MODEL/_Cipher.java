@@ -1,6 +1,6 @@
 package MODEL;
 
-import java.io.DataInputStream;
+import java.io.File;
 import java.util.HashMap;
 
 
@@ -94,13 +94,6 @@ public abstract class _Cipher {
 	 * @param cipherMODE: Cipher.ENCRYPT_MODE || Cipher.DECRYPT_MODE
 	 */
 	public abstract byte[] crypt(byte[] tocrypt,byte[] key,String instance,int cipherMODE);
-	/**
-	 * Diese Methode wird beim Upload von Datei vewendet. Die dient lediglig der Verschlüsselung
-	 * @param filepath
-	 * @param pseudokey: String der Länge 16Bytes, der als Schlüsselwurzel diennen soll.
-	 * @return String: verschlüsselte Form des Dateiinhaltes
-	 */
-	public abstract byte[] encryptfile(String filepath,byte[] pseudokey);
 	
 	/**
 	 * Diese Methode wird beim Upload von Datei vewendet. Die dient lediglig der Verschlüsselung
@@ -108,7 +101,7 @@ public abstract class _Cipher {
 	 * @param pseudokey: String der Länge 16Bytes, der als Schlüsselwurzel diennen soll.
 	 * @return String: verschlüsselte Form des Dateiinhaltes
 	 */
-	public abstract byte[] encryptfile(DataInputStream file,byte[] pseudokey);
+	public abstract byte[] encryptfile(File file,byte[] pseudokey);
 	
 	
 
