@@ -538,7 +538,7 @@ public class Config extends _Config {
 					userlist = currentreaderinfo.get(this.ticketIdlist).split(this.dbsep);
 					ticketIdlist = currentreaderinfo.get(this.readerlist).split(this.dbsep);
 					
-					Controller.shsdb.delete(this.filestb, "id="+fileId);
+					Controller.shsdb.delete(this.filestb, "id ="+fileId);
 				}else{
 					userlist = metadata.get(this.readerlist).toArray(new String[metadata.get(this.readerlist).size()]);
 					ticketIdlist = metadata.get(this.ticketIdlist).toArray(new String[metadata.get(this.ticketIdlist).size()]);

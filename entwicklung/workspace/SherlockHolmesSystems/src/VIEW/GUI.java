@@ -43,8 +43,10 @@ public class GUI extends JFrame {
 	private String[][] internalRowData;
 	private String[][] externalRowData;
 	private DefaultTableModel internalTableModel;
+	private DefaultTableModel externalTableModel;
 	private ArrayList<String> internalKeys = new ArrayList<String>();
-	private JTable table_1;
+	private ArrayList<String> externalKeys = new ArrayList<String>();
+	private JTable externalTable;
 	private JDialog verwalteZugriff;
 	
 	private void updateView(){
@@ -69,6 +71,20 @@ public class GUI extends JFrame {
 	        it.remove(); // avoids a ConcurrentModificationException
 	    }
 	    internalTableModel.fireTableDataChanged();
+	    
+	    int j=0;
+	    Iterator it1 = externalViewData.entrySet().iterator();
+	    while (it1.hasNext()){
+	    	Map.Entry pairs1 = (Map.Entry)it1.next();
+	    	key = pairs1.getKey().toString();
+	    	val = pairs1.getValue().toString();
+	    	externalKeys.add(key);
+	    	String[] rowEx = {val};
+	    	externalTableModel.insertRow(j,rowEx);
+	    	j++;
+	    	it1.remove();
+	    }
+	    //toreturn.put(ticketId,sent_by+this.sep+this.sep+filename);	
 	}
 	
 	/**
@@ -139,8 +155,8 @@ public class GUI extends JFrame {
 					.addComponent(konsole, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
 		);
 		
-		table_1 = new JTable();
-		externalFilesscrollPane.setRowHeaderView(table_1);
+		externalTable = new JTable();
+		externalFilesscrollPane.setRowHeaderView(externalTable);
 		
 		String[] columnNames = {"File"};
 		internalTableModel = new DefaultTableModel(internalRowData, columnNames);
@@ -191,7 +207,8 @@ public class GUI extends JFrame {
 					fileIds.add(internalKeys.get(selectedRow));
 					HashMap<String,ArrayList<String>> metadata = new HashMap<String,ArrayList<String>>();
 					metadata.put(Controller.shsconfig.fileId, fileIds);
-					Controller.shsconfig.delete(Controller.shsconfig.owner, Controller.shsconfig.filetype, metadata);				
+					Controller.shsconfig.delete(Controller.shsconfig.owner, Controller.shsconfig.filetype, metadata);
+					updateView();
 				} else {
 					System.out.println("Bitte eine Datei auswählen!");
 				}
@@ -292,7 +309,8 @@ public class GUI extends JFrame {
 		btnLoout.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				Controller.shsconfig.logoutSHS();
+				//Controller.shsconfig.logoutSHS(); sonst funktionier danach kein erneutes einloggen
+				internalTableModel.setColumnCount(0);
 			}
 		});
 		

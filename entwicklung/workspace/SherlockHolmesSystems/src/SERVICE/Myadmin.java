@@ -219,7 +219,7 @@ public class Myadmin implements Database {
 			if(!condition.isEmpty()){
 				query += " WHERE("+condition+")";
 			}
-			connect.createStatement().executeQuery(query);
+			connect.createStatement().executeUpdate(query);
 			
 			if(info.equals("")){info = this.text(34);}
 			Controller.shsgui.triggernotice(info);
