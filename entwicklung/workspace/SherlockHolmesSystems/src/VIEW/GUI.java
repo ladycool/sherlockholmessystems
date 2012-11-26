@@ -4,7 +4,10 @@ import java.awt.Color;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -285,6 +288,12 @@ public class GUI extends JFrame {
 				int selectedRow = internalTable.getSelectedRow();
 			 String pathId = internalVal.get(selectedRow);
 			 System.out.println(pathId);
+			 try {
+				new BufferedReader(new FileReader(pathId));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			 	
 			}
 		});
