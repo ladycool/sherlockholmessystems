@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 public class Main extends JFrame {
+public static GUI frame;
 	public Main() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
@@ -20,7 +21,7 @@ public class Main extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GUI frame = new GUI();
+					frame = new GUI();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

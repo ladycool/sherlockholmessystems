@@ -808,7 +808,7 @@ public class Config extends _Config {
 	private HashMap<String,String> getcurrentreader(String fileId) throws SQLException, Base64DecodingException{
 		HashMap<String,String> toreturn = new HashMap<String,String>();
 		byte[] _ticketsId=null,_readers=null;
-		String ticketsId="",readers="";		
+		String ticketsId="0",readers="";		
 		ResultSet result = Controller.shsdb.select(this.filestb,"k_ticketsId,readers","id="+fileId+" AND k_ticketsId IS NOT NULL AND readers IS NOT NULL");
 			
 		if(result.first()){// && result.getString("k_ticketsId") != null && result.getString("readers") != null
