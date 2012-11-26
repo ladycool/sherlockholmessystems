@@ -1,6 +1,7 @@
 package VIEW;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -8,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -48,6 +51,7 @@ public class GUI extends JFrame {
 	private static JTable internalTable;
 	private static HashMap<String, String> externalViewData = new HashMap<String, String>();
 	private static HashMap<String, String> internalViewData = new HashMap<String, String>();
+	private static HashMap<String, String> exFile = new HashMap<String, String>();
 	private String[][] internalRowData;
 	private String[][] externalRowData;
 	private static DefaultTableModel internalTableModel;
@@ -60,6 +64,10 @@ public class GUI extends JFrame {
 	
 	public static String getFileId(){
 		return fileId;
+	}
+	
+	public static HashMap<String, String> getExternalFile(){
+		return exFile;
 	}
 	
 	public static void updateView(){
@@ -278,11 +286,42 @@ public class GUI extends JFrame {
 		btnDateiAnzeigen.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
+				String pathId;
+				Desktop desktop = Desktop.getDesktop();
 				int selectedRow = internalTable.getSelectedRow();
+<<<<<<< HEAD
+				int exSelectedRow = externalTable.getSelectedRow();
+				if (selectedRow!=-1){
+					 pathId = internalVal.get(selectedRow);
+					 pathId = pathId.replace("\\", "/");
+					//Adresse mit Standardbrowser anzeigen
+						URI uri;
+						try {
+						  uri = new URI("file:///" +pathId);
+						  //uri = new URI("file:///"+pathId);
+						  desktop.browse(uri);
+						  
+						}
+						catch(Exception oError) {
+						  //Hier Fehler abfangen
+						}
+				} else if (exSelectedRow !=-1){
+					exFile = Controller.shsconfig.previewfile(externalKeys.get(exSelectedRow), Controller.shsconfig.reader);
+					FileViewer fv = new FileViewer();
+					fv.setVisible(true);
+					System.out.println(exFile.get("content"));
+
+				} else {
+					System.out.println("Bitte eine Datei auswählen!");
+				}
+			
+			 
+=======
 			 String pathId = internalVal.get(selectedRow);
 			 System.out.println(pathId);
 			 FileViewer fv = new FileViewer();
 			 fv.setVisible(true);
+>>>>>>> 2c86c7d49fd7a23d3b616c2e183bc428def20064
 			 	
 			}
 		});
