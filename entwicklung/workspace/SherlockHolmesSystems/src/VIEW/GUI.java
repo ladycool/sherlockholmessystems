@@ -289,7 +289,6 @@ public class GUI extends JFrame {
 				String pathId;
 				Desktop desktop = Desktop.getDesktop();
 				int selectedRow = internalTable.getSelectedRow();
-<<<<<<< HEAD
 				int exSelectedRow = externalTable.getSelectedRow();
 				if (selectedRow!=-1){
 					 pathId = internalVal.get(selectedRow);
@@ -314,14 +313,6 @@ public class GUI extends JFrame {
 				} else {
 					System.out.println("Bitte eine Datei auswählen!");
 				}
-			
-			 
-=======
-			 String pathId = internalVal.get(selectedRow);
-			 System.out.println(pathId);
-			 FileViewer fv = new FileViewer();
-			 fv.setVisible(true);
->>>>>>> 2c86c7d49fd7a23d3b616c2e183bc428def20064
 			 	
 			}
 		});
