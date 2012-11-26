@@ -1,20 +1,15 @@
 package VIEW;
 
 import java.awt.BorderLayout;
-
-
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.util.HashMap;
-
 import java.awt.EventQueue;
-
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
 import javax.swing.JTextPane;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -52,7 +47,6 @@ public class FileViewer extends JFrame {
 	 * Create the frame.
 	 */
 	public FileViewer() {
-
 		
 		setBounds(100, 100, 900, 500);
 		contentPane = new JPanel();
@@ -72,11 +66,5 @@ public class FileViewer extends JFrame {
 		
 		
 	}
-
-		
-		
-		
-	
-
 
 }
