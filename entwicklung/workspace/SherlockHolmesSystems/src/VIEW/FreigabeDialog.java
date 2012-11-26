@@ -93,8 +93,8 @@ public class FreigabeDialog extends JFrame {
 						userToShare.add(box.getText());
 					}
 				}
-				System.out.println(GUI.getFileId());
-				Controller.shsconfig.createticket(GUI.getFileId(), (String[])userToShare.toArray());
+				Controller.shsconfig.createticket(GUI.getFileId(), userToShare.toArray(new String[userToShare.size()]));
+				GUI.updateView();
 				close();
 			}
 		});
