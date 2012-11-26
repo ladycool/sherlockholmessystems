@@ -2,8 +2,11 @@ package MODEL.SERVICE;
 
 import java.io.DataInputStream;
 import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
 
 import MODEL.__Config;
 import SERVICE.User;
@@ -195,7 +198,7 @@ public abstract class _Config extends __Config{
 	 */
 	public abstract void delete(String status,String datatype, HashMap<String,ArrayList<String>> metadata);
 	
-	
+	public abstract HashMap<String,String> getcurrentreader(String fileId) throws SQLException, Base64DecodingException;
 	//TOMCAT-GUI
 	public abstract void uploadfile(DataInputStream in,String filename);
 }

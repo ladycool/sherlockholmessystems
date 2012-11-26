@@ -244,6 +244,7 @@ public class GUI extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int selectedRow = internalTable.getSelectedRow();
+				int externalSelectedRow = externalTable.getSelectedRow();
 				if (selectedRow!=-1){
 					ArrayList<String> fileIds = new ArrayList<String>();
 					fileIds.add(internalKeys.get(selectedRow));
@@ -251,13 +252,13 @@ public class GUI extends JFrame {
 					metadata.put(Controller.shsconfig.fileId, fileIds);
 					Controller.shsconfig.delete(Controller.shsconfig.owner, Controller.shsconfig.filetype, metadata);
 					updateView();
+				} else if (externalSelectedRow!=-1){
+					
 				} else {
 					System.out.println("Bitte eine Datei auswählen!");
 				}
 			}
 		});
-		
-		JButton btnEntnehmen = new JButton("Viewer Sicht");
 		
 		/**
 		 * @brief create JFILEChooser
@@ -288,6 +289,7 @@ public class GUI extends JFrame {
 				String pathId;
 				Desktop desktop = Desktop.getDesktop();
 				int selectedRow = internalTable.getSelectedRow();
+<<<<<<< HEAD
 				int exSelectedRow = externalTable.getSelectedRow();
 				if (selectedRow!=-1){
 					 pathId = internalVal.get(selectedRow);
@@ -314,13 +316,19 @@ public class GUI extends JFrame {
 				}
 			
 			 
+=======
+			 String pathId = internalVal.get(selectedRow);
+			 System.out.println(pathId);
+			 FileViewer fv = new FileViewer();
+			 fv.setVisible(true);
+>>>>>>> 2c86c7d49fd7a23d3b616c2e183bc428def20064
 			 	
 			}
 		});
 		GroupLayout gl_menuPanel = new GroupLayout(menuPanel);
 		gl_menuPanel.setHorizontalGroup(
 			gl_menuPanel.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_menuPanel.createSequentialGroup()
+				.addGroup(Alignment.LEADING, gl_menuPanel.createSequentialGroup()
 					.addGroup(gl_menuPanel.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnNewButton)
 						.addComponent(btnAuswhlen))
@@ -331,11 +339,10 @@ public class GUI extends JFrame {
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnErteilen)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnEntnehmen))
+							.addComponent(btnDateiAnzeigen)
+							.addGap(4))
 						.addComponent(pfad, GroupLayout.PREFERRED_SIZE, 247, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnDateiAnzeigen)
-					.addContainerGap(135, Short.MAX_VALUE))
+					.addContainerGap(230, Short.MAX_VALUE))
 		);
 		gl_menuPanel.setVerticalGroup(
 			gl_menuPanel.createParallelGroup(Alignment.LEADING)
@@ -348,7 +355,6 @@ public class GUI extends JFrame {
 						.addComponent(btnAuswhlen)
 						.addComponent(btnLsche)
 						.addComponent(btnErteilen)
-						.addComponent(btnEntnehmen)
 						.addComponent(btnDateiAnzeigen))
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);

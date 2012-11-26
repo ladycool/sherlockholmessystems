@@ -805,7 +805,8 @@ public class Config extends _Config {
 	 * @throws SQLException
 	 * @throws Base64DecodingException
 	 */
-	private HashMap<String,String> getcurrentreader(String fileId) throws SQLException, Base64DecodingException{
+	@Override
+	public HashMap<String,String> getcurrentreader(String fileId) throws SQLException, Base64DecodingException{
 		HashMap<String,String> toreturn = new HashMap<String,String>();
 		byte[] _ticketsId=null,_readers=null;
 		String ticketsId="0",readers="";		
