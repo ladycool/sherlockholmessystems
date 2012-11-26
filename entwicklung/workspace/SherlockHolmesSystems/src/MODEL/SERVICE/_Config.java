@@ -183,7 +183,7 @@ public abstract class _Config extends __Config{
 	
 	public abstract void createticket(String fileId,String[] userlist);
 
-	public abstract void deleteticket(String fileId,String[]userlist,String[] ticketIdlist);
+	protected abstract void deleteticket(String fileId,String[]userlist,String[] ticketIdlist);
 	
 	public abstract void logoutSHS();
 	/**

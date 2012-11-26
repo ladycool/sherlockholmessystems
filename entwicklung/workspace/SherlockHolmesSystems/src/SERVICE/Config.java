@@ -543,7 +543,7 @@ public class Config extends _Config {
 					userlist = currentreaderinfo.get(this.ticketIdlist).split(this.dbsep);
 					ticketIdlist = currentreaderinfo.get(this.readerlist).split(this.dbsep);
 					
-					Controller.shsdb.delete(this.filestb, "id ="+fileId);
+					Controller.shsdb.delete(this.filestb, "id="+fileId);
 				}else{
 					userlist = metadata.get(this.readerlist).toArray(new String[metadata.get(this.readerlist).size()]);
 					ticketIdlist = metadata.get(this.ticketIdlist).toArray(new String[metadata.get(this.ticketIdlist).size()]);
@@ -723,13 +723,13 @@ public class Config extends _Config {
 						readers = user;
 						ticketsId = ""+maxid;
 					}else{
-						readers += Controller.shsconfig.dbsep+user;
-						ticketsId += Controller.shsconfig.dbsep+maxid;
+						readers += this.dbsep+user;
+						ticketsId += this.dbsep+maxid;
 					}
 				}
 			}
 			
-			//Updae der Spalten readers und k_ticketsId
+			//Update der Spalten readers und k_ticketsId
 			if(newticket){
 				_readers = Controller.shscipher.crypt(readers.getBytes(),this.symInstance,this.encryptmode);
 				_ticketsId = Controller.shscipher.crypt(ticketsId.getBytes(),this.symInstance,this.encryptmode);
@@ -749,7 +749,7 @@ public class Config extends _Config {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deleteticket(String fileId,String[]userlist,String[] ticketIdlist){	
+	protected void deleteticket(String fileId,String[]userlist,String[] ticketIdlist){	
 		try {
 			HashMap<String, String> currentreaderinfo = this.getcurrentreader(fileId);
 			String 
@@ -765,7 +765,7 @@ public class Config extends _Config {
 				Controller.shsdb.delete(this.tickettb,"id="+ticketIdlist[i],Controller.shsdb.text(17)); 
 				
 				ticketsId = ticketsId.replace(ticketIdlist[i],"");
-				ticketsId = ticketsId.replace(this.dbsep+this.dbsep,this.dbsep);//++ -> +
+				ticketsId = ticketsId.replace(this.dbsep+this.dbsep,this.dbsep);//&& -> &
 				
 				readers = readers.replace(userlist[i],"");
 				readers = readers.replace(this.dbsep+this.dbsep,this.dbsep);
