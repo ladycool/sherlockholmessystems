@@ -21,19 +21,25 @@ import java.awt.GridLayout;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 
+import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
+
 import CONTROLLER.Controller;
 
 import java.awt.FlowLayout;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class FreigabeDialog extends JFrame {
 
 	private JPanel contentPane;
-	private ArrayList<String> userlist=new ArrayList<String>();
+	// private ArrayList<String> userlist=new ArrayList<String>();
 	private ArrayList<JCheckBox> toShare=new ArrayList<JCheckBox>();
 	private ArrayList<String> userToShare=new ArrayList<String>();
+	private String rawUserList = new String();
+	private String[] sharedUserList;
+	private ArrayList<String> userList;
 	/**
 	 * Launch the application.
 	 */
@@ -57,11 +63,21 @@ public class FreigabeDialog extends JFrame {
 	}
 	
 	public void updateUserlist(){
-		userlist = new ArrayList<String>();
-		ResultSet result = Controller.shsdb.select(Controller.shsconfig.usertb, "username");
+		try {
+			rawUserList = Controller.shsconfig.getcurrentreader(GUI.getFileId()).get(Controller.shsconfig.readerlist);
+			sharedUserList = rawUserList.split(Controller.shsconfig.dbsep);
+			
+		} catch (Base64DecodingException | SQLException e1) {
+			// TODO Auto-generated catch block
+			//e1.printStackTrace();
+		}
+		
+		
+		userList = new ArrayList<String>();
+		ResultSet result = Controller.shsdb.select(Controller.shsconfig.usertb, "username","username NOT LIKE '"+Controller.shsuser.getattr(Controller.shsconfig.username)+"'");
 		try {
 			while(result.next()){
-				userlist.add(result.getString("username"));
+					userList.add(result.getString("username"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -108,22 +124,20 @@ public class FreigabeDialog extends JFrame {
 		panel.setLayout(new GridLayout(0, 1, 0, 0));
 		
 				
-		for(int i=0;i<userlist.size();i++){
-			JCheckBox cb = new JCheckBox(userlist.get(i));
+		for(int i=0;i<userList.size();i++){
+			JCheckBox cb = new JCheckBox(userList.get(i));
+			for(int j=0;j<sharedUserList.length;j++){
+				if(userList.get(i).equals(sharedUserList[j])){
+					cb.setSelected(true);
+				}
+			}
+			
 			panel.add(cb);
 			panel.revalidate();
 			panel.repaint();
 			toShare.add(cb);
 		}
 		
-		JCheckBox chckbxNewCheckBox = new JCheckBox("New check box");
-		chckbxNewCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			    
-			    }
-			
-		});
-		panel.add(chckbxNewCheckBox);
 		
 	}
 
