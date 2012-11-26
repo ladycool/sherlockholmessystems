@@ -37,6 +37,7 @@ import javax.swing.JTextArea;
 public class GUI extends JFrame {
 	
 	private JPanel contentPane;
+	private JPanel menuPanel;
 	private JTextField passwort;
 	private JTextField pfad;
 	private JTextField benutzername;
@@ -49,6 +50,7 @@ public class GUI extends JFrame {
 	private DefaultTableModel internalTableModel;
 	private DefaultTableModel externalTableModel;
 	private ArrayList<String> internalKeys = new ArrayList<String>();
+	private ArrayList<String> internalVal = new ArrayList<String>();
 	private ArrayList<String> externalKeys = new ArrayList<String>();
 	private JTable externalTable;
 	private static String fileId;
@@ -72,6 +74,7 @@ public class GUI extends JFrame {
 	        System.out.println(key);
 	        System.out.println(val);
 	        internalKeys.add(key);
+	        internalVal.add(val);
 	        String[] row = {val};
 	        internalTableModel.insertRow(i, row);
 	        i++;
@@ -111,7 +114,8 @@ public class GUI extends JFrame {
 		
 		JPanel loginPanel = new JPanel();
 		
-		JPanel menuPanel = new JPanel();
+		menuPanel = new JPanel();
+		menuPanel.setVisible(false);
 		
 		JScrollPane internalFilesscrollPane = new JScrollPane();
 		
@@ -273,6 +277,17 @@ public class GUI extends JFrame {
 				
 			}
 		});
+		
+		JButton btnDateiAnzeigen = new JButton("Datei \u00F6ffnen");
+		btnDateiAnzeigen.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				int selectedRow = internalTable.getSelectedRow();
+			 String pathId = internalVal.get(selectedRow);
+			 System.out.println(pathId);
+			 	
+			}
+		});
 		GroupLayout gl_menuPanel = new GroupLayout(menuPanel);
 		gl_menuPanel.setHorizontalGroup(
 			gl_menuPanel.createParallelGroup(Alignment.TRAILING)
@@ -289,7 +304,9 @@ public class GUI extends JFrame {
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnEntnehmen))
 						.addComponent(pfad, GroupLayout.PREFERRED_SIZE, 247, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap(148, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnDateiAnzeigen)
+					.addContainerGap(135, Short.MAX_VALUE))
 		);
 		gl_menuPanel.setVerticalGroup(
 			gl_menuPanel.createParallelGroup(Alignment.LEADING)
@@ -302,8 +319,9 @@ public class GUI extends JFrame {
 						.addComponent(btnAuswhlen)
 						.addComponent(btnLsche)
 						.addComponent(btnErteilen)
-						.addComponent(btnEntnehmen))
-					.addContainerGap(138, Short.MAX_VALUE))
+						.addComponent(btnEntnehmen)
+						.addComponent(btnDateiAnzeigen))
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		menuPanel.setLayout(gl_menuPanel);
 		
@@ -332,6 +350,7 @@ public class GUI extends JFrame {
 				//System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
 				updateView();
 				System.out.println("Erfolgreich eingeloggt!");
+				menuPanel.setVisible(true);
 				
 			}
 		});
@@ -346,9 +365,11 @@ public class GUI extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				//Controller.shsconfig.logoutSHS(); sonst funktionier danach kein erneutes einloggen
-				internalTableModel.setColumnCount(0);
-				externalTableModel.setColumnCount(0);
+				//internalTableModel.setColumnCount(0);
+				//externalTableModel.setColumnCount(0);
 				System.out.println("Erfolgreich ausgeloggt!");
+				menuPanel.setVisible(false);
+				Main.frame.dispose();
 			}
 		});
 		
