@@ -245,7 +245,7 @@ public class GUI extends JFrame {
 					Controller.shsconfig.delete(Controller.shsconfig.owner, Controller.shsconfig.filetype, metadata);
 					updateView();
 				} else if (externalSelectedRow!=-1){
-					
+					System.out.println("Fremde Dateien können nicht gelöscht werden!");
 				} else {
 					System.out.println("Bitte eine Datei auswählen!");
 				}
