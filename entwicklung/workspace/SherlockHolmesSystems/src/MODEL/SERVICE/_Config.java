@@ -181,7 +181,7 @@ public abstract class _Config extends __Config{
 	 */
 	public abstract HashMap<String, Object> readticket(String fileId);
 	
-	public abstract void createticket(String fileId,String[] userlist);
+	protected abstract void createticket(String fileId,String[] userlist);
 
 	protected abstract void deleteticket(String fileId,String[]userlist,String[] ticketIdlist);
 	

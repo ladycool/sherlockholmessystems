@@ -655,7 +655,7 @@ public class Config extends _Config {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void createticket(String fileId,String[] userlist){
+	protected void createticket(String fileId,String[] userlist){
 		try {
 			ResultSet result = null;
 			String
@@ -744,6 +744,35 @@ public class Config extends _Config {
 		}
 	}
 	
+	
+	public void updateticket(String fileId, ArrayList<String> newuserlist){
+		try {	
+			HashMap<String, String> temp = this.getcurrentreader(fileId);
+			
+			String []userlist = temp.get(this.readerlist).split(this.dbsep);
+			String []ticketIdlist = temp.get(this.ticketIdlist).split(this.dbsep);
+			HashMap<String,String>todelete = new HashMap<String,String>();
+			
+			for (int i=0;i<userlist.length;i++) {
+				if(!newuserlist.contains(userlist[i])){
+					todelete.put(userlist[i],ticketIdlist[i]);
+				}
+			}
+			
+			//delete
+			userlist = (String[])todelete.keySet().toArray();
+			ticketIdlist = (String[]) todelete.values().toArray();			
+			this.deleteticket(fileId, userlist, ticketIdlist);
+			
+			//create
+			userlist = (String[]) newuserlist.toArray();
+			this.createticket(fileId, userlist);
+			
+		} catch (Base64DecodingException | SQLException e) {
+			Controller.shsgui.triggernotice(e);
+		}
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -795,7 +824,7 @@ public class Config extends _Config {
 		}
 		
 	}
-	
+	 
 	
 	/**
 	 * GETESTET (Patrick)
