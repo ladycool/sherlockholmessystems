@@ -17,6 +17,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.GroupLayout.Alignment;
@@ -313,7 +314,7 @@ public class GUI extends JFrame {
 		
 		JLabel lblPasswort = new JLabel("Passwort");
 		
-		passwort = new JTextField();
+		passwort = new JPasswordField();
 		passwort.setColumns(10);
 		
 		/**
