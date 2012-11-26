@@ -6,6 +6,7 @@ import javax.swing.UIManager;
 
 public class Main extends JFrame {
 	public Main() {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 	/**
 	 * Launch the application.

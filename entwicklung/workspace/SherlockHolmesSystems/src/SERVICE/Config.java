@@ -549,6 +549,7 @@ public class Config extends _Config {
 					ticketIdlist = metadata.get(this.ticketIdlist).toArray(new String[metadata.get(this.ticketIdlist).size()]);
 				}
 				
+				
 				this.deleteticket(fileId, userlist, ticketIdlist);
 				
 			}else{Controller.shsgui.triggernotice(Controller.shsdb.text(40));}

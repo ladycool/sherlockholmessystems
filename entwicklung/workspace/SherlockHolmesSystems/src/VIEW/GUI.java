@@ -50,8 +50,11 @@ public class GUI extends JFrame {
 	private ArrayList<String> internalKeys = new ArrayList<String>();
 	private ArrayList<String> externalKeys = new ArrayList<String>();
 	private JTable externalTable;
-	private JDialog verwalteZugriff;
+	private static String fileId;
 	
+	public static String getFileId(){
+		return fileId;
+	}
 	private void updateView(){
 		Controller.shsconfig.loadexternalview();
 		Controller.shsconfig.loadinternalview();
@@ -75,6 +78,7 @@ public class GUI extends JFrame {
 	    }
 	    internalTableModel.fireTableDataChanged();
 	    
+	    
 	    int j=0;
 	    Iterator it1 = externalViewData.entrySet().iterator();
 	    while (it1.hasNext()){
@@ -87,6 +91,7 @@ public class GUI extends JFrame {
 	    	j++;
 	    	it1.remove();
 	    }
+	    externalTableModel.fireTableDataChanged();
 	    //toreturn.put(ticketId,sent_by+this.sep+this.sep+filename);	
 	}
 	
@@ -95,6 +100,7 @@ public class GUI extends JFrame {
 	 * @return 
 	 */
 	public GUI() {
+		setTitle("Holmes Systems");
 	
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 604, 433);
@@ -170,13 +176,16 @@ public class GUI extends JFrame {
 		MessageConsole mc = new MessageConsole(textArea);
 		mc.redirectOut();
 		mc.redirectErr(Color.RED, null);
-		internalFilesscrollPane.setViewportView(textArea);
 		scrollPane.setViewportView(textArea);
 		
 		
 		
+		String[] excolumnNames = {"File"};
+		externalTableModel = new DefaultTableModel(externalRowData, excolumnNames);
 		externalTable = new JTable();
-		externalFilesscrollPane.setRowHeaderView(externalTable);
+		externalTable.setModel(externalTableModel);
+		//add(new JScrollPane(internalTable));
+		externalFilesscrollPane.setViewportView(externalTable);
 		
 		String[] columnNames = {"File"};
 		internalTableModel = new DefaultTableModel(internalRowData, columnNames);
@@ -185,14 +194,19 @@ public class GUI extends JFrame {
 		//add(new JScrollPane(internalTable));
 		internalFilesscrollPane.setViewportView(internalTable);
 
-			
-		verwalteZugriff = new JDialog();
-		verwalteZugriff.setVisible(false);
 		
 		JButton btnErteilen = new JButton("Freigabe");
-		btnErteilen.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				verwalteZugriff.setVisible(true);
+		btnErteilen.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				int selectedRow = internalTable.getSelectedRow();
+				if (selectedRow!=-1){
+					fileId = internalKeys.get(selectedRow);
+					FreigabeDialog fd = new FreigabeDialog();
+					fd.setVisible(true);
+				} else {
+					System.out.println("Bitte eine Datei auswählen, für die Sie die Freigabe erteilen wollen!");
+				}
 			}
 		});
 		
@@ -316,6 +330,7 @@ public class GUI extends JFrame {
 				Controller.shsuser = Controller.shsconfig.loginSHS(Controller.shsconfig.signactionA, attributes);
 				//System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
 				updateView();
+				System.out.println("Erfolgreich eingeloggt!");
 				
 			}
 		});
@@ -331,6 +346,8 @@ public class GUI extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				//Controller.shsconfig.logoutSHS(); sonst funktionier danach kein erneutes einloggen
 				internalTableModel.setColumnCount(0);
+				externalTableModel.setColumnCount(0);
+				System.out.println("Erfolgreich ausgeloggt!");
 			}
 		});
 		
