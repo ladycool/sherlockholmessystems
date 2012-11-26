@@ -611,7 +611,7 @@ public class Config extends _Config {
 	 * * @author Shazem(Patrick)
 	 */
 	@Override
-	public HashMap<String, Object> readticket(String ticketId){
+	protected HashMap<String, Object> readticket(String ticketId){
 		HashMap<String, Object> toreturn = new HashMap<String, Object>();
 		try{
 			byte[] priK = Controller.shscipher.getkeys().get(this.prik);

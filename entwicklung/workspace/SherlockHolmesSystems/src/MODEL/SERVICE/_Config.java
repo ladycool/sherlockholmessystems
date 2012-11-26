@@ -179,7 +179,7 @@ public abstract class _Config extends __Config{
 	 * @param fileId
 	 * @return {@link HashMap} HashMap<String,String>:"fileId"->fileId, "pseudokey"->Schlüssel zur Entschlüsselung der Datei
 	 */
-	public abstract HashMap<String, Object> readticket(String fileId);
+	protected abstract HashMap<String, Object> readticket(String fileId);
 	
 	public abstract void createticket(String fileId,String[] userlist);
 
