@@ -548,6 +548,7 @@ public class Config extends _Config {
 				}
 				
 				if(userlist.length != 0 && ticketIdlist.length != 0){
+					
 					this.deleteticket(fileId, userlist, ticketIdlist);
 				}
 				
@@ -577,7 +578,7 @@ public class Config extends _Config {
 			byte[] _my_username = my_username.getBytes();
 			my_username = super.wrap(Base64.encode(_my_username));
 			
-			ResultSet result = Controller.shsdb.select("tickets","id,sent_by,filename,`key`","sent_to LIKE "+my_username);
+			ResultSet result = Controller.shsdb.select(this.tickettb,"id,sent_by,filename,`key`","sent_to LIKE "+my_username);
 			String _sent_by,_filename,_pseudokey,ticketId;
 			byte[] sent_by,filename,pseudokey;
 			
@@ -596,7 +597,7 @@ public class Config extends _Config {
 				_filename = result.getString("filename");
 				filename = Controller.shscipher.crypt(Base64.decode(_filename),pseudokey,this.symInstance, this.decryptmode);
 				
-				toreturn.put(ticketId,sent_by+this.sep+this.sep+filename);	
+				toreturn.put(ticketId,new String(sent_by)+this._sep+new String(filename));	
 			}
 		} catch (SQLException | Base64DecodingException e) {
 			Controller.shsgui.triggernotice(e);
@@ -610,7 +611,7 @@ public class Config extends _Config {
 	 * * @author Shazem(Patrick)
 	 */
 	@Override
-	public HashMap<String, Object> readticket(String ticketId){
+	protected HashMap<String, Object> readticket(String ticketId){
 		HashMap<String, Object> toreturn = new HashMap<String, Object>();
 		try{
 			byte[] priK = Controller.shscipher.getkeys().get(this.prik);
@@ -690,7 +691,7 @@ public class Config extends _Config {
 					
 					//Step2 = der Dateiname wird verschlüsselt
 					temp = Controller.shscipher.crypt(Base64.decode(result.getString("pathdef")),this.symInstance,this.decryptmode); 
-					_temp = new String(temp).split(this.sep);
+					_temp = new String(temp).split(this._sep+this._sep);
 					filename = Controller.shscipher.crypt(_temp[_temp.length-1].getBytes(),pseudokey,this.symInstance,this.encryptmode);
 					
 					//Step3 = die fileId wird verschlüsselt
@@ -833,7 +834,8 @@ public class Config extends _Config {
 	 * @throws SQLException
 	 * @throws Base64DecodingException
 	 */
-	private HashMap<String,String> getcurrentreader(String fileId) throws SQLException, Base64DecodingException{
+	@Override
+	public HashMap<String,String> getcurrentreader(String fileId) throws SQLException, Base64DecodingException{
 		HashMap<String,String> toreturn = new HashMap<String,String>();
 		byte[] _ticketsId=null,_readers=null;
 		String ticketsId="0",readers="";		

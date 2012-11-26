@@ -1,10 +1,16 @@
 package VIEW;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,31 +43,42 @@ import javax.swing.JTextArea;
 public class GUI extends JFrame {
 	
 	private JPanel contentPane;
+	private JPanel menuPanel;
 	private JTextField passwort;
 	private JTextField pfad;
 	private JTextField benutzername;
 	private File file;
-	private JTable internalTable;
-	private HashMap<String, String> externalViewData = new HashMap<String, String>();
-	private HashMap<String, String> internalViewData = new HashMap<String, String>();
+	private static JTable internalTable;
+	private static HashMap<String, String> externalViewData = new HashMap<String, String>();
+	private static HashMap<String, String> internalViewData = new HashMap<String, String>();
+	private static HashMap<String, String> exFile = new HashMap<String, String>();
 	private String[][] internalRowData;
 	private String[][] externalRowData;
-	private DefaultTableModel internalTableModel;
-	private DefaultTableModel externalTableModel;
-	private ArrayList<String> internalKeys = new ArrayList<String>();
-	private ArrayList<String> externalKeys = new ArrayList<String>();
-	private JTable externalTable;
+	private static DefaultTableModel internalTableModel;
+	private static DefaultTableModel externalTableModel;
+	private static ArrayList<String> internalKeys = new ArrayList<String>();
+	private static ArrayList<String> internalVal = new ArrayList<String>();
+	private static ArrayList<String> externalKeys = new ArrayList<String>();
+	private static JTable externalTable;
 	private static String fileId;
 	
 	public static String getFileId(){
 		return fileId;
 	}
-	private void updateView(){
+	
+	public static HashMap<String, String> getExternalFile(){
+		return exFile;
+	}
+	
+	public static void updateView(){
 		Controller.shsconfig.loadexternalview();
 		Controller.shsconfig.loadinternalview();
 		internalViewData = Controller.shsconfig.getinternalviewdata();
 		externalViewData = Controller.shsconfig.getexternalviewdata();
-		
+		System.out.println(externalViewData.size());
+		for(int n=internalTable.getRowCount()-1;n>=0;n--){ 
+			internalTableModel.removeRow(n); 
+		}
 		int i = 0;
 		String key, val;
 		Iterator it = internalViewData.entrySet().iterator();
@@ -72,6 +89,7 @@ public class GUI extends JFrame {
 	        System.out.println(key);
 	        System.out.println(val);
 	        internalKeys.add(key);
+	        internalVal.add(val);
 	        String[] row = {val};
 	        internalTableModel.insertRow(i, row);
 	        i++;
@@ -79,7 +97,9 @@ public class GUI extends JFrame {
 	    }
 	    internalTableModel.fireTableDataChanged();
 	    
-	    
+	    for(int l=externalTable.getRowCount()-1;l>=0;l--){ 
+			externalTableModel.removeRow(l); 
+		}
 	    int j=0;
 	    Iterator it1 = externalViewData.entrySet().iterator();
 	    while (it1.hasNext()){
@@ -111,15 +131,12 @@ public class GUI extends JFrame {
 		
 		JPanel loginPanel = new JPanel();
 		
-		JPanel menuPanel = new JPanel();
+		menuPanel = new JPanel();
+		menuPanel.setVisible(false);
 		
 		JScrollPane internalFilesscrollPane = new JScrollPane();
 		
-		JLabel lblEigeneDateien = new JLabel("Eigene Dateien");
-		
 		JScrollPane externalFilesscrollPane = new JScrollPane();
-		
-		JLabel lblFremdeDateien = new JLabel("Fremde Dateien");
 
 		
 		JLabel lblKonsole = new JLabel("Konsole");
@@ -130,27 +147,21 @@ public class GUI extends JFrame {
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addComponent(loginPanel, GroupLayout.DEFAULT_SIZE, 586, Short.MAX_VALUE)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addComponent(menuPanel, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				.addGroup(gl_contentPane.createSequentialGroup()
+				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+					.addComponent(lblKonsole)
+					.addContainerGap())
+				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
 					.addComponent(internalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
 					.addContainerGap())
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(lblFremdeDateien)
-					.addContainerGap())
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(lblEigeneDateien)
-					.addContainerGap())
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(lblKonsole)
-					.addContainerGap())
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
-						.addComponent(externalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE))
+						.addComponent(externalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
@@ -159,14 +170,10 @@ public class GUI extends JFrame {
 					.addComponent(loginPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(menuPanel, GroupLayout.PREFERRED_SIZE, 57, GroupLayout.PREFERRED_SIZE)
-					.addGap(4)
-					.addComponent(lblEigeneDateien)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(internalFilesscrollPane, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE)
+					.addComponent(internalFilesscrollPane, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblFremdeDateien)
-					.addGap(11)
-					.addComponent(externalFilesscrollPane, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
+					.addComponent(externalFilesscrollPane, GroupLayout.PREFERRED_SIZE, 97, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblKonsole)
 					.addPreferredGap(ComponentPlacement.RELATED)
@@ -181,14 +188,14 @@ public class GUI extends JFrame {
 		
 		
 		
-		String[] excolumnNames = {"File"};
+		String[] excolumnNames = {"Fremde Dateien"};
 		externalTableModel = new DefaultTableModel(externalRowData, excolumnNames);
 		externalTable = new JTable();
 		externalTable.setModel(externalTableModel);
 		//add(new JScrollPane(internalTable));
 		externalFilesscrollPane.setViewportView(externalTable);
 		
-		String[] columnNames = {"File"};
+		String[] columnNames = {"Eigene Dateien"};
 		internalTableModel = new DefaultTableModel(internalRowData, columnNames);
 		internalTable = new JTable();
 		internalTable.setModel(internalTableModel);
@@ -203,8 +210,8 @@ public class GUI extends JFrame {
 				int selectedRow = internalTable.getSelectedRow();
 				if (selectedRow!=-1){
 					fileId = internalKeys.get(selectedRow);
-					//FreigabeDialog fd = new FreigabeDialog();
-					//fd.setVisible(true);
+					FreigabeDialog fd = new FreigabeDialog();
+					fd.setVisible(true);
 				} else {
 					System.out.println("Bitte eine Datei auswählen, für die Sie die Freigabe erteilen wollen!");
 				}
@@ -237,6 +244,7 @@ public class GUI extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int selectedRow = internalTable.getSelectedRow();
+				int externalSelectedRow = externalTable.getSelectedRow();
 				if (selectedRow!=-1){
 					ArrayList<String> fileIds = new ArrayList<String>();
 					fileIds.add(internalKeys.get(selectedRow));
@@ -244,13 +252,13 @@ public class GUI extends JFrame {
 					metadata.put(Controller.shsconfig.fileId, fileIds);
 					Controller.shsconfig.delete(Controller.shsconfig.owner, Controller.shsconfig.filetype, metadata);
 					updateView();
+				} else if (externalSelectedRow!=-1){
+					System.out.println("Fremde Dateien können nicht gelöscht werden!");
 				} else {
 					System.out.println("Bitte eine Datei auswählen!");
 				}
 			}
 		});
-		
-		JButton btnEntnehmen = new JButton("Viewer Sicht");
 		
 		/**
 		 * @brief create JFILEChooser
@@ -273,10 +281,54 @@ public class GUI extends JFrame {
 				
 			}
 		});
+		
+		JButton btnDateiAnzeigen = new JButton("Datei \u00F6ffnen");
+		btnDateiAnzeigen.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				String pathId;
+				Desktop desktop = Desktop.getDesktop();
+				int selectedRow = internalTable.getSelectedRow();
+<<<<<<< HEAD
+				int exSelectedRow = externalTable.getSelectedRow();
+				if (selectedRow!=-1){
+					 pathId = internalVal.get(selectedRow);
+					 pathId = pathId.replace("\\", "/");
+					//Adresse mit Standardbrowser anzeigen
+						URI uri;
+						try {
+						  uri = new URI("file:///" +pathId);
+						  //uri = new URI("file:///"+pathId);
+						  desktop.browse(uri);
+						  
+						}
+						catch(Exception oError) {
+						  //Hier Fehler abfangen
+						}
+				} else if (exSelectedRow !=-1){
+					exFile = Controller.shsconfig.previewfile(externalKeys.get(exSelectedRow), Controller.shsconfig.reader);
+					FileViewer fv = new FileViewer();
+					fv.setVisible(true);
+					System.out.println(exFile.get("content"));
+
+				} else {
+					System.out.println("Bitte eine Datei auswählen!");
+				}
+			
+			 
+=======
+			 String pathId = internalVal.get(selectedRow);
+			 System.out.println(pathId);
+			 FileViewer fv = new FileViewer();
+			 fv.setVisible(true);
+>>>>>>> 2c86c7d49fd7a23d3b616c2e183bc428def20064
+			 	
+			}
+		});
 		GroupLayout gl_menuPanel = new GroupLayout(menuPanel);
 		gl_menuPanel.setHorizontalGroup(
 			gl_menuPanel.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_menuPanel.createSequentialGroup()
+				.addGroup(Alignment.LEADING, gl_menuPanel.createSequentialGroup()
 					.addGroup(gl_menuPanel.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnNewButton)
 						.addComponent(btnAuswhlen))
@@ -287,9 +339,10 @@ public class GUI extends JFrame {
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnErteilen)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnEntnehmen))
+							.addComponent(btnDateiAnzeigen)
+							.addGap(4))
 						.addComponent(pfad, GroupLayout.PREFERRED_SIZE, 247, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap(148, Short.MAX_VALUE))
+					.addContainerGap(230, Short.MAX_VALUE))
 		);
 		gl_menuPanel.setVerticalGroup(
 			gl_menuPanel.createParallelGroup(Alignment.LEADING)
@@ -302,8 +355,8 @@ public class GUI extends JFrame {
 						.addComponent(btnAuswhlen)
 						.addComponent(btnLsche)
 						.addComponent(btnErteilen)
-						.addComponent(btnEntnehmen))
-					.addContainerGap(138, Short.MAX_VALUE))
+						.addComponent(btnDateiAnzeigen))
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		menuPanel.setLayout(gl_menuPanel);
 		
@@ -332,6 +385,7 @@ public class GUI extends JFrame {
 				//System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
 				updateView();
 				System.out.println("Erfolgreich eingeloggt!");
+				menuPanel.setVisible(true);
 				
 			}
 		});
@@ -346,9 +400,11 @@ public class GUI extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				//Controller.shsconfig.logoutSHS(); sonst funktionier danach kein erneutes einloggen
-				internalTableModel.setColumnCount(0);
-				externalTableModel.setColumnCount(0);
+				//internalTableModel.setColumnCount(0);
+				//externalTableModel.setColumnCount(0);
 				System.out.println("Erfolgreich ausgeloggt!");
+				menuPanel.setVisible(false);
+				Main.frame.dispose();
 			}
 		});
 		
