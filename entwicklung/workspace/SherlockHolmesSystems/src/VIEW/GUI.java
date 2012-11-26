@@ -50,6 +50,7 @@ public class GUI extends JFrame {
 	private static DefaultTableModel internalTableModel;
 	private static DefaultTableModel externalTableModel;
 	private static ArrayList<String> internalKeys = new ArrayList<String>();
+	private static ArrayList<String> internalVal = new ArrayList<String>();
 	private static ArrayList<String> externalKeys = new ArrayList<String>();
 	private static JTable externalTable;
 	private static String fileId;
@@ -63,7 +64,7 @@ public class GUI extends JFrame {
 		Controller.shsconfig.loadinternalview();
 		internalViewData = Controller.shsconfig.getinternalviewdata();
 		externalViewData = Controller.shsconfig.getexternalviewdata();
-		
+		System.out.println(externalViewData.size());
 		for(int n=internalTable.getRowCount()-1;n>=0;n--){ 
 			internalTableModel.removeRow(n); 
 		}
