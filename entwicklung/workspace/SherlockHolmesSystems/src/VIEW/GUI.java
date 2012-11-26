@@ -207,8 +207,8 @@ public class GUI extends JFrame {
 				int selectedRow = internalTable.getSelectedRow();
 				if (selectedRow!=-1){
 					fileId = internalKeys.get(selectedRow);
-					FreigabeDialog fd = new FreigabeDialog();
-					fd.setVisible(true);
+					//FreigabeDialog fd = new FreigabeDialog();
+					//fd.setVisible(true);
 				} else {
 					System.out.println("Bitte eine Datei auswählen, für die Sie die Freigabe erteilen wollen!");
 				}

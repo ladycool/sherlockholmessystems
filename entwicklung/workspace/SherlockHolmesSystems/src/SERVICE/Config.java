@@ -100,24 +100,22 @@ public class Config extends _Config {
 				String password = attributes.get(this.password);				
 				attributes.remove(this.password);
 				
-				String userId="";
+				String userId="",pseudouserId="";
 				while(true){//Die Userid ist ebenfalls eindeutig
 					userId = new String(super.random(username.length()+password.length()));//Step 1
-					userId = userId.replace("?", "");
+					pseudouserId = super.insert(userId,username);// Step2		
+					
 					try {
-						result = Controller.shsdb.select(this.keytb,"userId","userId LIKE '"+userId+"%'");
+						result = Controller.shsdb.select(this.usertb,"userId","userId LIKE "+super.wrap(pseudouserId));
 					} catch (Exception e) {}
 					if(!result.first()){
 						break;
 					}
 				}
-							
-				password = super.insert(password,userId);//pseudo-password -- Step2				
-				toinsert.put(this.password,Base64.encode(password.getBytes()));
-				
-				
-				String pseudouserId = super.insert(userId,username);// Step3		
 				toinsert.put(this.dbuserId, Base64.encode(pseudouserId.getBytes()));//pseudouserId to save
+				
+				password = super.insert(password,userId);//pseudo-password -- Step3				
+				toinsert.put(this.password,Base64.encode(password.getBytes()));
 				
 				toinsert.putAll(attributes);
 				for (String elt : toinsert.keySet()) {
@@ -549,8 +547,9 @@ public class Config extends _Config {
 					ticketIdlist = metadata.get(this.ticketIdlist).toArray(new String[metadata.get(this.ticketIdlist).size()]);
 				}
 				
-				
-				this.deleteticket(fileId, userlist, ticketIdlist);
+				if(userlist.length != 0 && ticketIdlist.length != 0){
+					this.deleteticket(fileId, userlist, ticketIdlist);
+				}
 				
 			}else{Controller.shsgui.triggernotice(Controller.shsdb.text(40));}
 		} catch (Base64DecodingException | SQLException e) {Controller.shsgui.triggernotice(e);}
@@ -808,7 +807,7 @@ public class Config extends _Config {
 	private HashMap<String,String> getcurrentreader(String fileId) throws SQLException, Base64DecodingException{
 		HashMap<String,String> toreturn = new HashMap<String,String>();
 		byte[] _ticketsId=null,_readers=null;
-		String ticketsId="",readers="";		
+		String ticketsId="0",readers="";		
 		ResultSet result = Controller.shsdb.select(this.filestb,"k_ticketsId,readers","id="+fileId+" AND k_ticketsId IS NOT NULL AND readers IS NOT NULL");
 			
 		if(result.first()){// && result.getString("k_ticketsId") != null && result.getString("readers") != null
