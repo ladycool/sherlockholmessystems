@@ -548,6 +548,7 @@ public class Config extends _Config {
 				}
 				
 				if(userlist.length != 0 && ticketIdlist.length != 0){
+					
 					this.deleteticket(fileId, userlist, ticketIdlist);
 				}
 				

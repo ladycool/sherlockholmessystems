@@ -41,27 +41,31 @@ public class GUI extends JFrame {
 	private JTextField pfad;
 	private JTextField benutzername;
 	private File file;
-	private JTable internalTable;
-	private HashMap<String, String> externalViewData = new HashMap<String, String>();
-	private HashMap<String, String> internalViewData = new HashMap<String, String>();
+	private static JTable internalTable;
+	private static HashMap<String, String> externalViewData = new HashMap<String, String>();
+	private static HashMap<String, String> internalViewData = new HashMap<String, String>();
 	private String[][] internalRowData;
 	private String[][] externalRowData;
-	private DefaultTableModel internalTableModel;
-	private DefaultTableModel externalTableModel;
-	private ArrayList<String> internalKeys = new ArrayList<String>();
-	private ArrayList<String> externalKeys = new ArrayList<String>();
-	private JTable externalTable;
+	private static DefaultTableModel internalTableModel;
+	private static DefaultTableModel externalTableModel;
+	private static ArrayList<String> internalKeys = new ArrayList<String>();
+	private static ArrayList<String> externalKeys = new ArrayList<String>();
+	private static JTable externalTable;
 	private static String fileId;
 	
 	public static String getFileId(){
 		return fileId;
 	}
-	private void updateView(){
+	
+	public static void updateView(){
 		Controller.shsconfig.loadexternalview();
 		Controller.shsconfig.loadinternalview();
 		internalViewData = Controller.shsconfig.getinternalviewdata();
 		externalViewData = Controller.shsconfig.getexternalviewdata();
 		
+		for(int n=internalTable.getRowCount()-1;n>=0;n--){ 
+			internalTableModel.removeRow(n); 
+		}
 		int i = 0;
 		String key, val;
 		Iterator it = internalViewData.entrySet().iterator();
@@ -79,7 +83,9 @@ public class GUI extends JFrame {
 	    }
 	    internalTableModel.fireTableDataChanged();
 	    
-	    
+	    for(int l=externalTable.getRowCount()-1;l>=0;l--){ 
+			externalTableModel.removeRow(l); 
+		}
 	    int j=0;
 	    Iterator it1 = externalViewData.entrySet().iterator();
 	    while (it1.hasNext()){
@@ -115,11 +121,7 @@ public class GUI extends JFrame {
 		
 		JScrollPane internalFilesscrollPane = new JScrollPane();
 		
-		JLabel lblEigeneDateien = new JLabel("Eigene Dateien");
-		
 		JScrollPane externalFilesscrollPane = new JScrollPane();
-		
-		JLabel lblFremdeDateien = new JLabel("Fremde Dateien");
 
 		
 		JLabel lblKonsole = new JLabel("Konsole");
@@ -130,27 +132,21 @@ public class GUI extends JFrame {
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addComponent(loginPanel, GroupLayout.DEFAULT_SIZE, 586, Short.MAX_VALUE)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addComponent(menuPanel, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				.addGroup(gl_contentPane.createSequentialGroup()
+				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+					.addComponent(lblKonsole)
+					.addContainerGap())
+				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
 					.addComponent(internalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
 					.addContainerGap())
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(lblFremdeDateien)
-					.addContainerGap())
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(lblEigeneDateien)
-					.addContainerGap())
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(lblKonsole)
-					.addContainerGap())
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
-						.addComponent(externalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE))
+						.addComponent(externalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
@@ -159,14 +155,10 @@ public class GUI extends JFrame {
 					.addComponent(loginPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(menuPanel, GroupLayout.PREFERRED_SIZE, 57, GroupLayout.PREFERRED_SIZE)
-					.addGap(4)
-					.addComponent(lblEigeneDateien)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(internalFilesscrollPane, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE)
+					.addComponent(internalFilesscrollPane, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblFremdeDateien)
-					.addGap(11)
-					.addComponent(externalFilesscrollPane, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
+					.addComponent(externalFilesscrollPane, GroupLayout.PREFERRED_SIZE, 97, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblKonsole)
 					.addPreferredGap(ComponentPlacement.RELATED)
@@ -181,14 +173,14 @@ public class GUI extends JFrame {
 		
 		
 		
-		String[] excolumnNames = {"File"};
+		String[] excolumnNames = {"Fremde Dateien"};
 		externalTableModel = new DefaultTableModel(externalRowData, excolumnNames);
 		externalTable = new JTable();
 		externalTable.setModel(externalTableModel);
 		//add(new JScrollPane(internalTable));
 		externalFilesscrollPane.setViewportView(externalTable);
 		
-		String[] columnNames = {"File"};
+		String[] columnNames = {"Eigene Dateien"};
 		internalTableModel = new DefaultTableModel(internalRowData, columnNames);
 		internalTable = new JTable();
 		internalTable.setModel(internalTableModel);
@@ -203,8 +195,8 @@ public class GUI extends JFrame {
 				int selectedRow = internalTable.getSelectedRow();
 				if (selectedRow!=-1){
 					fileId = internalKeys.get(selectedRow);
-					//FreigabeDialog fd = new FreigabeDialog();
-					//fd.setVisible(true);
+					FreigabeDialog fd = new FreigabeDialog();
+					fd.setVisible(true);
 				} else {
 					System.out.println("Bitte eine Datei auswählen, für die Sie die Freigabe erteilen wollen!");
 				}
