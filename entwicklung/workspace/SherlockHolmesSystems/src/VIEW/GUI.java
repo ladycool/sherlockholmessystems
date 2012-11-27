@@ -39,6 +39,9 @@ import javax.swing.JTable;
 import javax.swing.JInternalFrame;
 import javax.swing.JTextPane;
 import javax.swing.JTextArea;
+import java.awt.SystemColor;
+import java.awt.Font;
+import java.awt.Toolkit;
 
 public class GUI extends JFrame {
 	
@@ -75,7 +78,7 @@ public class GUI extends JFrame {
 		Controller.shsconfig.loadinternalview();
 		internalViewData = Controller.shsconfig.getinternalviewdata();
 		externalViewData = Controller.shsconfig.getexternalviewdata();
-		System.out.println(externalViewData.size());
+		//System.out.println(externalViewData.size());
 		for(int n=internalTable.getRowCount()-1;n>=0;n--){ 
 			internalTableModel.removeRow(n); 
 		}
@@ -86,8 +89,8 @@ public class GUI extends JFrame {
 	        Map.Entry pairs = (Map.Entry)it.next();
 	        key = pairs.getKey().toString();
 	        val = pairs.getValue().toString();
-	        System.out.println(key);
-	        System.out.println(val);
+	        //System.out.println(key);
+	        //System.out.println(val);
 	        internalKeys.add(key);
 	        internalVal.add(val);
 	        String[] row = {val};
@@ -121,17 +124,22 @@ public class GUI extends JFrame {
 	 * @return 
 	 */
 	public GUI() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Sandra\\Desktop\\Log-in-icon.png"));
+		setBackground(SystemColor.inactiveCaptionText);
 		setTitle("Holmes Systems");
 	
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 604, 433);
 		contentPane = new JPanel();
+		contentPane.setBackground(SystemColor.windowBorder);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
 		JPanel loginPanel = new JPanel();
+		loginPanel.setBackground(SystemColor.inactiveCaption);
 		
 		menuPanel = new JPanel();
+		menuPanel.setBackground(SystemColor.info);
 		menuPanel.setVisible(false);
 		
 		JScrollPane internalFilesscrollPane = new JScrollPane();
@@ -140,6 +148,8 @@ public class GUI extends JFrame {
 
 		
 		JLabel lblKonsole = new JLabel("Konsole");
+		lblKonsole.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblKonsole.setForeground(SystemColor.text);
 		
 		JScrollPane scrollPane = new JScrollPane();
 
@@ -147,29 +157,22 @@ public class GUI extends JFrame {
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
-				.addComponent(loginPanel, GroupLayout.DEFAULT_SIZE, 586, Short.MAX_VALUE)
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(menuPanel, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
 					.addComponent(lblKonsole)
 					.addContainerGap())
-				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
-					.addComponent(internalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
-					.addContainerGap())
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(externalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
-						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE))
-					.addContainerGap())
+				.addComponent(loginPanel, GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+				.addComponent(internalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+				.addComponent(externalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+				.addComponent(menuPanel, GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(loginPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(loginPanel, GroupLayout.PREFERRED_SIZE, 37, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(menuPanel, GroupLayout.PREFERRED_SIZE, 57, GroupLayout.PREFERRED_SIZE)
+					.addComponent(menuPanel, GroupLayout.PREFERRED_SIZE, 78, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(internalFilesscrollPane, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
@@ -177,7 +180,7 @@ public class GUI extends JFrame {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblKonsole)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE))
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 56, Short.MAX_VALUE))
 		);
 		
 		JTextArea textArea = new JTextArea();
@@ -252,6 +255,7 @@ public class GUI extends JFrame {
 					metadata.put(Controller.shsconfig.fileId, fileIds);
 					Controller.shsconfig.delete(Controller.shsconfig.owner, Controller.shsconfig.filetype, metadata);
 					updateView();
+					System.out.println("Eigene Datei erfolgreich gelöscht");
 				} else if (externalSelectedRow!=-1){
 					System.out.println("Fremde Dateien können nicht gelöscht werden!");
 				} else {
@@ -289,6 +293,7 @@ public class GUI extends JFrame {
 				String pathId;
 				Desktop desktop = Desktop.getDesktop();
 				int selectedRow = internalTable.getSelectedRow();
+
 				int exSelectedRow = externalTable.getSelectedRow();
 				if (selectedRow!=-1){
 					 pathId = internalVal.get(selectedRow);
@@ -299,6 +304,7 @@ public class GUI extends JFrame {
 						  uri = new URI("file:///" +pathId);
 						  //uri = new URI("file:///"+pathId);
 						  desktop.browse(uri);
+						  System.out.println("Eigene Datei erfolgreich geöffnet");
 						  
 						}
 						catch(Exception oError) {
@@ -308,46 +314,49 @@ public class GUI extends JFrame {
 					exFile = Controller.shsconfig.previewfile(externalKeys.get(exSelectedRow), Controller.shsconfig.reader);
 					FileViewer fv = new FileViewer();
 					fv.setVisible(true);
-					System.out.println(exFile.get("content"));
-
+					System.out.println("Fremde Datei erfolgreich geöffnet");
+					
 				} else {
 					System.out.println("Bitte eine Datei auswählen!");
 				}
+
 			 	
 			}
 		});
 		GroupLayout gl_menuPanel = new GroupLayout(menuPanel);
 		gl_menuPanel.setHorizontalGroup(
-			gl_menuPanel.createParallelGroup(Alignment.TRAILING)
-				.addGroup(Alignment.LEADING, gl_menuPanel.createSequentialGroup()
+			gl_menuPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_menuPanel.createSequentialGroup()
+					.addContainerGap()
 					.addGroup(gl_menuPanel.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnNewButton)
 						.addComponent(btnAuswhlen))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(gl_menuPanel.createParallelGroup(Alignment.TRAILING)
+					.addGap(12)
+					.addGroup(gl_menuPanel.createParallelGroup(Alignment.TRAILING, false)
 						.addGroup(gl_menuPanel.createSequentialGroup()
 							.addComponent(btnLsche)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnErteilen)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnDateiAnzeigen)
-							.addGap(4))
-						.addComponent(pfad, GroupLayout.PREFERRED_SIZE, 247, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap(230, Short.MAX_VALUE))
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(btnDateiAnzeigen))
+						.addComponent(pfad))
+					.addContainerGap())
 		);
 		gl_menuPanel.setVerticalGroup(
 			gl_menuPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_menuPanel.createSequentialGroup()
-					.addGroup(gl_menuPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(pfad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnNewButton))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_menuPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnAuswhlen)
-						.addComponent(btnLsche)
-						.addComponent(btnErteilen)
-						.addComponent(btnDateiAnzeigen))
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+					.addContainerGap()
+					.addGroup(gl_menuPanel.createParallelGroup(Alignment.TRAILING)
+						.addComponent(btnNewButton)
+						.addComponent(pfad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_menuPanel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_menuPanel.createParallelGroup(Alignment.BASELINE)
+							.addComponent(btnLsche)
+							.addComponent(btnErteilen)
+							.addComponent(btnDateiAnzeigen))
+						.addComponent(btnAuswhlen))
+					.addGap(14))
 		);
 		menuPanel.setLayout(gl_menuPanel);
 		
@@ -413,43 +422,52 @@ public class GUI extends JFrame {
 				Controller.shsuser = Controller.shsconfig.loginSHS(Controller.shsconfig.signactionB, attributes);
 				//System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
 				updateView();
+				menuPanel.setVisible(true);
+				System.out.println("Erfolgreich Registriert und eingeloggt");
 			}
 		});
 		GroupLayout gl_loginPanel = new GroupLayout(loginPanel);
 		gl_loginPanel.setHorizontalGroup(
 			gl_loginPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_loginPanel.createSequentialGroup()
-					.addContainerGap()
+					.addGap(10)
 					.addComponent(lblBenutzername)
-					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGap(4)
 					.addComponent(benutzername, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addGap(36)
 					.addComponent(lblPasswort)
-					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGap(4)
 					.addComponent(passwort, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addGap(18)
 					.addComponent(btnLogin)
 					.addGap(14)
 					.addComponent(btnLoout)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(btnRegister)
-					.addContainerGap(19, Short.MAX_VALUE))
+					.addGap(10)
+					.addComponent(btnRegister))
 		);
 		gl_loginPanel.setVerticalGroup(
 			gl_loginPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_loginPanel.createSequentialGroup()
-					.addGap(6)
-					.addGroup(gl_loginPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblBenutzername)
-						.addComponent(benutzername, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+					.addGap(9)
+					.addComponent(lblBenutzername))
 				.addGroup(gl_loginPanel.createSequentialGroup()
 					.addGap(6)
-					.addGroup(gl_loginPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblPasswort)
-						.addComponent(btnLogin)
-						.addComponent(btnRegister)
-						.addComponent(btnLoout)
-						.addComponent(passwort, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+					.addComponent(benutzername, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(gl_loginPanel.createSequentialGroup()
+					.addGap(10)
+					.addComponent(lblPasswort))
+				.addGroup(gl_loginPanel.createSequentialGroup()
+					.addGap(7)
+					.addComponent(passwort, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(gl_loginPanel.createSequentialGroup()
+					.addGap(6)
+					.addComponent(btnLogin))
+				.addGroup(gl_loginPanel.createSequentialGroup()
+					.addGap(6)
+					.addComponent(btnLoout))
+				.addGroup(gl_loginPanel.createSequentialGroup()
+					.addGap(6)
+					.addComponent(btnRegister))
 		);
 		loginPanel.setLayout(gl_loginPanel);
 		contentPane.setLayout(gl_contentPane);
