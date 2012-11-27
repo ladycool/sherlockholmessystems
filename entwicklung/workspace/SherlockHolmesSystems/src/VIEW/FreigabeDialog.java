@@ -41,7 +41,7 @@ public class FreigabeDialog extends JFrame {
 	private String[] sharedUserList;
 	private ArrayList<String> userList;
 	private String[] startStatus;
-	private String[] endStatus;
+	private ArrayList<String> endStatus;
 	/**
 	 * Launch the application.
 	 */
@@ -106,18 +106,19 @@ public class FreigabeDialog extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				//get all checked checkboxes
-				endStatus = new String[toShare.size()];
+				endStatus = new ArrayList<String>();
 				for(int j=0;j<toShare.size();j++){
 					JCheckBox box = (JCheckBox) toShare.get(j);
 					if(box.isSelected()){
 						userToShare.add(box.getText());
-						endStatus[j] = box.getText();
+						endStatus.add(box.getText());
 					}
 				}
-				Controller.shsconfig.createticket(GUI.getFileId(), userToShare.toArray(new String[userToShare.size()]));
-				
-				for(int m=0;m<startStatus.length;m++)
-				
+				Controller.shsconfig.updateticket(GUI.getFileId(), endStatus);
+//				Controller.shsconfig.createticket(GUI.getFileId(), userToShare.toArray(new String[userToShare.size()]));
+//				
+//				for(int m=0;m<startStatus.length;m++)
+//				
 				GUI.updateView();
 				close();
 			}

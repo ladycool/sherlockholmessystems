@@ -761,12 +761,12 @@ public class Config extends _Config {
 			}
 			
 			//delete
-			userlist = (String[])todelete.keySet().toArray();
-			ticketIdlist = (String[]) todelete.values().toArray();			
+			userlist = todelete.keySet().toArray(new String[todelete.size()]);
+			ticketIdlist = todelete.values().toArray(new String[todelete.size()]);			
 			this.deleteticket(fileId, userlist, ticketIdlist);
 			
 			//create
-			userlist = (String[]) newuserlist.toArray();
+			userlist = newuserlist.toArray(new String[newuserlist.size()]);
 			this.createticket(fileId, userlist);
 			
 		} catch (Base64DecodingException | SQLException e) {
