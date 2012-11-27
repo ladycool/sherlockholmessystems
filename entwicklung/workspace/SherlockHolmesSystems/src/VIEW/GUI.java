@@ -119,6 +119,7 @@ public class GUI extends JFrame {
 	    //toreturn.put(ticketId,sent_by+this.sep+this.sep+filename);	
 	}
 	
+	
 	/**
 	 * Create the frame.
 	 * @return 
@@ -192,15 +193,45 @@ public class GUI extends JFrame {
 		
 		
 		String[] excolumnNames = {"Fremde Dateien"};
-		externalTableModel = new DefaultTableModel(externalRowData, excolumnNames);
+		externalTableModel = new DefaultTableModel(externalRowData, excolumnNames) {
+			   @Override
+			   public boolean isCellEditable(int row, int column) {
+			       //Only the third column
+			       return false;
+			   }
+			};
 		externalTable = new JTable();
+		externalTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2){
+					externalTable.getSelectionModel().clearSelection();
+				}
+			}
+		});
 		externalTable.setModel(externalTableModel);
 		//add(new JScrollPane(internalTable));
 		externalFilesscrollPane.setViewportView(externalTable);
 		
+		
 		String[] columnNames = {"Eigene Dateien"};
-		internalTableModel = new DefaultTableModel(internalRowData, columnNames);
+		internalTableModel = new DefaultTableModel(internalRowData, columnNames) {
+			   @Override
+			   public boolean isCellEditable(int row, int column) {
+			       //Only the third column
+			       return false;
+			   }
+			};
 		internalTable = new JTable();
+		internalTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2){
+					internalTable.getSelectionModel().clearSelection();
+				}
+			}
+		});
+		
 		internalTable.setModel(internalTableModel);
 		//add(new JScrollPane(internalTable));
 		internalFilesscrollPane.setViewportView(internalTable);
