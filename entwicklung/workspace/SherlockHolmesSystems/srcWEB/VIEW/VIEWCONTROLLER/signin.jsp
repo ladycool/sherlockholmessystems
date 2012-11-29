@@ -1,59 +1,84 @@
-<%@ page import="SERVICE.Config" %>
+<%@page import="java.util.HashMap"%>
+<%@ page import="CONTROLLER.Controller" %>
 <%
 	final String //Skriptspezifische Ids
 	spanId = "spanbackId",
 	submitId = "usercreator",
-	hiddenbufId = "hiddenbuffer",
-	usernameId = "username",
-	passwordId = "password"
+	bakupId = "backup",
+	defaultAction = "'" + Controller.shsconfig.signactionB + "'" //signup
 	;
+
+	String
+	username = (String)session.getAttribute(Controller.shsconfig.usernameId)
+	;
+	
+	if(username == null){ username="";}
+   //Controller.shsdb.text("username")
+   //out.print(Controller.shsdb != null);
+   
 %>
 
 
-<form action="">
-	<table>
-		<tr>
-			<td class="loginlabel"><%=Config.shsdb.text("Username")%></td>
-			<td class="logininput"><%=Config.shsgui.defaultTXTInput(usernameId)%></td>
-		</tr>
-		<tr>
-			<td class="loginlabel"><%=Config.shsdb.text("Password")%></td>
-			<td class="logininput"><%=Config.shsgui.createInput("password",passwordId,50)%></td>
-		</tr>
-	</table>
+<table>
+	<tr><td class="shstitle" colspan="2">
+			<%=Controller.shsconfig.programName %>
+			<%=Controller.shsgui.createImg("","",Controller.shsconfig.print) %>
+		</td>
+	</tr>
+	<tr>
+		<td class="loginlabel"><%=Controller.shsdb.text(6) %></td>
+		<td class="logininput"><%=Controller.shsgui.createInput("text",Controller.shsconfig.usernameId,username,50,"")%></td>
+	</tr>
 	
-	<div id="<%=Config.signupId%>" style="display:none;">
-		<%@ include file="signup.jsp" %>
-	</div>
+	<tr>
+		<td class="loginlabel"><%=Controller.shsdb.text(7)%></td>
+		<td class="logininput"><%=Controller.shsgui.createInput("password",Controller.shsconfig.passwordId,50)%></td>
+	</tr>
 	
-	<table>
-		<tr><td style="text-align:right;">
-			<!-- Not a memeber yet -->	
-			<%=	"<span id='"+spanId+"'>"+					
-				Config.shsgui.createA("clicktosignup('tosignup')",1000000000)+
-				Config.shsgui.space(10,Config.horiz) +
-				"</span>"+
-				Config.shsgui.createInput("submit",submitId,Config.shsdb.text(2222)) %>
-			
-			<input type="hidden" id="<%=hiddenbufId %>" value=""/>
-			<script>
-				function clicktosignup(action){
-					simpleToggle("signup");	
-					if(action == "tosignup"){
-						tohtml="<input type='button' title='"+<%=Config.shsdb.text(333)%>+"' value='"+<%=Config.shsdb.text(333)%>+"' onclick='clicktosignup(\"\")'/>";							
-						$("#hiddenbuffer").val($("#spanbackId").html());				
-						$("#usercreator").val(<%=Config.shsdb.text(11111)%>);
+</table>
+
+<div id="<%=Controller.shsconfig.signupId%>" style="display:none;">
+	<%@ include file="signup.jsp" %>
+</div>
+
+<table>
+	<tr><td class="right" style="padding-top:10px;">
+		<!-- Not a memeber yet -->	
+		<%=	
+			"<span id='"+spanId+"'>"+					
+			Controller.shsgui.createA("clicktochange('signup')",Controller.shsdb.text(4))+
+			Controller.shsgui.space(10,Controller.shsconfig.horiz) +
+			"</span>"+
+			Controller.shsgui.createInput("submit",submitId,Controller.shsdb.text(5)) +
+			Controller.shsgui.createInput("hidden", Controller.shsconfig.signactionId, "signin") //name="signaction"
+		%>
+		<input type="hidden" id="<%=bakupId%>" value="">
+		
+		<script>
+			function clicktochange(action){					
+				bakupId = "#backup";
+				signactionId = "#signaction";
+				spanId = "#spanbackId";
+				submitId = "#usercreator";
+											
+				if(action == "signup"){
+					tohtml = "<input type='button' title='"+<%=Controller.shsdb.text("\"Zur&uuml;ck&nbsp;zum&nbsp;Anmeldeformular\"")%>+"' value='"+<%=Controller.shsdb.text("\"Zur&uuml;ck\"")%>+"' onclick='clicktochange(\"signin\")'/>";
+					tohtml += "&nbsp;&nbsp;<input type='reset' value='"+<%=Controller.shsdb.text("\"Reset\"")%>+"'/>&nbsp;&nbsp;";
 					
-					}else{
-						tohtml= $("#hiddenbuffer").val();							
-						$("#hiddenbuffer").val("");							
-						$("#usercreator").val(<%=Config.shsdb.text(2222)%>);
-					
+					if($(bakupId).val() == ''){//So wird es sichergestellt dass die ursprüngliche Form des span-Tags aufbewahren wird
+						$(bakupId).val($(spanId).html());
 					}
-					
-					$("#spanbackId").html(tohtml);
-				}
-			</script>
-		</td></tr>		
-	</table>
-</form>
+					$(submitId).val(<%=Controller.shsdb.text("'Registrieren'")%>);
+				}else if(action == "signin"){
+					tohtml = $(bakupId).val();
+					$(submitId).val(<%=Controller.shsdb.text("'Anmelden'")%>);
+				}				
+				animateToggle("signup","verti");
+				$(spanId).html(tohtml);
+				$(signactionId).val(action);
+				
+			}
+		</script>
+	</td></tr>		
+</table>
+

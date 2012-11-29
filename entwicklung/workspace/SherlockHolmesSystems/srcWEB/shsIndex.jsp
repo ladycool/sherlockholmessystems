@@ -1,13 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
     
-<%@ page import="SERVICE.Config" %>
+<%@ page import="CONTROLLER.Controller" %>
 
 <%
 	String
-	absPath = request.getContextPath(),
-	bodyId = "shsbody"
+	absPath = request.getContextPath()
 	;
+	//Controller.shsconfig.keypath = absPath + Controller.shsconfig.keypath;
 %>
 
 <%!
@@ -29,6 +29,7 @@
 
 	//destroy
 	public void jspdestroy(){
+		Controller.shsdb.close();
 		
 	}
 %>
@@ -37,15 +38,19 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">		
-		<link href="<%=absPath+Config.classes %>" type="text/css" rel="stylesheet">
-		<link href="<%=absPath+Config.tags %>" type="text/css" rel="stylesheet">
-		<script src="<%=absPath+Config.jquery %>" type="text/javascript"></script>	
-		<script src="<%=absPath+Config.jsmeth %>" type="text/javascript"></script>	
+		<link href="<%=absPath+Controller.shsconfig.classes %>" type="text/css" rel="stylesheet">
+		<link href="<%=absPath+Controller.shsconfig.tags %>" type="text/css" rel="stylesheet">
+		<script src="<%=absPath+Controller.shsconfig.jquery %>" type="text/javascript"></script>	
+		<script src="<%=absPath+Controller.shsconfig.jsmeth %>" type="text/javascript"></script>	
 		
-		<title>Sherlock Holmes Systems</title>
+		<title><%=Controller.shsconfig.title%></title>
 	</head>
-	<body class="maxwidth" id="<%=bodyId%>" name="<%=bodyId%>">
-		<%if(session.getAttribute("user") != null){%>
+	
+	<body>
+		<%@ include file="VIEW/javascript/attributes.jsp" %>
+	
+		<%if(session.getAttribute(Controller.shsconfig.shsuser) == null && 
+			request.getParameter(Controller.shsconfig.signactionId) == null){%>
 			<%@ include file="VIEW/login.jsp" %>
 		<%}else{%>
 			<%@ include file="VIEW/controllboard.jsp" %>	

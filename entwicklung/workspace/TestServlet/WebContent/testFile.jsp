@@ -7,6 +7,12 @@
 <title>Simple JSP File</title>
 </head>
 <body>
+	<form action="http://localhost:8080/TestServlet/testFile.jsp" method="POST">
+		<input type="text" name="thisisatest" size="100">
+		<input type="submit" value="test test">
+	</form>
+	<%=request.getParameter("thisisatest") %>
+	<br><br><br><br>
 	<%!
 	public int add(int a,int b){
 		return a+b;

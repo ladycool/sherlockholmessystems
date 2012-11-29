@@ -1,15 +1,41 @@
 package SERVICE;
 
-import MODEL._Config;
+import SERVICE.Config;
+import CONTROLLER.Controller;
 import MODEL.GUI;
 import MODEL.enums.Direction;
 
 public class HTML implements GUI {
-
-		
+	
+	/*
+	 * PRIVATE
+	 */
+	private static HTML _html = new HTML();
+	private HTML(){
+		super();//do nothing
+	}
+	
+	/**
+	 * @doc Erzeugt einen Singelton
+	 * @return
+	 */
+	public static HTML getInstance(){
+		return HTML._html;
+	}
+	
+	
 	@Override
-	public String createInput(String type,String id,String value,int length,String onclick) {
-		String input = "<input type=\""+type+"\" id=\""+id+"\" name=\""+id+"\" value=\""+value+"\"";	
+	public String createInput(String type,String id,Object value,int length,String onclick) {
+		if(value instanceof String){
+			value = (String)value;
+		}else if(value instanceof Integer){
+			value = Controller.shsdb.text((int)value);
+		}
+		
+		String input = "<input type=\""+type+"\" id=\""+id+"\" value=\""+value+"\"";
+		if(!(type.equals("submit") || type.equals("button"))){
+			input += " name=\""+id+"\"";
+		}
 		if(length > 0){
 			input += " size=\""+length+"\"";
 		}
@@ -21,7 +47,7 @@ public class HTML implements GUI {
 	}
 	
 	@Override
-	public String createInput(String type,String id,String value,String onclick) {
+	public String createInput(String type,String id,Object value,String onclick) {
 		return createInput(type,id,value,0,onclick);
 	}
 	
@@ -46,9 +72,12 @@ public class HTML implements GUI {
 	}
 	
 	@Override
-	public String createImg(String blockId,String src,String alt,int height,int width,boolean resizeable){
+	public String createImg(String imgId,String blockId,String src,String alt,int height,int width,String event,boolean resizeable){
 		//Beispiel: <img alt="images/arrowRIGHT.png"" src="images/arrowLEFT.png" onclick="blockToggle('<%=Config.mainwestId%>')">
-		String toprint = "<img alt=\""+alt+"\" src=\""+src+"\" onclick=\"blockToggle('"+blockId+"')\"";
+		String toprint = "<img id=\""+imgId+"\" alt=\""+alt+"\" src=\""+src+"\"";
+		if(!event.equals("")){
+			toprint += event;
+		}
 		if(height > 0 && width > 0){
 			toprint += "height=\""+height+"\" width=\""+width+"\"";
 		}
@@ -61,13 +90,21 @@ public class HTML implements GUI {
 	}
 	
 	@Override
-	public String createImg(String blockId,String src,String alt){//Speziel für die Pfeile
-		return createImg(blockId,src,alt,20,20,true);
+	public String createImg(String imgId,String blockId,String src,String alt,String direction){//Speziel für die Pfeile
+		int height = 20, width = 20;
+		
+		//Beispiel: <img alt="images/arrowRIGHT.png"" src="images/arrowLEFT.png" onclick="blockToggle('<%=Config.mainwestId%>')">
+		String toprint = "<img id=\""+imgId+"\" alt=\""+alt+"\" src=\""+src+"\" onclick=\"blockToggle('"+imgId+"','"+blockId+"','"+direction+"')\"";
+		toprint += "height=\""+height+"\" width=\""+width+"\"";
+		toprint += "onmouseover=\"$(this).attr('height',5*$(this).attr('height')/4);$(this).attr('width',5*$(this).attr('width')/4)\"";
+		toprint += "onmouseout=\"$(this).attr('height',4*$(this).attr('height')/5);$(this).attr('width',4*$(this).attr('width')/5)\"";
+		toprint += ">";		
+		return toprint;
 	}
 	
 	@Override
-	public String createImg(String blockId,String src){
-		return createImg(blockId,src,"",0,0,false);
+	public String createImg(String imgId,String blockId,String src){
+		return createImg(imgId,blockId,src,"",0,0,"",false);
 	}
 	
 	@Override
@@ -76,9 +113,9 @@ public class HTML implements GUI {
 	 */
 	public String space(int i,Direction d){
 		String toreturn="",space="";
-		if(d.equals(Direction.horiz)||d.equals(Direction.up)||d.equals(Direction.down)){
+		if(d.equals(Controller.shsconfig.horiz)||d.equals(Controller.shsconfig.up)||d.equals(Controller.shsconfig.down)){
 			space = "&nbsp;";
-		}else if(d.equals(Direction.verti)||d.equals(Direction.left)||d.equals(Direction.right)){
+		}else if(d.equals(Controller.shsconfig.verti)||d.equals(Controller.shsconfig.left)||d.equals(Controller.shsconfig.right)){
 			space = "<br/>";
 		}
 		for (int j = 0; j < i; j++) {
@@ -90,11 +127,24 @@ public class HTML implements GUI {
 	
 	@Override
 	public void triggernotice(Exception e){
-		String a = _Config.consoleId;
+		//Spezielfall der Methode triggernotice(String message);
 		
-		//ruft die züstandige javascript-Methode auf
+		String tosend = e.getMessage();
+		triggernotice(tosend);
 	}
 
+	@Override
+	public void triggernotice(String message){
+		String msg = Controller.shsconfig.consoleId;
+		System.err.println(message);
+		//ruft die züstandige javascript-Methode auf
+	}
+	
+	@Override
+	public void triggernotice(int id){
+		triggernotice(Controller.shsdb.text(id));
+	}
+	
 	@Override
 	public String createRadiobuttons() {
 		// TODO Auto-generated method stub
@@ -108,7 +158,14 @@ public class HTML implements GUI {
 	}
 	
 	@Override
-	public String createA(String id,String click,String mouseover,String mouseout,String otherEvents,int textId){
+	public String createA(String id,String click,String mouseover,String mouseout,String otherEvents,Object text){
+		if(text instanceof String){
+			text = (String)text;
+		}else if(text instanceof Integer){
+			text = Controller.shsdb.text((int)text);
+		}
+		
+		
 		String toreturn = "<a ";
 		if(!id.isEmpty()){
 			//id += "_a";
@@ -130,19 +187,19 @@ public class HTML implements GUI {
 			toreturn += "onclick=\""+click+"\" ";
 		}
 		
-		toreturn +=otherEvents+">"+Config.shsdb.text(textId)+"</a>";
+		toreturn +=otherEvents+">"+text+"</a>";
 		
 		return toreturn;
 	}
 		
 	@Override
-	public String createA(String click,String mouseover,String mouseout,int textId){
-		return createA("",click, mouseover, mouseout,"", textId);
+	public String createA(String click,String mouseover,String mouseout,Object text){
+		return createA("",click, mouseover, mouseout,"", text);
 	}
 	
 	@Override
-	public String createA(String click, int textId) {
-		return createA("",click,"","","",textId);
+	public String createA(String click, Object text) {
+		return createA("",click,"","","",text);
 	}
 
 	@Override

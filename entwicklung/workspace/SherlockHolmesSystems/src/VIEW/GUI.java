@@ -1,0 +1,506 @@
+package VIEW;
+
+import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.Window;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import CONTROLLER.Controller;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JTable;
+import javax.swing.JInternalFrame;
+import javax.swing.JTextPane;
+import javax.swing.JTextArea;
+import java.awt.SystemColor;
+import java.awt.Font;
+import java.awt.Toolkit;
+
+public class GUI extends JFrame {
+	
+	private JPanel contentPane;
+	private JPanel menuPanel;
+	private JTextField passwort;
+	private JTextField pfad;
+	private JTextField benutzername;
+	private File file;
+	private static JTable internalTable;
+	private static HashMap<String, String> externalViewData = new HashMap<String, String>();
+	private static HashMap<String, String> internalViewData = new HashMap<String, String>();
+	private static HashMap<String, String> exFile = new HashMap<String, String>();
+	private String[][] internalRowData;
+	private String[][] externalRowData;
+	private static DefaultTableModel internalTableModel;
+	private static DefaultTableModel externalTableModel;
+	private static ArrayList<String> internalKeys = new ArrayList<String>();
+	private static ArrayList<String> internalVal = new ArrayList<String>();
+	private static ArrayList<String> externalKeys = new ArrayList<String>();
+	private static JTable externalTable;
+	private static String fileId;
+	
+	public static String getFileId(){
+		return fileId;
+	}
+	
+	public static HashMap<String, String> getExternalFile(){
+		return exFile;
+	}
+	
+	public static void updateView(){
+		Controller.shsconfig.loadexternalview();
+		Controller.shsconfig.loadinternalview();
+		internalViewData = Controller.shsconfig.getinternalviewdata();
+		externalViewData = Controller.shsconfig.getexternalviewdata();
+		//System.out.println(externalViewData.size());
+		for(int n=internalTable.getRowCount()-1;n>=0;n--){ 
+			internalTableModel.removeRow(n); 
+		}
+		int i = 0;
+		String key, val;
+		Iterator it = internalViewData.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry pairs = (Map.Entry)it.next();
+	        key = pairs.getKey().toString();
+	        val = pairs.getValue().toString();
+	        //System.out.println(key);
+	        //System.out.println(val);
+	        internalKeys.add(key);
+	        internalVal.add(val);
+	        String[] row = {val};
+	        internalTableModel.insertRow(i, row);
+	        i++;
+	        it.remove(); // avoids a ConcurrentModificationException
+	    }
+	    internalTableModel.fireTableDataChanged();
+	    
+	    for(int l=externalTable.getRowCount()-1;l>=0;l--){ 
+			externalTableModel.removeRow(l); 
+		}
+	    int j=0;
+	    Iterator it1 = externalViewData.entrySet().iterator();
+	    while (it1.hasNext()){
+	    	Map.Entry pairs1 = (Map.Entry)it1.next();
+	    	key = pairs1.getKey().toString();
+	    	val = pairs1.getValue().toString();
+	    	externalKeys.add(key);
+	    	String[] rowEx = {val};
+	    	externalTableModel.insertRow(j,rowEx);
+	    	j++;
+	    	it1.remove();
+	    }
+	    externalTableModel.fireTableDataChanged();
+	    //toreturn.put(ticketId,sent_by+this.sep+this.sep+filename);	
+	}
+	
+	
+	/**
+	 * Create the frame.
+	 * @return 
+	 */
+	public GUI() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Sandra\\Desktop\\Log-in-icon.png"));
+		setBackground(SystemColor.inactiveCaptionText);
+		setTitle("Holmes Systems");
+	
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 604, 433);
+		contentPane = new JPanel();
+		contentPane.setBackground(SystemColor.windowBorder);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		
+		JPanel loginPanel = new JPanel();
+		loginPanel.setBackground(SystemColor.inactiveCaption);
+		
+		menuPanel = new JPanel();
+		menuPanel.setBackground(SystemColor.info);
+		menuPanel.setVisible(false);
+		
+		JScrollPane internalFilesscrollPane = new JScrollPane();
+		
+		JScrollPane externalFilesscrollPane = new JScrollPane();
+
+		
+		JLabel lblKonsole = new JLabel("Konsole");
+		lblKonsole.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblKonsole.setForeground(SystemColor.text);
+		
+		JScrollPane scrollPane = new JScrollPane();
+
+		
+		
+		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addComponent(lblKonsole)
+					.addContainerGap())
+				.addComponent(loginPanel, GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+				.addComponent(internalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+				.addComponent(externalFilesscrollPane, GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+				.addComponent(menuPanel, GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addComponent(loginPanel, GroupLayout.PREFERRED_SIZE, 37, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(menuPanel, GroupLayout.PREFERRED_SIZE, 78, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(internalFilesscrollPane, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(externalFilesscrollPane, GroupLayout.PREFERRED_SIZE, 97, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblKonsole)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 56, Short.MAX_VALUE))
+		);
+		
+		JTextArea textArea = new JTextArea();
+		MessageConsole mc = new MessageConsole(textArea);
+		mc.redirectOut();
+		mc.redirectErr(Color.RED, null);
+		scrollPane.setViewportView(textArea);
+		
+		
+		
+		String[] excolumnNames = {"Fremde Dateien"};
+		externalTableModel = new DefaultTableModel(externalRowData, excolumnNames) {
+			   @Override
+			   public boolean isCellEditable(int row, int column) {
+			       //Only the third column
+			       return false;
+			   }
+			};
+		externalTable = new JTable();
+		externalTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2){
+					externalTable.getSelectionModel().clearSelection();
+				}
+			}
+		});
+		externalTable.setModel(externalTableModel);
+		//add(new JScrollPane(internalTable));
+		externalFilesscrollPane.setViewportView(externalTable);
+		
+		
+		String[] columnNames = {"Eigene Dateien"};
+		internalTableModel = new DefaultTableModel(internalRowData, columnNames) {
+			   @Override
+			   public boolean isCellEditable(int row, int column) {
+			       //Only the third column
+			       return false;
+			   }
+			};
+		internalTable = new JTable();
+		internalTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2){
+					internalTable.getSelectionModel().clearSelection();
+				}
+			}
+		});
+		
+		internalTable.setModel(internalTableModel);
+		//add(new JScrollPane(internalTable));
+		internalFilesscrollPane.setViewportView(internalTable);
+
+		
+		JButton btnErteilen = new JButton("Freigabe");
+		btnErteilen.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				int selectedRow = internalTable.getSelectedRow();
+				if (selectedRow!=-1){
+					fileId = internalKeys.get(selectedRow);
+					FreigabeDialog fd = new FreigabeDialog();
+					fd.setVisible(true);
+				} else {
+					System.out.println("Bitte eine Datei auswählen, für die Sie die Freigabe erteilen wollen!");
+				}
+			}
+		});
+		
+		pfad = new JTextField();
+		pfad.setColumns(10);
+		
+		/**
+		 * @brief FILE UPLOAD
+		 *
+		 */
+		JButton btnAuswhlen = new JButton("Hinzuf\u00FCgen");
+		btnAuswhlen.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				Controller.shsconfig.uploadfile(file);
+				updateView();
+				internalTableModel.fireTableDataChanged();
+			}
+		});
+		
+		/**
+		 * @brief Delete File
+		 *
+		 */
+		JButton btnLsche = new JButton("L\u00F6schen");
+		btnLsche.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int selectedRow = internalTable.getSelectedRow();
+				int externalSelectedRow = externalTable.getSelectedRow();
+				if (selectedRow!=-1){
+					ArrayList<String> fileIds = new ArrayList<String>();
+					fileIds.add(internalKeys.get(selectedRow));
+					HashMap<String,ArrayList<String>> metadata = new HashMap<String,ArrayList<String>>();
+					metadata.put(Controller.shsconfig.fileId, fileIds);
+					Controller.shsconfig.delete(Controller.shsconfig.owner, Controller.shsconfig.filetype, metadata);
+					updateView();
+					System.out.println("Eigene Datei erfolgreich gelöscht");
+				} else if (externalSelectedRow!=-1){
+					System.out.println("Fremde Dateien können nicht gelöscht werden!");
+				} else {
+					System.out.println("Bitte eine Datei auswählen!");
+				}
+			}
+		});
+		
+		/**
+		 * @brief create JFILEChooser
+		 *
+		 */
+		JButton btnNewButton = new JButton("Ausw\u00E4hlen");
+		btnNewButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				try{
+					JFileChooser fileOeffnen = new JFileChooser();
+					fileOeffnen.setDialogTitle("Datei Öffnen");
+					fileOeffnen.showOpenDialog(null);
+					file = fileOeffnen.getSelectedFile();
+					String fileName = file.getAbsolutePath();
+					pfad.setText(fileName);
+				}catch (Exception e) {
+					e.getStackTrace();
+				}
+				
+			}
+		});
+		
+		JButton btnDateiAnzeigen = new JButton("Datei \u00F6ffnen");
+		btnDateiAnzeigen.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				String pathId;
+				Desktop desktop = Desktop.getDesktop();
+				int selectedRow = internalTable.getSelectedRow();
+
+				int exSelectedRow = externalTable.getSelectedRow();
+				if (selectedRow!=-1){
+					 pathId = internalVal.get(selectedRow);
+					 pathId = pathId.replace("\\", "/");
+					//Adresse mit Standardbrowser anzeigen
+						URI uri;
+						try {
+						  uri = new URI("file:///" +pathId);
+						  //uri = new URI("file:///"+pathId);
+						  desktop.browse(uri);
+						  System.out.println("Eigene Datei erfolgreich geöffnet");
+						  
+						}
+						catch(Exception oError) {
+						  //Hier Fehler abfangen
+						}
+				} else if (exSelectedRow !=-1){
+					exFile = Controller.shsconfig.previewfile(externalKeys.get(exSelectedRow), Controller.shsconfig.reader);
+					FileViewer fv = new FileViewer();
+					fv.setVisible(true);
+					System.out.println("Fremde Datei erfolgreich geöffnet");
+					
+				} else {
+					System.out.println("Bitte eine Datei auswählen!");
+				}
+
+			 	
+			}
+		});
+		GroupLayout gl_menuPanel = new GroupLayout(menuPanel);
+		gl_menuPanel.setHorizontalGroup(
+			gl_menuPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_menuPanel.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_menuPanel.createParallelGroup(Alignment.LEADING)
+						.addComponent(btnNewButton)
+						.addComponent(btnAuswhlen))
+					.addGap(12)
+					.addGroup(gl_menuPanel.createParallelGroup(Alignment.TRAILING, false)
+						.addGroup(gl_menuPanel.createSequentialGroup()
+							.addComponent(btnLsche)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(btnErteilen)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(btnDateiAnzeigen))
+						.addComponent(pfad))
+					.addContainerGap())
+		);
+		gl_menuPanel.setVerticalGroup(
+			gl_menuPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_menuPanel.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_menuPanel.createParallelGroup(Alignment.TRAILING)
+						.addComponent(btnNewButton)
+						.addComponent(pfad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGroup(gl_menuPanel.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_menuPanel.createParallelGroup(Alignment.BASELINE)
+							.addComponent(btnLsche)
+							.addComponent(btnErteilen)
+							.addComponent(btnDateiAnzeigen))
+						.addComponent(btnAuswhlen))
+					.addGap(14))
+		);
+		menuPanel.setLayout(gl_menuPanel);
+		
+		JLabel lblBenutzername = new JLabel("Benutzername");
+		
+		benutzername = new JTextField();
+		benutzername.setColumns(10);
+		
+		JLabel lblPasswort = new JLabel("Passwort");
+		
+		passwort = new JPasswordField();
+		passwort.setColumns(10);
+		
+		/**
+		 * @brief LOGIN USER
+		 *
+		 */
+		JButton btnLogin = new JButton("Login");
+		btnLogin.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				HashMap<String, String> attributes = new HashMap<String, String>();
+				attributes.put(Controller.shsconfig.username, benutzername.getText());
+				attributes.put(Controller.shsconfig.password, passwort.getText());
+				Controller.shsuser = Controller.shsconfig.loginSHS(Controller.shsconfig.signactionA, attributes);
+				//System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
+				updateView();
+				System.out.println("Erfolgreich eingeloggt!");
+				menuPanel.setVisible(true);
+				
+			}
+		});
+		
+
+		/**
+		 * @brief LOGOUT USER
+		 *
+		 */
+		JButton btnLoout = new JButton("Logout");
+		btnLoout.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//Controller.shsconfig.logoutSHS(); sonst funktionier danach kein erneutes einloggen
+				//internalTableModel.setColumnCount(0);
+				//externalTableModel.setColumnCount(0);
+				System.out.println("Erfolgreich ausgeloggt!");
+				menuPanel.setVisible(false);
+				Main.frame.dispose();
+			}
+		});
+		
+		/**
+		 * @brief REGISTER USER
+		 *
+		 */
+		JButton btnRegister = new JButton("Register");
+		btnRegister.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				HashMap<String, String> attributes = new HashMap<String, String>();
+				attributes.put(Controller.shsconfig.username, benutzername.getText());
+				attributes.put(Controller.shsconfig.password, passwort.getText());
+				Controller.shsuser = Controller.shsconfig.loginSHS(Controller.shsconfig.signactionB, attributes);
+				//System.out.println(Controller.shsuser.getattr(Controller.shsconfig.username));
+				updateView();
+				menuPanel.setVisible(true);
+				System.out.println("Erfolgreich Registriert und eingeloggt");
+			}
+		});
+		GroupLayout gl_loginPanel = new GroupLayout(loginPanel);
+		gl_loginPanel.setHorizontalGroup(
+			gl_loginPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_loginPanel.createSequentialGroup()
+					.addGap(10)
+					.addComponent(lblBenutzername)
+					.addGap(4)
+					.addComponent(benutzername, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(36)
+					.addComponent(lblPasswort)
+					.addGap(4)
+					.addComponent(passwort, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addComponent(btnLogin)
+					.addGap(14)
+					.addComponent(btnLoout)
+					.addGap(10)
+					.addComponent(btnRegister))
+		);
+		gl_loginPanel.setVerticalGroup(
+			gl_loginPanel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_loginPanel.createSequentialGroup()
+					.addGap(9)
+					.addComponent(lblBenutzername))
+				.addGroup(gl_loginPanel.createSequentialGroup()
+					.addGap(6)
+					.addComponent(benutzername, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(gl_loginPanel.createSequentialGroup()
+					.addGap(10)
+					.addComponent(lblPasswort))
+				.addGroup(gl_loginPanel.createSequentialGroup()
+					.addGap(7)
+					.addComponent(passwort, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(gl_loginPanel.createSequentialGroup()
+					.addGap(6)
+					.addComponent(btnLogin))
+				.addGroup(gl_loginPanel.createSequentialGroup()
+					.addGap(6)
+					.addComponent(btnLoout))
+				.addGroup(gl_loginPanel.createSequentialGroup()
+					.addGap(6)
+					.addComponent(btnRegister))
+		);
+		loginPanel.setLayout(gl_loginPanel);
+		contentPane.setLayout(gl_contentPane);
+	}
+}

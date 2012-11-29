@@ -3,6 +3,7 @@ package MODEL;
 import MODEL.enums.Direction;
 
 public interface GUI {
+	
 	/**
 	 * <input/>-Feld in HTML. Diese Methode sollte bei Input-Tags benutzt werden die keine Länge benötigen
 	 * @param type: <input type=""
@@ -20,7 +21,7 @@ public interface GUI {
 	 * @param onclick
 	 * @return <input type="type" id="id" value="value"/>
 	 */
-	public String createInput(String type,String id,String value,String onclick);
+	public String createInput(String type,String id,Object value,String onclick);
 	
 	/**
 	 * <input/>-Feld in HTML. Diese Methode sollte bei Input-Tags benutzt werden die eine bestimmte Länge benötigen
@@ -31,7 +32,7 @@ public interface GUI {
 	 * @param onclick
 	 * @return <input type="type" id="id" value="value"/>
 	 */
-	public String createInput(String type,String id,String value,int length,String onclick);
+	public String createInput(String type,String id,Object value,int length,String onclick);
 	
 
 	/**
@@ -52,6 +53,7 @@ public interface GUI {
 	
 	/**
 	 * Analog zu der Methode: createInput. Zusatzlich wird hier eine Datenbank verbindung mit der Tabelle "element_names" aufgebaut.
+	 * @deprecated Verglichen zu der Anwendungshäufigkeit ist der Implementieraufwand im Moment zu hoch
 	 * @return
 	 */
 	public String createSelect();
@@ -62,7 +64,7 @@ public interface GUI {
 	 * @param src: Pfad zum Bild
 	 * @return String
 	 */
-	public String createImg(String blockId, String src);
+	public String createImg(String imgId,String blockId, String src);
 	
 	/**
 	 * Erzeugt ein Tag vom Typ '<img/>'
@@ -71,7 +73,7 @@ public interface GUI {
 	 * @param alt: Pfad zum Bild der nach der Defaultaktion angezeigt werden sollte
 	 * @return String
 	 */
-	public String createImg(String blockId, String src, String alt);
+	public String createImg(String imgId,String blockId, String src, String alt,String direction);
 	
 	/**
 	 * Erzeugt ein Tag vom Typ '<img/>'
@@ -83,7 +85,7 @@ public interface GUI {
 	 * @param resizeable: Erzeugt ein nettes Feature
 	 * @return String
 	 */
-	public String createImg(String blockId,String src,String alt,int height,int width,boolean resizeable);
+	public String createImg(String imgId,String blockId,String src,String alt,int height,int width,String event,boolean resizeable);
 	
 	public String createTextarea(String id,String rows,String cols,String initval);
 	
@@ -114,32 +116,44 @@ public interface GUI {
 	 * @param mouseover
 	 * @param mouseout
 	 * @param otherEvents Bsp: "ondbleclick=\"do something\""
-	 * @param textId
+	 * @param text
 	 * @return String: <a></a>
 	 */
-	public String createA(String id,String click,String mouseover,String mouseout,String otherEvents,int textId);
+	public String createA(String id,String click,String mouseover,String mouseout,String otherEvents,Object text);
 	
 	/**
 	 * Vereinfachte Form der Methode: createA(String id,String href,String mouseover,String mouseout,String event,int textId)
 	 * @param href
 	 * @param mouseover
 	 * @param mouseout
-	 * @param textId
+	 * @param text
 	 * @return String: <a></a>
 	 */
-	public String createA(String click,String mouseover,String mouseout,int textId);
+	public String createA(String click,String mouseover,String mouseout,Object text);
 	
 	/**
 	 * Vereinfachte Form der Methode: createA(String id,String href,String mouseover,String mouseout,String event,int textId)
 	 * @param click
-	 * @param textId
+	 * @param text
 	 * @return String: <a></a>
 	 */
-	public String createA(String click,int textId);
+	public String createA(String click,Object text);
 	
 	/**
-	 * @deprecated Für den Moment
-	 * @param e
+	 * Reicht Meldung zur Konsole weiter.
+	 * @param e: Exception die weiter gereicht werden sollte.
 	 */
 	public void triggernotice(Exception e);
+	
+	/**
+	 * Reicht Meldung zur Konsole weiter.
+	 * @param message: Nachricht die angezeigt werden sollte.
+	 */
+	public void triggernotice(String message);
+	
+	/**
+	 * Reicht Meldung zur Konsole weiter.
+	 * @param id: id der Nachricht in der Tabelle "text" die angezeigt werden sollte.
+	 */
+	public void triggernotice(int id);
 }

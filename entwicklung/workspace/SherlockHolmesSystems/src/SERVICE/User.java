@@ -3,18 +3,27 @@ package SERVICE;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import SERVICE.Config;
-
+/**
+ * 
+ * @author Shazem (Patrick)
+ *
+ */
 
 public class User{
 	private HashMap<String, Object> attributes;
-	private ArrayList<String> restrictedSETAttr;
-	private ArrayList<String> restrictedGETAttr;
+	private ArrayList<String> 
+	restrictedSETAttr = new ArrayList<String>(),
+	restrictedGETAttr = new ArrayList<String>();
 	private static User singelton;
 	
 	
 	private User(HashMap<String, Object> attributes) {
 		this.attributes = attributes;
+		
+		//Set metadata
+		String metadata = "<shsmetadata>"+this.attributes.get("username")+"</shsmetadata>";
+		this.restrictedSETAttr.add("metadata");
+		this.attributes.put("metadata",metadata);
 	}
 
 	/**
@@ -23,9 +32,11 @@ public class User{
 	 * @return ein Singelton
 	 */
 	public static User getInstance(HashMap<String, Object> attributes) {
+		//SETTER-START
 		if(User.singelton == null){
 			User.singelton = new User(attributes);
 		}
+		//SETTER-END
 		return User.singelton;
 	}
 	
@@ -49,6 +60,6 @@ public class User{
 		if(!this.restrictedGETAttr.contains(key)){
 			return this.attributes.get(key);
 		}
-		return Config.shsdb.text(0);//Fehlermeldung
+		return null;//Fehlermeldung
 	}
 }

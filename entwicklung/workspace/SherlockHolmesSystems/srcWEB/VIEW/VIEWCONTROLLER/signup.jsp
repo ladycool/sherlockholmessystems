@@ -1,25 +1,27 @@
-<!-- @Eshan,Engin,Stella -->
+<!-- Das Skript ist vollständig: Patrick -->
 
-<%@ page import="SERVICE.Config" %>
-<%
-	final String
-	firstnameId = "",
-	middlenameId = "",
-	lastnameId = "",
-	titleNa = "",
-	streetId = "",
-	zipcodeId = "",
-	cityId = "",
-	phonenrId = ""
-	;
-
-	final int
-	length = 50
-	;
-%>
+<%@ page import="CONTROLLER.Controller" %>
 
 
-<table id='<%=Config.signupId%>' style='dislay:none;'>
-	<tr><td class="loginlabel"><%=Config.shsdb.text(455) %></td><td class="logininput"><%=Config.shsgui.defaultTXTInput(firstnameId) %></td></tr>
-	<tr><td class="loginlabel"><%=Config.shsdb.text(456) %></td><td class="logininput"><%=Config.shsgui.defaultTXTInput(middlenameId) %></td></tr>
+<table id='<%=Controller.shsconfig.signupId%>' style='dislay:none;'>
+	<tr>
+		<td class="loginlabel"><%=Controller.shsdb.text("Name") %></td>
+		<td class="logininput"><%=Controller.shsgui.defaultTXTInput(Controller.shsconfig.fullnameId) %></td>
+	</tr>
+	<tr>
+		<td class="loginlabel"><%=Controller.shsdb.text(56)%></td>
+		<td><select name="<%=Controller.shsconfig.languageId%>" class="logininput" title="">
+		  <option value="deu" selected="selected"><%=Controller.shsdb.text(53)%></option>
+		  <option value="eng"><%=Controller.shsdb.text(54)%></option>
+		  <option value="fra"><%=Controller.shsdb.text(55)%></option>
+		</select></td>
+	</tr>
+	<tr>
+		<td class="loginlabel"><%=Controller.shsdb.text("Anschrift") %></td>
+		<td class="logininput"><%=Controller.shsgui.defaultTXTInput(Controller.shsconfig.addressId) %></td>
+	</tr>
+	<tr>
+		<td class="loginlabel"><%=Controller.shsdb.text("Tel Nr.") %></td>
+		<td class="logininput"><%=Controller.shsgui.defaultTXTInput(Controller.shsconfig.phonenrId) %></td>
+	</tr>
 </table>

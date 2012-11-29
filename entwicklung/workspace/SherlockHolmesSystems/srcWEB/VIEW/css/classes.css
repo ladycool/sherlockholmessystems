@@ -5,20 +5,184 @@
 }
 
 .loginlabel{
-	width: 30%;
-	vertical-align: top;
-	text-align: right;
-	padding-right: 5px;
+	width: 120px;
+	display:block;
+    font:14px/22px Verdana, Tahomma, Geneva;
+    text-shadow: 1px 2px 3px #999;
+    margin:0 0 0 6px;
 }
 
 .logininput{
-	vertical-align: top;
+	 border:3px solid #F7F9FA;
+	-webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+    -moz-box-shadow:2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95a2a7 inset;
+    -webkit-box-shadow:2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95a2a7 inset;
+    box-shadow:2px 3px 3px rgba(0, 0, 0, 0.06) inset, 0 0 1px #95a2a7 inset;
+    margin:-3px 3px 0px 4px;
+    /*width:355px; Das passiert automatisch*/
+    
+}
+
+.loginDiv {
+	width: 450px;
+	 background:#eff3f6;
+    border: 1px solid #C3D4DB;
+	border-top:1px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    -moz-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    color:#444;
+    font:normal 12px/14px Verdana, Tahomma, Geneva;
+    text-shadow: 1px 2px 3px #999;
+    /*margin:0 auto 30px;*/
+	overflow:hidden;
+	padding-right: 5px;
 }
 
 td.right{
 	text-align: right;
 }
 
-maxwidth{
-	width:100%;	
+td.notice{
+	text-align: left;
+	border-top: solid gray 1px;
+	color: red;
 }
+
+
+td.shstitle{
+	text-align: left;
+	font:normal 18px Verdana, Tahomma, Geneva;
+	text-shadow: 1px 1px 1px #999;
+	font-size: 30px;
+	font-weight: bold;
+	color: rgb(65,105,225);
+    padding-bottom: 15px;
+    padding-left: 5px;
+    
+}
+
+td.body{
+	background:#eff3f6;
+    border: 1px solid white;
+	border-top:1px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    -moz-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    color:#444;
+    font:normal 12px/14px Verdana, Tahomma, Geneva;
+    text-shadow: 1px 2px 3px #999;
+    margin:0 auto 30px;
+	overflow:hidden;
+}
+
+td.headerB{
+	background:rgba(192,192,192, 0.5);
+   -moz-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    color: rgb(0,191,255);
+    font:normal 14px Verdana, Tahomma, Geneva;
+   	text-shadow: 1px 1px 1px #999;
+    margin:0 auto 30px;
+	overflow:hidden;
+}
+
+td.headerA{
+	background:#4169e1;
+    -moz-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    color:white;
+    font:bold 18px Verdana, Tahomma, Geneva;
+    text-shadow: 1px 1px 1px #999;
+    margin:0 auto 30px;
+	overflow:hidden;
+}
+
+td.console{
+	background:white;
+    border: 1px solid white;
+	border-top:1px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    -moz-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    color:#444;
+    font:normal 12px/14px Verdana, Tahomma, Geneva;
+    margin:0 auto 30px;
+	overflow:hidden;
+}
+
+div.popup{
+	border: solid 2px;
+	border-top-left-radius: 10px 10px;
+	border-bottom-right-radius: 10px 10px;
+	position: absolute;
+	border-style: solid;
+	border-color:rgb(65,105,225);
+	background:#eff3f6;
+    color:black;
+    font:normal 12px/14px Verdana, Tahomma, Geneva;
+    margin:0 auto 30px;
+	overflow:hidden;
+	position: absolute;
+	display: none;
+	resize: both; 
+}
+
+body{
+	margin-top: 50px;
+	background: #778899;
+	
+}
+
+
+#controllboard {
+	background: white;
+}
+
+
+.main {
+	/*width: 700px; Das braucht man ebenfalls nicht*/
+	 background:white;
+    border: 1px solid #C3D4DB;
+	border-top:1px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    -moz-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    -webkit-box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    box-shadow:rgba(0,0,0,0.15) 0 0 1px;
+    color:#444;
+    font:normal 12px/14px Arial, Helvetica, Sans-serif;
+    margin:0 auto 30px;
+    padding: 1px 1px 1px 1px;
+	overflow:hidden;
+}
+
+.console {
+	background: white;
+}
+
+#spanbackId {
+	margin: 0 55px 0 0;
+}
+
+.folder {
+	list-style-image:url(../images/folderIcon.png);
+}
+
+
+
+

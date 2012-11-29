@@ -1,0 +1,38 @@
+/*
+File file = new File("C:/Users/Shazem/Desktop/sss.txt");
+Controller.shsconfig.uploadfile(file);
+
+String id = "1";
+HashMap<String,String> dbfile = Controller.shsconfig.previewfile(id,Controller.shsconfig.owner);
+
+System.out.println(dbfile.get("filepath"));
+System.out.println(dbfile.get("content"));
+*/
+
+	/**
+	 * Diese Methode bereitet die Datei vor der Anzeige oder dem Herunterladen vor, für den Besitzer der Datei
+	 * @param fileid
+	 * @return {@link HashMap} HashMap<String,String> = (filepath->"",content->"")
+	 */
+	private HashMap<String,String> preloadInternalfile(String fileId){
+		HashMap<String, String> toreturn = new HashMap<String, String>();		
+		try {
+			ResultSet result = Controller.shsdb.select(this.filestb,"`key`,content,pathdef","id="+fileId);
+			result.next();
+			byte[]
+			_content = Base64.decode(result.getString("content")),
+			_pathdef = Base64.decode(result.getString("pathdef")),
+			
+			pseudokey = Controller.shscipher.crypt(Base64.decode(result.getString("key")), this.symInstance, this.decryptmode);
+			_pathdef = Controller.shscipher.crypt(_pathdef, this.symInstance, this.decryptmode);
+			
+			//Entschlüsselung des Inhaltes
+			_content = Controller.shscipher.crypt(_content,pseudokey,this.symInstance,this.decryptmode);		
+
+			toreturn.put("filepath",new String(_pathdef));
+			toreturn.put("content",new String(_content));
+		} catch (SQLException | Base64DecodingException e) {
+			Controller.shsgui.triggernotice(e);
+		}
+		return toreturn;
+	}
